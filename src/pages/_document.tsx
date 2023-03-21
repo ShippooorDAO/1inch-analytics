@@ -73,18 +73,6 @@ export default class MyDocument extends Document {
             name="keywords"
             content="1inch,info,dex,aggregator,analytics,blockchain,web3,finance,warden,shippooor,risk,crypto"
           />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css?family=IBM Plex Mono&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css?family=Roboto Mono&display=swap"
-            rel="stylesheet"
-          />
           <meta name="emotion-insertion-point" content="" />
           {emotionStyleTags}
         </Head>

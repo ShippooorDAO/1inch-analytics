@@ -1,5 +1,3 @@
-import { List, Users } from 'react-feather';
-
 import { SidebarItemsType } from '@/types/sidebar';
 
 import { RoundedImageIcon } from '../icons/RoundedImageIcon';
@@ -10,6 +8,7 @@ export enum PageSection {
   TRANSACTIONS,
   FUSION,
   TOKEN,
+  TREASURY,
 }
 
 export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
@@ -18,7 +17,9 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.OVERVIEW,
       {
         href: '/',
-        icon: Users,
+        icon: () => (
+          <RoundedImageIcon size="small" src="/warden/bar_chart.svg" />
+        ),
         title: 'Overview',
       },
     ],
@@ -26,7 +27,7 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.TRANSACTIONS,
       {
         href: '/transactions',
-        icon: List,
+        icon: () => <RoundedImageIcon size="small" src="/warden/swap.svg" />,
         title: 'Transactions',
       },
     ],
@@ -50,6 +51,16 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
         title: '1INCH Token',
       },
     ],
+    [
+      PageSection.TREASURY,
+      {
+        href: '/treasury',
+        icon: () => (
+          <RoundedImageIcon size="small" src="/warden/treasury.svg" />
+        ),
+        title: 'Treasury',
+      },
+    ],
   ]
 );
 
@@ -58,12 +69,14 @@ export function getNavItems(): SidebarNavProps {
   const transactionsSection = pageSections.get(PageSection.TRANSACTIONS)!;
   const tokenSection = pageSections.get(PageSection.TOKEN)!;
   const fusionSection = pageSections.get(PageSection.FUSION)!;
+  const treasurySection = pageSections.get(PageSection.TREASURY)!;
 
   const items: SidebarItemsType[] = [
     overviewSection,
     transactionsSection,
     tokenSection,
     fusionSection,
+    treasurySection,
   ];
 
   const navProps = [
