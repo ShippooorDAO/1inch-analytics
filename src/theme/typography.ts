@@ -2,10 +2,6 @@ import { TypographyOptions } from '@mui/material/styles/createTypography';
 
 const typography: TypographyOptions = {
   fontFamily: [
-    'Inter',
-    '-apple-system',
-    'BlinkMacSystemFont',
-    '"Segoe UI"',
     'Roboto',
     '"Helvetica Neue"',
     'Arial',
