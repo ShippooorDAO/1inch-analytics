@@ -1,0 +1,17 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - yarn install
+    build:
+      commands:
+        - yarn run build
+        - echo "NEXT_PUBLIC_MUI_DATA_GRID_PRO_LICENSE_KEY=$NEXT_PUBLIC_MUI_DATA_GRID_PRO_LICENSE_KEY" >> .env.local
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

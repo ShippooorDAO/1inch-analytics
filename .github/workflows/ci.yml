@@ -1,0 +1,21 @@
+name: ci
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Install dependencies
+        run: yarn install
+      - name: Deploy Next.js app
+        run: yarn run build
+        env:
+          NEXT_PUBLIC_WARDEN_API_URL: http://localhost:3000/api/graphql
