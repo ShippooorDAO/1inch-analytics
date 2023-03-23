@@ -105,7 +105,7 @@ function DashboardInternal({ children, sidebarNavProps }: DashboardType) {
     storeFeatureFlagsDialogOpen(featureFlagsDialogOpen);
   }, [featureFlagsDialogOpen]);
 
-  sidebarNavProps = sidebarNavProps ?? getNavItems();
+  sidebarNavProps = sidebarNavProps ?? getNavItems(featureFlags);
   const theme = useTheme();
   const isLg = useMediaQuery(theme.breakpoints.up('lg'));
 

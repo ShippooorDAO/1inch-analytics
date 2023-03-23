@@ -38,6 +38,9 @@ const FeatureFlagsContext = createContext<FeatureFlagsContextState>({
   get enableMockData(): never {
     throw new Error(missingProviderError);
   },
+  get enableTransactionsPage(): never {
+    throw new Error(missingProviderError);
+  },
 });
 
 interface FeatureFlagsProviderProps {
@@ -48,7 +51,8 @@ function featureFlagsAreEqual(a: FeatureFlags, b: FeatureFlags): boolean {
   return (
     a.enableAllExperimentalFeatures === b.enableAllExperimentalFeatures &&
     a.sudo === b.sudo &&
-    a.enableMockData === b.enableMockData
+    a.enableMockData === b.enableMockData &&
+    a.enableTransactionsPage === b.enableTransactionsPage
   );
 }
 
@@ -118,6 +122,9 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
         getBooleanQueryParam(router.query.e),
       sudo: getBooleanQueryParam(router.query.sudo),
       enableMockData: getBooleanQueryParam(router.query.enableMockData),
+      enableTransactionsPage: getBooleanQueryParam(
+        router.query.enableTransactionsPage
+      ),
     });
 
     if (enableAllExperimentalFeatures === false) {
@@ -159,6 +166,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
     delete router.query.enableAllExperimentalFeatures;
     delete router.query.sudo;
     delete router.query.enableMockData;
+    delete router.query.enableTransactionsPage;
     router.push(router);
   };
 

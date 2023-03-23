@@ -109,7 +109,7 @@ export default function Home() {
             chains={chains ?? []}
           />
         </div>
-        <div
+        {/* <div
           css={css`
             display: flex;
             flex-flow: column;
@@ -146,7 +146,7 @@ export default function Home() {
               })}
             />
           </div>
-        </div>
+        </div> */}
         <div
           css={css`
             display: flex;

@@ -1,3 +1,4 @@
+import { FeatureFlags } from '@/shared/FeatureFlags/FeatureFlags.type';
 import { SidebarItemsType } from '@/types/sidebar';
 
 import { RoundedImageIcon } from '../icons/RoundedImageIcon';
@@ -64,20 +65,23 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
   ]
 );
 
-export function getNavItems(): SidebarNavProps {
+export function getNavItems(featureFlags: FeatureFlags): SidebarNavProps {
   const overviewSection = pageSections.get(PageSection.OVERVIEW)!;
-  const transactionsSection = pageSections.get(PageSection.TRANSACTIONS)!;
   const tokenSection = pageSections.get(PageSection.TOKEN)!;
   const fusionSection = pageSections.get(PageSection.FUSION)!;
   const treasurySection = pageSections.get(PageSection.TREASURY)!;
 
   const items: SidebarItemsType[] = [
     overviewSection,
-    transactionsSection,
     tokenSection,
     fusionSection,
     treasurySection,
   ];
+
+  if (featureFlags.enableTransactionsPage) {
+    const transactionsSection = pageSections.get(PageSection.TRANSACTIONS)!;
+    items.push(transactionsSection);
+  }
 
   const navProps = [
     {
