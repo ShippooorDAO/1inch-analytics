@@ -31,12 +31,18 @@ function getTooltipFormatter(
   xValue: number,
   timeseriesList: Timeseries[],
   selectedTimeseries: Timeseries[],
-  theme: Theme
+  theme: Theme,
+  formatter: (y?: number) => string = (y) => format(y, { symbol: 'USD' })
 ) {
   const tooltipRows = timeseriesList
     .filter((t) => timeseriesIsSelected(t, selectedTimeseries))
     .map((timeseries) =>
-      getTooltipRowForTimeseries(xValue, timeseries, selectedTimeseries)
+      getTooltipRowForTimeseries(
+        xValue,
+        timeseries,
+        selectedTimeseries,
+        formatter
+      )
     );
 
   const totalY = selectedTimeseries.reduce((acc, t) => {
@@ -52,7 +58,7 @@ function getTooltipFormatter(
     row: {
       color: 'white',
       name: 'Total (all selected chains)',
-      y: format(totalY, { symbol: 'USD' }),
+      y: formatter(totalY),
     },
   });
   tooltipRows.sort((a, b) => {
@@ -69,7 +75,8 @@ function getTooltipFormatter(
 function getTooltipRowForTimeseries(
   x: number,
   timeseries: Timeseries,
-  selectedTimeseries: Timeseries[]
+  selectedTimeseries: Timeseries[],
+  formatter: (y?: number) => string
 ) {
   const totalY = selectedTimeseries.reduce((acc, t) => {
     const data = t.data.find((d) => d.x === x);
@@ -91,7 +98,7 @@ function getTooltipRowForTimeseries(
   const point = {
     color: timeseries.color,
     name: timeseries.name,
-    y: `${format(data?.y, { symbol: 'USD' })} (${format(share, {
+    y: `${formatter(data?.y)} (${format(share, {
       symbol: '%',
     })})`,
   };
@@ -108,6 +115,7 @@ export interface HistogramChartProps {
   timeInterval: TimeInterval;
   onTimeWindowChange: (timeWindow: TimeWindow) => void;
   onTimeIntervalChange: (timeInterval: TimeInterval) => void;
+  formatter?: (y?: number) => string;
 }
 
 export function HistogramChart({
@@ -116,6 +124,7 @@ export function HistogramChart({
   timeInterval,
   onTimeWindowChange,
   onTimeIntervalChange,
+  formatter,
 }: HistogramChartProps) {
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
@@ -189,7 +198,8 @@ export function HistogramChart({
           this.x,
           selectedTimeseries,
           timeseriesList,
-          theme
+          theme,
+          formatter
         );
       },
       shared: false,

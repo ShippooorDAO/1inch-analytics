@@ -22,12 +22,14 @@ interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
   weeklyTimeseriesList?: Timeseries[];
   monthlyTimeseriesList?: Timeseries[];
+  formatter?: (y?: number | null) => string;
 }
 
 function ControlledHistogramChart({
   dailyTimeseriesList,
   weeklyTimeseriesList,
   monthlyTimeseriesList,
+  formatter,
 }: ControllerHistogramChartProps) {
   const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
   const [timeInterval, setTimeInterval] = useState<TimeInterval>(
@@ -60,6 +62,7 @@ function ControlledHistogramChart({
       timeInterval={timeInterval}
       onTimeWindowChange={setTimeWindow}
       onTimeIntervalChange={setTimeInterval}
+      formatter={formatter}
     />
   );
 }
@@ -245,6 +248,7 @@ export default function Home() {
                     )
                   : undefined
               }
+              formatter={(y) => format(y, { symbol: 'USD' })}
             />
             <div
               css={css`
@@ -264,6 +268,7 @@ export default function Home() {
                     color: chain.color,
                   };
                 })}
+                formatter={(y) => format(y, { symbol: 'USD' })}
               />
             </div>
           </div>
@@ -349,6 +354,7 @@ export default function Home() {
             >
               <DonutChart
                 seriesName="Transactions"
+                formatter={(y) => format(y, { decimals: 0 })}
                 data={selectedChains.map((chain) => {
                   const volume =
                     data?.byChain.get(chain.chainId)
@@ -389,6 +395,7 @@ export default function Home() {
                     )
                   : undefined
               }
+              formatter={(y) => format(y, { decimals: 0 })}
             />
           </div>
         </div>
@@ -489,6 +496,7 @@ export default function Home() {
                     )
                   : undefined
               }
+              formatter={(y) => format(y, { decimals: 0 })}
             />
             <div
               css={css`
@@ -498,7 +506,8 @@ export default function Home() {
               `}
             >
               <DonutChart
-                seriesName="Transactions"
+                seriesName="Wallets"
+                formatter={(y) => format(y, { decimals: 0 })}
                 data={selectedChains.map((chain) => {
                   const volume =
                     data?.byChain.get(chain.chainId)

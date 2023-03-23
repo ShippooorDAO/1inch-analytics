@@ -8,7 +8,13 @@ import { format } from '@/shared/Utils/Format';
 
 import { useChartOptions } from './useChartOptions';
 
-function useDonutChartOptions() {
+interface UseDonutChartOptionsProps {
+  formatter?: (y?: number | null) => string;
+}
+
+function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
+  const innerFormatter = formatter ?? ((y) => format(y, { symbol: 'USD' }));
+
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
 
@@ -51,7 +57,7 @@ function useDonutChartOptions() {
             series: [
               {
                 name: this.series.name,
-                y: format(this.y, { symbol: 'USD' }),
+                y: innerFormatter(this.y),
               },
               {
                 name: 'Share',
@@ -99,10 +105,11 @@ export interface DonutChartProps {
     imageUrl?: string;
     color?: string;
   }>;
+  formatter?: (y?: number | null) => string;
 }
 
-export function DonutChart({ data, seriesName }: DonutChartProps) {
-  const { chartOptions } = useDonutChartOptions();
+export function DonutChart({ data, seriesName, formatter }: DonutChartProps) {
+  const { chartOptions } = useDonutChartOptions({ formatter });
 
   const options: Highcharts.Options = {
     ...chartOptions,
