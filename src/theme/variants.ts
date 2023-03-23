@@ -126,6 +126,15 @@ const darkVariant = merge(defaultVariant, {
       primary: '#FBFBFB',
       secondary: '#6C86AD',
     },
+    success: {
+      main: '#21C187',
+    },
+    error: {
+      main: '#FF8078',
+    },
+    warning: {
+      main: '#FFC700',
+    },
   },
   header: {
     color: muiColors.grey[300],

@@ -206,6 +206,7 @@ function DashboardInternal({ children, sidebarNavProps }: DashboardType) {
           </div>
           <img
             src="/warden/background/background-white-5-narrow-fade.png"
+            alt=""
             css={css`
               position: absolute;
               overflow: hidden;

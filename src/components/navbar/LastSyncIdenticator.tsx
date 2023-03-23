@@ -4,12 +4,7 @@ import moment from 'moment';
 import { lighten } from 'polished';
 
 function getLastSyncTimestamp() {
-  const millisecondsInTenMinutes = 1000 * 60 * 10;
-  const now = new Date().getTime();
-
-  const lastSyncTimestamp = now - (now % millisecondsInTenMinutes);
-
-  return lastSyncTimestamp;
+  return moment.utc().startOf('day').unix();
 }
 
 export function LastSyncIdenticator() {

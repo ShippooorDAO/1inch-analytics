@@ -35,6 +35,9 @@ const FeatureFlagsContext = createContext<FeatureFlagsContextState>({
   get runtimeFeatureFlagsLoaded(): never {
     throw new Error(missingProviderError);
   },
+  get enableMockData(): never {
+    throw new Error(missingProviderError);
+  },
 });
 
 interface FeatureFlagsProviderProps {
@@ -44,7 +47,8 @@ interface FeatureFlagsProviderProps {
 function featureFlagsAreEqual(a: FeatureFlags, b: FeatureFlags): boolean {
   return (
     a.enableAllExperimentalFeatures === b.enableAllExperimentalFeatures &&
-    a.sudo === b.sudo
+    a.sudo === b.sudo &&
+    a.enableMockData === b.enableMockData
   );
 }
 
@@ -113,6 +117,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
         getBooleanQueryParam(router.query.enableAllExperimentalFeatures) ??
         getBooleanQueryParam(router.query.e),
       sudo: getBooleanQueryParam(router.query.sudo),
+      enableMockData: getBooleanQueryParam(router.query.enableMockData),
     });
 
     if (enableAllExperimentalFeatures === false) {
@@ -122,6 +127,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
     } else {
       storedForcedFeatureFlags = removeUndefinedFeatureFlags(
         storeFeatureFlags({
+          enableMockData: true,
           ...storedForcedFeatureFlags,
           ...forcedFeatureFlagsFromQueryParams,
         })!
@@ -152,6 +158,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
     delete router.query.e;
     delete router.query.enableAllExperimentalFeatures;
     delete router.query.sudo;
+    delete router.query.enableMockData;
     router.push(router);
   };
 

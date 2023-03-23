@@ -1,7 +1,7 @@
 // @ts-ignore
 import levenshtein from 'js-levenshtein';
 
-import { Chain } from '../Chain';
+import { Chain, ChainId } from '../Chain';
 
 const DEFAULT_SEARCH_RANKING = [
   'ethereum',
@@ -61,7 +61,7 @@ export class ChainStore {
     );
   }
 
-  getByChainId(chainId: number | string): Chain | undefined {
+  getByChainId(chainId: number | string | ChainId): Chain | undefined {
     return this.getAll().find((chain) => chain.chainId === Number(chainId));
   }
 

@@ -1,4 +1,4 @@
-import { useLazyQuery } from '@apollo/client';
+import { gql, useLazyQuery } from '@apollo/client';
 import {
   createContext,
   FC,
@@ -9,16 +9,133 @@ import {
 } from 'react';
 
 import { AssetService } from '../Currency/AssetService';
+import { UsdAmount } from '../Currency/UsdAmount';
 import { FeatureFlags } from '../FeatureFlags/FeatureFlags.type';
 import { useFeatureFlags } from '../FeatureFlags/FeatureFlagsContextProvider';
+import { Asset } from '../Model/Asset';
+import {
+  Chain,
+  ChainId,
+  getChainColor,
+  getChainImageUrl,
+} from '../Model/Chain';
 import { AssetStore } from '../Model/Stores/AssetStore';
 import { ChainStore } from '../Model/Stores/ChainStore';
-import {
-  GlobalSystemQueryResponse,
-  OneInchAnalyticsAPIProviderState,
-} from './OneInchAnalyticsAPI.type';
-import { processGlobalSystemResponse } from './OneInchAnalyticsAPIProcess';
-import { GET_GLOBAL_SYSTEM } from './OneInchAnalyticsAPIQueries';
+import { createMockGlobalSystemResponse } from './mocks/GlobalSystemQueryResponse';
+
+export interface OneInchAnalyticsAPIProviderState {
+  systemStatus?: {
+    id: string;
+    message: string;
+  };
+  assetService?: AssetService;
+  chainStore?: ChainStore;
+}
+
+export interface GlobalSystemQueryResponse {
+  systemStatus: {
+    id?: string;
+    message?: string;
+  } | null;
+  chains: {
+    id: string;
+    name: string;
+    chainIdentifier: number;
+    nativeToken: string;
+  }[];
+  assets: {
+    id: string;
+    address: string;
+    symbol: string;
+    chain: {
+      id: string;
+    };
+    name: string;
+    decimals: number;
+    logoUrl: string;
+    priceUsd: number;
+    price: number;
+  }[];
+}
+
+function getAssetDisplayName(symbol: string, chain: Chain): string {
+  if (!chain.chainId || chain.chainId === ChainId.ETHEREUM) {
+    return symbol;
+  }
+
+  return `${symbol} (${chain.displayName})`;
+}
+
+export function processGlobalSystemResponse(
+  response: GlobalSystemQueryResponse
+): {
+  assets: Asset[];
+  chains: Chain[];
+} {
+  const chains = response.chains.map((chain) => {
+    return {
+      ...chain,
+      chainId: chain.chainIdentifier,
+      displayName: chain.name,
+      imageUrl: getChainImageUrl(chain.chainIdentifier),
+      color: getChainColor(chain.chainIdentifier),
+      nativeToken: {
+        id: chain.nativeToken, // TODO: Make sure to link with correct property.
+      } as Asset,
+    };
+  });
+
+  const assets: Asset[] = response.assets
+    .filter((entry) => !!entry.symbol)
+    .map((entry) => {
+      const chain = chains.find((chain) => chain.id === entry.chain.id)!;
+      return {
+        ...entry,
+        chain,
+        imageUrl: entry.logoUrl,
+        displayName: getAssetDisplayName(entry.name, chain),
+        precision: BigInt(10 ** entry.decimals),
+        priceUsd: new UsdAmount(entry.priceUsd),
+      };
+    });
+
+  for (const chain of chains) {
+    const nativeToken = assets.find(
+      (asset) => asset.id === chain.nativeToken.id
+    )!;
+    chain.nativeToken = nativeToken;
+  }
+
+  return { assets, chains };
+}
+
+export const GET_GLOBAL_SYSTEM = gql`
+  {
+    systemStatus {
+      id
+      message
+    }
+    chains {
+      id
+      name
+      chainIdentifier
+      nativeToken
+    }
+    assets {
+      id
+      address
+      symbol
+      chain {
+        id
+      }
+      name
+      decimals
+      logoUrl
+      priceUsd
+      price
+    }
+  }
+`;
 
 const missingProviderError =
   'You forgot to wrap your code in a provider <OneInchAnalyticsAPIProvider>';
@@ -109,8 +226,21 @@ export const OneInchAnalyticsAPIProvider: FC<
       return;
     }
 
-    queryGlobalSystem();
-  }, [featureFlagsContext.runtimeFeatureFlagsLoaded]);
+    if (featureFlagsContext.enableMockData) {
+      const { assets, chains } = processGlobalSystemResponse(
+        createMockGlobalSystemResponse()
+      );
+
+      const assetStore = new AssetStore(assets);
+      setAssetService(new AssetService(assetStore));
+      setChainStore(new ChainStore(chains));
+    } else {
+      queryGlobalSystem();
+    }
+  }, [
+    featureFlagsContext.runtimeFeatureFlagsLoaded,
+    featureFlagsContext.enableMockData,
+  ]);
 
   useEffect(() => {
     if (!featureFlagsContext.runtimeFeatureFlagsLoaded) {

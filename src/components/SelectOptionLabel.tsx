@@ -1,15 +1,12 @@
 import { css } from '@emotion/react';
 import { Typography } from '@mui/material';
 
-interface AssetPriceOptionLabelProps {
+interface SelectOptionLabelProps {
   name: string;
   icon?: React.ReactNode;
 }
 
-export function AssetPriceOptionLabel({
-  name,
-  icon,
-}: AssetPriceOptionLabelProps) {
+export function SelectOptionLabel({ name, icon }: SelectOptionLabelProps) {
   return (
     <div
       css={css`

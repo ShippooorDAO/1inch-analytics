@@ -1,6 +1,9 @@
 import { css } from '@emotion/react';
+import { TrendingDown, TrendingUp } from '@mui/icons-material';
 import { Card, Typography } from '@mui/material';
 import React from 'react';
+
+import { format } from '@/shared/Utils/Format';
 
 import { AutoSkeleton } from './AutoSkeleton';
 
@@ -47,16 +50,18 @@ export function MetricsCard({
           <Typography variant="h1" fontWeight={300}>
             {value}
           </Typography>
-          {subValue !== undefined && (
+          {subValue !== undefined && typeof subValue === 'string' && (
             <Typography variant="body2" color="textSecondary">
               {subValue}
             </Typography>
           )}
+          {subValue !== undefined && typeof subValue !== 'string' && subValue}
         </div>
       </AutoSkeleton>
-      {footer && typeof footer !== 'string' ? (
+      {footer && typeof footer !== 'string' && (
         <AutoSkeleton loading={loading_}>{footer}</AutoSkeleton>
-      ) : (
+      )}
+      {footer && typeof footer === 'string' && (
         <AutoSkeleton loading={loading_}>
           <Typography variant="body2" color="textSecondary" fontWeight={300}>
             {footer}
@@ -64,5 +69,46 @@ export function MetricsCard({
         </AutoSkeleton>
       )}
     </Card>
+  );
+}
+
+interface TrendLabelProps {
+  label?: string;
+  variant?: 'up' | 'down';
+}
+
+export function TrendLabel({ label, variant }: TrendLabelProps) {
+  return (
+    <div
+      css={(theme) => css`
+        display: flex;
+        flex-flow: row;
+        gap: 10px;
+        align-items: center;
+        color: ${variant === 'up'
+          ? theme.palette.success.main
+          : theme.palette.error.main};
+      `}
+    >
+      {variant === 'up' ? (
+        <TrendingUp fontSize="small" />
+      ) : (
+        <TrendingDown fontSize="small" />
+      )}
+      <Typography variant="body2">{label}</Typography>
+    </div>
+  );
+}
+
+interface TrendLabelPercentProps {
+  value?: number;
+}
+
+export function TrendLabelPercent({ value }: TrendLabelPercentProps) {
+  return (
+    <TrendLabel
+      label={format(value, { symbol: '%', decimals: 1 })}
+      variant={value && value > 0 ? 'up' : 'down'}
+    />
   );
 }

@@ -20,6 +20,13 @@ export enum TimeWindow {
   THREE_MONTHS = 4,
   ONE_YEAR = 5,
   YEAR_TO_DAY = 6,
+  MAX = 7,
+}
+
+export enum TimeInterval {
+  DAILY = 1,
+  WEEKLY = 2,
+  MONTHLY = 3,
 }
 
 export interface TimeseriesOptions {
