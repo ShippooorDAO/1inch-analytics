@@ -13,7 +13,7 @@ export interface Chain {
 export enum ChainId {
   ETHEREUM = 1,
   OPTIMISM = 10,
-  AURORA = 10,
+  AURORA = 1313161554,
   ARBITRUM = 42161,
   POLYGON = 137,
   BSC = 56,

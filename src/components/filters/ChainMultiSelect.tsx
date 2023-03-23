@@ -76,11 +76,11 @@ export function ChainMultiSelect({
           options.find((o) => o.value === values[0])?.label ?? 'Select chains'
         );
       }
-      if (values.length > 1) {
-        return `${values.length} chains selected`;
-      }
       if (values.length === chains.length) {
         return 'All chains selected';
+      }
+      if (values.length > 1) {
+        return `${values.length} chains selected`;
       }
     })();
 

@@ -264,13 +264,25 @@ function sumTimeseries(timeseriesList: Timeseries[]): Timeseries {
   return result;
 }
 
+function getCumulatedTimeseries(timeseries: Timeseries) {
+  let cumulated = 0;
+  return {
+    ...timeseries,
+    data: timeseries.data.map((d) => {
+      cumulated += d.y;
+      return { ...d, y: cumulated };
+    }),
+  };
+}
+
 function getTimeseriesTrend(timeseries: Timeseries) {
   if (timeseries.data.length < 2) {
     return 0;
   }
 
   return (
-    timeseries.data[timeseries.data.length - 1].y /
+    (timeseries.data[timeseries.data.length - 1].y -
+      timeseries.data[timeseries.data.length - 2].y) /
     timeseries.data[timeseries.data.length - 2].y
   );
 }

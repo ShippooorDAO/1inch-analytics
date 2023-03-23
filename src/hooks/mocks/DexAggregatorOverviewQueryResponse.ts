@@ -6,23 +6,6 @@ import {
   DexAggregatorOverviewWalletsAndTransactionsQueryResponse,
 } from '../useDexAggregatorOverview';
 
-const mockWalletAndTransactionDataPoint = {
-  timestamp: Math.floor(Date.now() / 1000),
-  chain: {
-    chainIdentifier: 1,
-  },
-  transactionCount: 1234,
-  walletCount: 1234,
-};
-
-const mockVolumeDataPoint = {
-  timestamp: Math.floor(Date.now() / 1000),
-  chain: {
-    chainIdentifier: 1,
-  },
-  volumeUsd: 1234,
-};
-
 function createMockWalletAndTransactionDataPoint(
   timestamp: number,
   chainId: ChainId,
@@ -34,8 +17,8 @@ function createMockWalletAndTransactionDataPoint(
     chain: {
       chainIdentifier: String(chainId),
     },
-    transactionCount,
-    walletCount,
+    transactionCount: transactionCount * Math.random(),
+    walletCount: walletCount * Math.random(),
   };
 }
 
@@ -49,7 +32,7 @@ function createMockVolumeDataPoint(
     chain: {
       chainIdentifier: String(chainId),
     },
-    volumeUsd,
+    volumeUsd: volumeUsd * Math.random(),
   };
 }
 

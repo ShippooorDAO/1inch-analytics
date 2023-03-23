@@ -35,8 +35,26 @@ function getTooltipFormatter(
 ) {
   const tooltipRows = timeseriesList
     .filter((t) => timeseriesIsSelected(t, selectedTimeseries))
-    .map((timeseries) => getTooltipRowForTimeseries(xValue, timeseries));
+    .map((timeseries) =>
+      getTooltipRowForTimeseries(xValue, timeseries, selectedTimeseries)
+    );
 
+  const totalY = selectedTimeseries.reduce((acc, t) => {
+    const data = t.data.find((d) => d.x === xValue);
+    return acc + (data?.y || 0);
+  }, 0);
+
+  tooltipRows.push({
+    y: selectedTimeseries.reduce((acc, t) => {
+      const data = t.data.find((d) => d.x === xValue);
+      return acc + (data?.y || 0);
+    }, 0),
+    row: {
+      color: 'white',
+      name: 'Total (all selected chains)',
+      y: format(totalY, { symbol: 'USD' }),
+    },
+  });
   tooltipRows.sort((a, b) => {
     return (b.y || 0) - (a.y || 0);
   });
@@ -48,10 +66,19 @@ function getTooltipFormatter(
   );
 }
 
-function getTooltipRowForTimeseries(x: number, timeseries: Timeseries) {
+function getTooltipRowForTimeseries(
+  x: number,
+  timeseries: Timeseries,
+  selectedTimeseries: Timeseries[]
+) {
+  const totalY = selectedTimeseries.reduce((acc, t) => {
+    const data = t.data.find((d) => d.x === x);
+    return acc + (data?.y || 0);
+  }, 0);
+
   const data = (() => {
     const index = timeseries.data.findIndex((data) => {
-      return data.x > x;
+      return data.x >= x;
     });
     if (index === -1 || index === 0) {
       return null;
@@ -59,10 +86,14 @@ function getTooltipRowForTimeseries(x: number, timeseries: Timeseries) {
     return timeseries.data[index - 1];
   })();
 
+  const share = data?.y ? data.y / totalY : 0;
+
   const point = {
     color: timeseries.color,
     name: timeseries.name,
-    y: format(data?.y, { symbol: 'USD' }),
+    y: `${format(data?.y, { symbol: 'USD' })} (${format(share, {
+      symbol: '%',
+    })})`,
   };
 
   return {
@@ -114,7 +145,7 @@ export function HistogramChart({
 
     series.push(
       // @ts-ignore
-      ...timeseriesList.map((t) => ({
+      ...selectedTimeseries.map((t) => ({
         type: 'column',
         color: t.color,
         name: t.name,
