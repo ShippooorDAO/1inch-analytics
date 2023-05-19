@@ -22,6 +22,7 @@ import { useMemo, useState } from 'react';
 import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
+import { rgba } from 'polished';
 
 interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
@@ -203,6 +204,7 @@ export default function Home() {
             display: flex;
             flex-flow: column;
             border-radius: 24px;
+            background-image: url('card-bg.svg');
             background-color: ${theme.palette.background.paper};
           `}
         >
@@ -293,6 +295,7 @@ export default function Home() {
                 gap: 20px;
                 border: 1px solid ${theme.palette.divider};
                 border-radius: 24px;
+                background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 padding: 16px;
                 width: calc(100% - 420px);
                 ${theme.breakpoints.down('lg')} {
@@ -343,6 +346,7 @@ export default function Home() {
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
+                background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 border: 1px solid ${theme.palette.divider};
                 border-radius: 24px;
                 justify-content: space-between;
@@ -394,6 +398,7 @@ export default function Home() {
             display: flex;
             flex-flow: column;
             border-radius: 24px;
+            background-image: url('card-bg-5.svg');
             background-color: ${theme.palette.background.paper};
           `}
         >
@@ -494,6 +499,7 @@ export default function Home() {
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
+                background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 border: 1px solid ${theme.palette.divider};
                 border-radius: 24px;
                 justify-content: space-between;
@@ -547,6 +553,7 @@ export default function Home() {
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
+                background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 border: 1px solid ${theme.palette.divider};
                 border-radius: 24px;
                 padding: 16px;
@@ -604,6 +611,7 @@ export default function Home() {
             display: flex;
             flex-flow: column;
             border-radius: 24px;
+            background-image: url('card-bg-4.svg');
             background-color: ${theme.palette.background.paper};
           `}
         >
@@ -681,6 +689,7 @@ export default function Home() {
           >
             <div
               css={(theme) => css`
+                background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
@@ -733,6 +742,7 @@ export default function Home() {
             </div>
             <div
               css={(theme) => css`
+                background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
