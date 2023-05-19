@@ -7,21 +7,94 @@ import { format } from '@/shared/Utils/Format';
 
 import { AutoSkeleton } from './AutoSkeleton';
 
-export function MetricsCard({
+export function SlimMetricsCard({
   title,
   value,
   subValue,
-  footer,
   loading,
 }: {
   loading?: boolean;
   title: React.ReactNode;
   value?: React.ReactNode;
   subValue?: React.ReactNode;
+}) {
+  const loading_ = !value || !!loading;
+
+  return (
+    <Card
+      css={css`
+        height: 100%;
+        display: flex;
+        flex-flow: row;
+        gap: 10px;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+      `}
+    >
+      <AutoSkeleton loading={loading_}>
+        <div
+          css={(theme) =>
+            css`
+              border-radius-left: 10px;
+              background-color: ${theme.palette.action.hover};
+              padding: 10px;
+            `
+          }
+        >
+          <Typography variant="body2">{title}</Typography>
+        </div>
+      </AutoSkeleton>
+      <AutoSkeleton loading={loading_}>
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            gap: 10px;
+            align-items: center;
+            white-space: nowrap;
+          `}
+        >
+          <Typography variant="body2">{value}</Typography>
+        </div>
+      </AutoSkeleton>
+      {subValue !== undefined && (
+        <div
+          css={(theme) => css`
+            border-left: 2px solid ${theme.palette.action.hover};
+            padding-left: 10px;
+          `}
+        >
+          {subValue !== undefined && typeof subValue === 'string' && (
+            <Typography variant="body2" color="textSecondary">
+              {subValue}
+            </Typography>
+          )}
+          {subValue !== undefined && typeof subValue !== 'string' && subValue}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+export function MetricsCard({
+  title,
+  value,
+  subValue,
+  footer,
+  loading,
+  variant: variant_,
+}: {
+  loading?: boolean;
+  title: React.ReactNode;
+  value?: React.ReactNode;
+  subValue?: React.ReactNode;
   footer?: React.ReactNode;
+  variant?: 'default' | 'slim';
 }) {
   const loading_ = !value || !!loading;
   const value_ = !loading ? value : 12345;
+  const variant = variant_ || 'default';
 
   return (
     <Card
@@ -43,7 +116,7 @@ export function MetricsCard({
             display: flex;
             flex-flow: row;
             gap: 10px;
-            align-items: baseline;
+            align-items: center;
             white-space: nowrap;
           `}
         >
@@ -58,7 +131,7 @@ export function MetricsCard({
           {subValue !== undefined && typeof subValue !== 'string' && subValue}
         </div>
       </AutoSkeleton>
-      {footer && typeof footer !== 'string' && (
+      {/* {footer && typeof footer !== 'string' && (
         <AutoSkeleton loading={loading_}>{footer}</AutoSkeleton>
       )}
       {footer && typeof footer === 'string' && (
@@ -67,7 +140,7 @@ export function MetricsCard({
             {footer}
           </Typography>
         </AutoSkeleton>
-      )}
+      )} */}
     </Card>
   );
 }

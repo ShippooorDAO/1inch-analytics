@@ -23,6 +23,26 @@ export enum TimeWindow {
   MAX = 7,
 }
 
+export function getTimeWindowLabel(timeWindow: TimeWindow) {
+  switch (timeWindow) {
+    case TimeWindow.ONE_DAY:
+      return '1D';
+    case TimeWindow.SEVEN_DAYS:
+      return '7D';
+    case TimeWindow.ONE_MONTH:
+      return '1M';
+    case TimeWindow.THREE_MONTHS:
+      return '3M';
+    case TimeWindow.ONE_YEAR:
+      return '1Y';
+    case TimeWindow.YEAR_TO_DAY:
+      return 'YTD';
+    case TimeWindow.MAX:
+    default:
+      return 'All time';
+  }
+}
+
 export enum TimeInterval {
   DAILY = 1,
   WEEKLY = 2,

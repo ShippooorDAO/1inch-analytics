@@ -180,7 +180,6 @@ function DashboardInternal({ children, sidebarNavProps }: DashboardType) {
         <div
           css={(theme) => css`
             flex: 1;
-            background: ${theme.palette.background.default};
           `}
         >
           <div
@@ -204,20 +203,7 @@ function DashboardInternal({ children, sidebarNavProps }: DashboardType) {
               />
             )}
           </div>
-          <img
-            src="/warden/background/background-white-5-narrow-fade.png"
-            alt=""
-            css={css`
-              position: absolute;
-              overflow: hidden;
-              width: 99vw;
-              left: 0;
-              top: 0;
-              height: 460px;
-              object-fit: cover;
-              z-index: 1;
-            `}
-          />
+
           <div
             css={css`
               z-index: 2;

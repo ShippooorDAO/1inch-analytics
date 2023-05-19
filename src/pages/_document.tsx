@@ -1,4 +1,4 @@
-import { CacheProvider } from '@emotion/react';
+import { CacheProvider, css } from '@emotion/react';
 import createEmotionServer from '@emotion/server/create-instance';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
@@ -103,7 +103,41 @@ export default class MyDocument extends Document {
             cardType: 'summary_large_image',
           }}
         />
-        <body>
+        <body
+          css={css`
+            overflow-x: hidden;
+            ::before {
+              content: '';
+              z-index: -1;
+              position: absolute;
+              width: 1146px;
+              height: 1146px;
+              right: -750px;
+              top: 50px;
+              background: radial-gradient(
+                50% 50% at 50% 50%,
+                rgba(74, 39, 74, 0.74) 0%,
+                rgba(76, 38, 73, 0) 100%
+              );
+              opacity: 0.7;
+            }
+            ::after {
+              content: '';
+              z-index: -1;
+              position: absolute;
+              width: 1228px;
+              height: 1228px;
+              left: -742px;
+              top: -50px;
+              background: radial-gradient(
+                50% 50% at 50% 50%,
+                rgba(40, 94, 176, 0.41) 0%,
+                rgba(6, 19, 31, 0) 100%
+              );
+              opacity: 0.7;
+            }
+          `}
+        >
           <Main />
           <NextScript />
         </body>

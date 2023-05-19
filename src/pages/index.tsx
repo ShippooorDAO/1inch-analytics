@@ -9,7 +9,11 @@ import {
 } from '@/shared/Model/Timeseries';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { css } from '@emotion/react';
-import { MetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import PersonIcon from '@mui/icons-material/Person';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+
+import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { format } from '@/shared/Utils/Format';
 import { DonutChart } from '@/components/chart/DonutChart';
 import { Chain } from '@/shared/Model/Chain';
@@ -17,6 +21,7 @@ import { useDexAggregatorOverview } from '@/hooks/useDexAggregatorOverview';
 import { useMemo, useState } from 'react';
 import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
+import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 
 interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
@@ -67,21 +72,96 @@ function ControlledHistogramChart({
   );
 }
 
+interface ControlledDonutChartProps {
+  seriesName: string;
+  formatter: (y?: number | null) => string;
+  lastWeekVolume?: {
+    name: string;
+    y: number;
+    color: string;
+  }[];
+  lastMonthVolume?: {
+    name: string;
+    y: number;
+    color: string;
+  }[];
+
+  allTimeVolume?: {
+    name: string;
+    y: number;
+    color: string;
+  }[];
+}
+
+function ControlledDonutChart({
+  seriesName,
+  formatter,
+  lastWeekVolume,
+  lastMonthVolume,
+  allTimeVolume,
+}: ControlledDonutChartProps) {
+  const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
+
+  const handleTimeWindowChange = (e: any, value: any) => {
+    if (value) {
+      setTimeWindow(value);
+    }
+  };
+
+  const data = useMemo(() => {
+    switch (timeWindow) {
+      case TimeWindow.SEVEN_DAYS:
+        return lastWeekVolume;
+      case TimeWindow.ONE_MONTH:
+        return lastMonthVolume;
+      case TimeWindow.MAX:
+      default:
+        return allTimeVolume;
+    }
+  }, [timeWindow, lastWeekVolume, lastMonthVolume, allTimeVolume]);
+
+  return (
+    <>
+      <TimeWindowToggleButtonGroup
+        value={timeWindow}
+        onChange={handleTimeWindowChange}
+        options={[
+          { value: TimeWindow.SEVEN_DAYS, label: 'Last Week' },
+          { value: TimeWindow.ONE_MONTH, label: 'Last Month' },
+          { value: TimeWindow.MAX, label: 'All Time' },
+        ]}
+      />
+      <DonutChart seriesName={seriesName} data={data} formatter={formatter} />
+    </>
+  );
+}
+
 export default function Home() {
   const { chainStore } = useOneInchAnalyticsAPIContext();
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
 
-  const chains = useMemo(() => {
+  const displayedChains = useMemo(() => {
     if (!chainStore) {
       return undefined;
     }
 
-    setSelectedChains(chainStore.getAll());
+    if (selectedChains.length === 0) {
+      return chainStore?.getAll();
+    }
+
+    return selectedChains;
+  }, [selectedChains, chainStore]);
+
+  const chainOptions = useMemo(() => {
+    if (!chainStore) {
+      return undefined;
+    }
+
     return chainStore.getAll();
   }, [chainStore]);
 
   const { data } = useDexAggregatorOverview({
-    chainIds: selectedChains.map((chain) => chain.chainId),
+    chainIds: displayedChains?.map((chain) => chain.chainId),
   });
 
   return (
@@ -103,163 +183,198 @@ export default function Home() {
         <div
           css={css`
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
           `}
         >
-          <ChainMultiSelect
-            values={selectedChains}
-            onChange={setSelectedChains}
-            chains={chains ?? []}
-          />
+          <div>
+            Filter by chain:
+            <ChainMultiSelect
+              values={selectedChains}
+              onChange={setSelectedChains}
+              chains={chainOptions ?? []}
+            />
+          </div>
         </div>
-        {/* <div
-          css={css`
-            display: flex;
-            flex-flow: column;
-            gap: 30px;
-          `}
-        >
-          <Typography variant="h3">Topline Metrics</Typography>
 
-          <div
-            css={css`
-              display: flex;
-              flex-flow: row;
-              justify-content: center;
-              gap: 20px;
-            `}
-          >
-            <MetricsCard
-              title="Volume (All time)"
-              value={format(data?.allSelectedChains.allTimeVolume, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-            />
-            <MetricsCard
-              title="Wallets  (All time)"
-              value={format(data?.allSelectedChains.allTimeWalletsCount, {
-                abbreviate: true,
-              })}
-            />
-            <MetricsCard
-              title="Transactions  (All time)"
-              value={format(data?.allSelectedChains.allTimeTransactionsCount, {
-                abbreviate: true,
-              })}
-            />
-          </div>
-        </div> */}
         <div
-          css={css`
+          css={(theme) => css`
             display: flex;
             flex-flow: column;
-            gap: 30px;
+            border-radius: 24px;
+            background-color: ${theme.palette.background.paper};
           `}
         >
-          <Typography variant="h3">Volume</Typography>
           <div
             css={css`
               display: flex;
               flex-flow: row;
-              justify-content: center;
-              gap: 20px;
+              padding: 20px;
+              gap: 5px;
+              border-top-left-radius: 24px;
+              border-top-right-radius: 24px;
+              align-items: center;
+              justify-content: space-between;
             `}
           >
-            <MetricsCard
-              title="Volume (All time)"
-              value={format(data?.allSelectedChains.allTimeVolume, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Volume (24H)"
-              value={format(data?.allSelectedChains.lastDayVolume, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastDayVolumeTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Volume (7D)"
-              value={format(data?.allSelectedChains.lastWeekVolume, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastWeekVolumeTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Volume (30D)"
-              value={format(data?.allSelectedChains.lastMonthVolume, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastMonthVolumeTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-          </div>
-          <div
-            css={css`
-              display: flex;
-              flex-flow: row;
-              justify-content: center;
-              gap: 20px;
-            `}
-          >
-            <ControlledHistogramChart
-              dailyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!.dailyVolumeTimeseries
-                    )
-                  : undefined
-              }
-              weeklyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!.weeklyVolumeTimeseries
-                    )
-                  : undefined
-              }
-              monthlyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .monthlyVolumeTimeseries
-                    )
-                  : undefined
-              }
-              formatter={(y) => format(y, { symbol: 'USD' })}
-            />
+            <BarChartIcon />
+            <Typography variant="h3">Volume</Typography>
             <div
               css={css`
                 display: flex;
-                flex-flow: column;
+                flex-flow: row;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
                 gap: 20px;
               `}
             >
-              <DonutChart
+              <SlimMetricsCard
+                title="All time"
+                value={format(data?.allSelectedChains.allTimeVolume, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                })}
+              />
+              <SlimMetricsCard
+                title="24H"
+                value={format(data?.allSelectedChains.lastDayVolume, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                })}
+                subValue={
+                  <TrendLabelPercent
+                    value={data?.allSelectedChains.lastDayVolumeTrend}
+                  />
+                }
+              />
+              <SlimMetricsCard
+                title="7D"
+                value={format(data?.allSelectedChains.lastWeekVolume, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                })}
+                subValue={
+                  <TrendLabelPercent
+                    value={data?.allSelectedChains.lastWeekVolumeTrend}
+                  />
+                }
+              />
+              <SlimMetricsCard
+                title="30D"
+                value={format(data?.allSelectedChains.lastMonthVolume, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                })}
+                subValue={
+                  <TrendLabelPercent
+                    value={data?.allSelectedChains.lastMonthVolumeTrend}
+                  />
+                }
+              />
+            </div>
+            <div></div>
+          </div>
+          <div
+            css={css`
+              display: flex;
+              flex-flow: row;
+              justify-content: flex-start;
+              gap: 20px;
+              flex-wrap: wrap;
+              padding: 0 20px 20px 20px;
+            `}
+          >
+            <div
+              css={(theme) => css`
+                display: flex;
+                flex-flow: column;
+                gap: 20px;
+                border: 1px solid ${theme.palette.divider};
+                border-radius: 24px;
+                padding: 16px;
+                width: calc(100% - 420px);
+                ${theme.breakpoints.down('lg')} {
+                  width: 100%;
+                }
+              `}
+            >
+              <Typography variant="h3">Historical volume per chain</Typography>
+              <div
+                css={css`
+                  width: 100%;
+                `}
+              >
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .dailyVolumeTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .weeklyVolumeTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .monthlyVolumeTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { symbol: 'USD' })}
+                />
+              </div>
+            </div>
+            <div
+              css={(theme) => css`
+                display: flex;
+                flex-flow: column;
+                gap: 20px;
+                border: 1px solid ${theme.palette.divider};
+                border-radius: 24px;
+                justify-content: space-between;
+                padding: 16px;
+                width: 400px;
+                ${theme.breakpoints.down('lg')} {
+                  width: 100%;
+                }
+              `}
+            >
+              <Typography variant="h3">Current volume per chain</Typography>
+              <ControlledDonutChart
                 seriesName="Volume (USD)"
-                data={selectedChains.map((chain) => {
+                lastWeekVolume={displayedChains?.map((chain) => {
+                  const volume =
+                    data?.byChain.get(chain.chainId)?.lastWeekVolume ?? 0;
+                  return {
+                    name: chain.name,
+                    y: volume,
+                    color: chain.color,
+                  };
+                })}
+                lastMonthVolume={displayedChains?.map((chain) => {
+                  const volume =
+                    data?.byChain.get(chain.chainId)?.lastMonthVolume ?? 0;
+                  return {
+                    name: chain.name,
+                    y: volume,
+                    color: chain.color,
+                  };
+                })}
+                allTimeVolume={displayedChains?.map((chain) => {
                   const volume =
                     data?.byChain.get(chain.chainId)?.allTimeVolume ?? 0;
                   return {
@@ -275,87 +390,146 @@ export default function Home() {
         </div>
 
         <div
-          css={css`
+          css={(theme) => css`
             display: flex;
             flex-flow: column;
-            gap: 20px;
+            border-radius: 24px;
+            background-color: ${theme.palette.background.paper};
           `}
         >
-          <Typography variant="h3">Transactions</Typography>
-
           <div
             css={css`
               display: flex;
               flex-flow: row;
-              justify-content: center;
-              gap: 20px;
+              padding: 20px;
+              gap: 5px;
+              border-top-left-radius: 24px;
+              border-top-right-radius: 24px;
+              align-items: center;
+              justify-content: space-between;
             `}
           >
-            <MetricsCard
-              title="Transactions (All time)"
-              value={format(data?.allSelectedChains.allTimeTransactionsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Transactions (24H)"
-              value={format(data?.allSelectedChains.lastDayTransactionsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastDayTransactionsCountTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Transactions (7D)"
-              value={format(data?.allSelectedChains.lastWeekTransactionsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastWeekTransactionsCountTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Transactions (30D)"
-              value={format(
-                data?.allSelectedChains.lastMonthTransactionsCount,
-                {
-                  symbol: 'USD',
-                  abbreviate: true,
+            <ReceiptIcon />
+            <Typography variant="h3">Transactions</Typography>
+
+            <div
+              css={css`
+                display: flex;
+                flex-flow: row;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                gap: 20px;
+              `}
+            >
+              <SlimMetricsCard
+                title="All time"
+                value={format(
+                  data?.allSelectedChains.allTimeTransactionsCount,
+                  {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }
+                )}
+              />
+              <SlimMetricsCard
+                title="24H"
+                value={format(
+                  data?.allSelectedChains.lastDayTransactionsCount,
+                  {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }
+                )}
+                subValue={
+                  <TrendLabelPercent
+                    value={
+                      data?.allSelectedChains.lastDayTransactionsCountTrend
+                    }
+                  />
                 }
-              )}
-              footer="All selected chains"
-            />
+              />
+              <SlimMetricsCard
+                title="7D"
+                value={format(
+                  data?.allSelectedChains.lastWeekTransactionsCount,
+                  {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }
+                )}
+                subValue={
+                  <TrendLabelPercent
+                    value={
+                      data?.allSelectedChains.lastWeekTransactionsCountTrend
+                    }
+                  />
+                }
+              />
+              <SlimMetricsCard
+                title="30D"
+                value={format(
+                  data?.allSelectedChains.lastMonthTransactionsCount,
+                  {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }
+                )}
+              />
+            </div>
+            <div></div>
           </div>
           <div
             css={css`
               display: flex;
               flex-flow: row;
-              justify-content: center;
+              justify-content: flex-start;
               gap: 20px;
+              flex-wrap: wrap;
+              padding: 0 20px 20px 20px;
             `}
           >
             <div
-              css={css`
+              css={(theme) => css`
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
+                border: 1px solid ${theme.palette.divider};
+                border-radius: 24px;
+                justify-content: space-between;
+                padding: 16px;
+                width: 400px;
+                ${theme.breakpoints.down('lg')} {
+                  width: 100%;
+                }
               `}
             >
-              <DonutChart
+              <Typography variant="h3">
+                Current transactions per chain
+              </Typography>
+              <ControlledDonutChart
                 seriesName="Transactions"
-                formatter={(y) => format(y, { decimals: 0 })}
-                data={selectedChains.map((chain) => {
+                lastWeekVolume={displayedChains?.map((chain) => {
+                  const volume =
+                    data?.byChain.get(chain.chainId)
+                      ?.lastWeekTransactionsCount ?? 0;
+                  return {
+                    name: chain.name,
+                    y: volume,
+                    color: chain.color,
+                  };
+                })}
+                lastMonthVolume={displayedChains?.map((chain) => {
+                  const volume =
+                    data?.byChain.get(chain.chainId)
+                      ?.lastMonthTransactionsCount ?? 0;
+                  return {
+                    name: chain.name,
+                    y: volume,
+                    color: chain.color,
+                  };
+                })}
+                allTimeVolume={displayedChains?.map((chain) => {
                   const volume =
                     data?.byChain.get(chain.chainId)
                       ?.allTimeTransactionsCount ?? 0;
@@ -365,159 +539,245 @@ export default function Home() {
                     color: chain.color,
                   };
                 })}
+                formatter={(y) => format(y, { decimals: 0 })}
               />
             </div>
-            <ControlledHistogramChart
-              dailyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .dailyTransactionsCountTimeseries
-                    )
-                  : undefined
-              }
-              weeklyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .weeklyTransactionsCountTimeseries
-                    )
-                  : undefined
-              }
-              monthlyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .monthlyTransactionsCountTimeseries
-                    )
-                  : undefined
-              }
-              formatter={(y) => format(y, { decimals: 0 })}
-            />
+            <div
+              css={(theme) => css`
+                display: flex;
+                flex-flow: column;
+                gap: 20px;
+                border: 1px solid ${theme.palette.divider};
+                border-radius: 24px;
+                padding: 16px;
+                width: calc(100% - 420px);
+                ${theme.breakpoints.down('lg')} {
+                  width: 100%;
+                }
+              `}
+            >
+              <Typography variant="h3">
+                Historical transactions per chain
+              </Typography>
+              <div
+                css={css`
+                  width: 100%;
+                `}
+              >
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .dailyTransactionsCountTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .weeklyTransactionsCountTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .monthlyTransactionsCountTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { decimals: 0 })}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         <div
-          css={css`
+          css={(theme) => css`
             display: flex;
             flex-flow: column;
-            gap: 30px;
+            border-radius: 24px;
+            background-color: ${theme.palette.background.paper};
           `}
         >
-          <Typography variant="h3">Wallets</Typography>
-
           <div
             css={css`
               display: flex;
               flex-flow: row;
-              justify-content: center;
-              gap: 20px;
+              padding: 20px;
+              gap: 5px;
+              border-top-left-radius: 24px;
+              border-top-right-radius: 24px;
+              align-items: center;
+              justify-content: space-between;
             `}
           >
-            <MetricsCard
-              title="Wallets (All time)"
-              value={format(data?.allSelectedChains.allTimeWalletsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Wallets (24H)"
-              value={format(data?.allSelectedChains.lastDayWalletsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastDayWalletsCountTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Wallets (7D)"
-              value={format(data?.allSelectedChains.lastWeekWalletsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              subValue={
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.lastWeekWalletsCountTrend}
-                />
-              }
-              footer="All selected chains"
-            />
-            <MetricsCard
-              title="Wallets (30D)"
-              value={format(data?.allSelectedChains.lastMonthWalletsCount, {
-                symbol: 'USD',
-                abbreviate: true,
-              })}
-              footer="All selected chains"
-            />
+            <PersonIcon />
+            <Typography variant="h3">Users</Typography>
+
+            <div
+              css={css`
+                display: flex;
+                flex-flow: row;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                gap: 20px;
+              `}
+            >
+              <SlimMetricsCard
+                title="All time"
+                value={format(data?.allSelectedChains.allTimeWalletsCount, {
+                  abbreviate: true,
+                })}
+              />
+              <SlimMetricsCard
+                title="24H"
+                value={format(data?.allSelectedChains.lastDayWalletsCount, {
+                  abbreviate: true,
+                })}
+                subValue={
+                  <TrendLabelPercent
+                    value={data?.allSelectedChains.lastDayWalletsCountTrend}
+                  />
+                }
+              />
+              <SlimMetricsCard
+                title="7D"
+                value={format(data?.allSelectedChains.lastWeekWalletsCount, {
+                  abbreviate: true,
+                })}
+                subValue={
+                  <TrendLabelPercent
+                    value={data?.allSelectedChains.lastWeekWalletsCountTrend}
+                  />
+                }
+              />
+              <SlimMetricsCard
+                title="30D"
+                value={format(data?.allSelectedChains.lastMonthWalletsCount, {
+                  abbreviate: true,
+                })}
+              />
+            </div>
+            <div></div>
           </div>
           <div
             css={css`
               display: flex;
               flex-flow: row;
-              justify-content: center;
+              justify-content: flex-start;
               gap: 20px;
+              flex-wrap: wrap;
+              padding: 0 20px 20px 20px;
             `}
           >
-            <ControlledHistogramChart
-              dailyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .dailyTransactionsCountTimeseries
-                    )
-                  : undefined
-              }
-              weeklyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .weeklyTransactionsCountTimeseries
-                    )
-                  : undefined
-              }
-              monthlyTimeseriesList={
-                data
-                  ? selectedChains.map(
-                      (chain) =>
-                        data!.byChain.get(chain.chainId)!
-                          .monthlyTransactionsCountTimeseries
-                    )
-                  : undefined
-              }
-              formatter={(y) => format(y, { decimals: 0 })}
-            />
             <div
-              css={css`
+              css={(theme) => css`
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
+                border: 1px solid ${theme.palette.divider};
+                border-radius: 24px;
+                padding: 16px;
+                width: calc(100% - 420px);
+                ${theme.breakpoints.down('lg')} {
+                  width: 100%;
+                }
               `}
             >
-              <DonutChart
+              <Typography variant="h3">Historical users per chain</Typography>
+              <div
+                css={css`
+                  width: 100%;
+                `}
+              >
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .dailyWalletsCountTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .weeklyWalletsCountTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .monthlyWalletsCountTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { decimals: 0 })}
+                />
+              </div>
+            </div>
+            <div
+              css={(theme) => css`
+                display: flex;
+                flex-flow: column;
+                gap: 20px;
+                border: 1px solid ${theme.palette.divider};
+                border-radius: 24px;
+                justify-content: space-between;
+                padding: 16px;
+                width: 400px;
+                ${theme.breakpoints.down('lg')} {
+                  width: 100%;
+                }
+              `}
+            >
+              <Typography variant="h3">Current users per chain</Typography>
+              <ControlledDonutChart
                 seriesName="Wallets"
-                formatter={(y) => format(y, { decimals: 0 })}
-                data={selectedChains.map((chain) => {
+                lastWeekVolume={displayedChains?.map((chain) => {
                   const volume =
-                    data?.byChain.get(chain.chainId)
-                      ?.allTimeTransactionsCount ?? 0;
+                    data?.byChain.get(chain.chainId)?.lastWeekWalletsCount ?? 0;
                   return {
                     name: chain.name,
                     y: volume,
                     color: chain.color,
                   };
                 })}
+                lastMonthVolume={displayedChains?.map((chain) => {
+                  const volume =
+                    data?.byChain.get(chain.chainId)?.lastMonthWalletsCount ??
+                    0;
+                  return {
+                    name: chain.name,
+                    y: volume,
+                    color: chain.color,
+                  };
+                })}
+                allTimeVolume={displayedChains?.map((chain) => {
+                  const volume =
+                    data?.byChain.get(chain.chainId)?.allTimeWalletsCount ?? 0;
+                  return {
+                    name: chain.name,
+                    y: volume,
+                    color: chain.color,
+                  };
+                })}
+                formatter={(y) => format(y, { decimals: 0 })}
               />
             </div>
           </div>

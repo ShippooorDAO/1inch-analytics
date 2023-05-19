@@ -10,6 +10,7 @@ import {
   createTooltipFormatter,
 } from '@/shared/Highcharts/HighchartsContextProvider';
 import {
+  getTimeWindowLabel,
   TimeInterval,
   Timeseries,
   TimeWindow,
@@ -187,6 +188,10 @@ export function HistogramChart({
 
   const options: Highcharts.Options = {
     ...chartOptions,
+    chart: {
+      ...chartOptions.chart,
+      marginRight: 0,
+    },
     tooltip: {
       ...chartOptions.tooltip,
       formatter() {
@@ -214,13 +219,14 @@ export function HistogramChart({
           display: flex;
           flex-flow: column;
           gap: 10px;
+          width: 100%;
         `}
       >
         <div
           css={css`
             display: flex;
             flex-flow: row;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             gap: 20px;
           `}
@@ -230,22 +236,25 @@ export function HistogramChart({
             values={selectedTimeseries}
             onChange={setSelectedTimeseries}
           />
-          <div
-            css={css`
-              display: flex;
-              gap: 20px;
-            `}
-          >
-            <TimeIntervalToggleButtonGroup
-              value={timeInterval}
-              onChange={handleTimeIntervalChange}
-            />
-            <TimeWindowToggleButtonGroup
-              value={timeWindow}
-              onChange={handleTimeWindowChange}
-            />
-          </div>
+
+          <TimeIntervalToggleButtonGroup
+            value={timeInterval}
+            onChange={handleTimeIntervalChange}
+          />
+          <TimeWindowToggleButtonGroup
+            value={timeWindow}
+            options={[
+              TimeWindow.SEVEN_DAYS,
+              TimeWindow.ONE_MONTH,
+              TimeWindow.ONE_YEAR,
+            ].map((timeWindow) => ({
+              value: timeWindow,
+              label: getTimeWindowLabel(timeWindow),
+            }))}
+            onChange={handleTimeWindowChange}
+          />
         </div>
+
         <HighchartsReact highcharts={Highcharts} options={options} />
       </div>
     </LoadingWrapper>

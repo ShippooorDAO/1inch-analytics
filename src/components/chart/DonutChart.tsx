@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import { rgba } from 'polished';
 
 import { LoadingWrapper } from '@/components/SkeletonWrapper';
 import { createTooltipFormatter } from '@/shared/Highcharts/HighchartsContextProvider';
@@ -38,6 +39,30 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
 
   const options: Highcharts.Options = {
     ...chartOptions,
+    chart: {
+      type: 'bar',
+      ...chartOptions.chart,
+    },
+    yAxis: {
+      ...chartOptions.yAxis,
+      labels: {
+        // @ts-ignore
+        ...chartOptions.yAxis?.labels,
+        enabled: false,
+      },
+      title: {
+        // @ts-ignore
+        ...chartOptions.yAxis?.title,
+        text: 'Volume (USD)',
+      },
+      gridLineWidth: 1,
+      gridLineDashStyle: 'Dash',
+      gridLineColor: rgba(theme.palette.text.primary, 0.1),
+    },
+    xAxis: {
+      ...chartOptions.xAxis,
+      visible: false,
+    },
     tooltip: {
       backgroundColor: theme.palette.wardenTeal[700],
       borderColor: theme.palette.divider,
@@ -70,21 +95,17 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
       },
     },
     plotOptions: {
-      pie: {
-        size: '100%',
-        innerSize: '50%',
+      bar: {
         colors: pieColors,
         borderColor: theme.palette.text.secondary,
         borderWidth: 1,
-        // @ts-ignore
         dataLabels: {
-          overflow: 'allow',
+          crop: false,
           enabled: true,
-          connectorColor: theme.palette.text.secondary,
-          connectorWidth: 1,
-          format: '{point.name}: {point.percentage:.1f}%',
+          formatter() {
+            return `${this.point.name}: ${innerFormatter(this.y)}`;
+          },
           style: {
-            fontWeight: 400,
             fontFamily: theme.typography.fontFamily,
             fontSize: theme.typography.body1.fontSize,
             color: theme.palette.text.primary,
@@ -99,6 +120,7 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
 
 export interface DonutChartProps {
   seriesName: string;
+  yAxisTitle?: string;
   data?: Array<{
     name: string;
     y: number;
@@ -111,13 +133,24 @@ export interface DonutChartProps {
 export function DonutChart({ data, seriesName, formatter }: DonutChartProps) {
   const { chartOptions } = useDonutChartOptions({ formatter });
 
+  const sortedData = [...(data ?? [])];
+  sortedData.sort((a, b) => b.y - a.y);
+
   const options: Highcharts.Options = {
     ...chartOptions,
+    yAxis: {
+      ...chartOptions.yAxis,
+      title: {
+        // @ts-ignore
+        ...chartOptions.yAxis?.title,
+        text: seriesName,
+      },
+    },
     series: [
       {
-        type: 'pie',
+        type: 'bar',
         name: seriesName,
-        data: [...(data ?? [])],
+        data: sortedData,
       },
     ],
   };

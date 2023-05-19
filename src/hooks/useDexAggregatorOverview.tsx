@@ -696,24 +696,24 @@ function parseDexAggregatorOverviewQueryResponse(
 export function useDexAggregatorOverview({
   chainIds,
 }: {
-  chainIds: ChainId[];
+  chainIds?: ChainId[];
 }): DexAggregatorOverview {
   const { chainStore } = useOneInchAnalyticsAPIContext();
 
   const featureFlags = useFeatureFlags();
 
-  const { data, loading } = useQuery<
+  const { data, loading, variables } = useQuery<
     DexAggregatorOverviewQueryResponse,
     DexAggregatorOverviewQueryVariables
   >(DEX_AGGREGATOR_OVERVIEW_QUERY, {
     variables: {
-      chainIds: chainIds.map((chainId) => chainId.toString()),
+      chainIds: chainIds?.map((chainId) => chainId.toString()) ?? [],
     },
-    skip: featureFlags.enableMockData,
+    skip: !chainIds || featureFlags.enableMockData,
   });
 
   const parsedData = useMemo(() => {
-    if (!chainStore || featureFlags.enableMockData === undefined) {
+    if (!chainStore || featureFlags.enableMockData === undefined || !chainIds) {
       return undefined;
     }
 
