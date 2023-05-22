@@ -1,21 +1,19 @@
 import { css } from '@emotion/react';
 import { EmailOutlined, Telegram } from '@mui/icons-material';
-import { IconButton, Typography, useTheme } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import { Twitter } from 'react-feather';
 
 export const SidebarFooter = ({ ...rest }) => {
-  const theme = useTheme();
-
   return (
     <div
-      css={css`
+      css={(theme) => css`
         display: flex;
         flex-flow: column;
         justify-content: space-between;
         gap: 10px;
         padding-top: 20px;
         padding-bottom: 20px;
-        background-color: ${theme.palette.background.default};
+        background-color: ${theme.sidebar.background};
       `}
     >
       <div>
@@ -25,7 +23,7 @@ export const SidebarFooter = ({ ...rest }) => {
           </Typography>
         </div>
         <div
-          css={css`
+          css={(theme) => css`
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -33,7 +31,7 @@ export const SidebarFooter = ({ ...rest }) => {
             padding: 20px;
             padding-top: 0;
             padding-bottom: 0;
-            background-color: ${theme.palette.background.default};
+            background-color: ${theme.sidebar.background};
           `}
         >
           <IconButton

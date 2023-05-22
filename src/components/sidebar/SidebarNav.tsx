@@ -19,7 +19,7 @@ const SidebarNav = ({ items }: SidebarNavProps) => {
         border-right: 1px solid rgba(0, 0, 0, 0.12);
         flex-grow: 1;
         overflow: hidden;
-        background-color: ${theme.palette.background.default};
+        background-color: ${theme.sidebar.background};
         &:hover {
           overflow: auto;
         }

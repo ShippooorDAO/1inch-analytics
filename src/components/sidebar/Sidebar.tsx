@@ -17,7 +17,7 @@ export interface SidebarProps {
 const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
   return (
     <Drawer
-      css={css`
+      css={(theme) => css`
         border-right: 0;
         > div {
           border-right: 0;
@@ -33,7 +33,7 @@ const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
           flex-flow: row;
           justify-content: space-between;
           align-items: center;
-          background-color: ${theme.palette.background.default};
+          background-color: ${theme.sidebar.background};
         `}
       >
         <Link href="/">

@@ -1,6 +1,7 @@
 import * as muiColors from '@mui/material/colors';
 // @ts-ignore
 import merge from 'deepmerge';
+import { lighten } from 'polished';
 
 import { THEMES } from '../constants';
 
@@ -110,7 +111,7 @@ const darkVariant = merge(defaultVariant, {
   name: THEMES.DARK,
   sidebar: {
     color: muiColors.grey[200],
-    background: wardenTeal[900],
+    background: lighten(0.03, '#06070A'),
   },
   palette: {
     mode: 'dark',
