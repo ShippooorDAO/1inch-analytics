@@ -13,13 +13,16 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import PersonIcon from '@mui/icons-material/Person';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 
-import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
+import {
+  MetricsCardWithLink,
+  SlimMetricsCard,
+  TrendLabelPercent,
+} from '@/components/MetricsCard';
 import { format } from '@/shared/Utils/Format';
 import { DonutChart } from '@/components/chart/DonutChart';
 import { Chain } from '@/shared/Model/Chain';
 import { useDexAggregatorOverview } from '@/hooks/useDexAggregatorOverview';
 import { useMemo, useState } from 'react';
-import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { rgba } from 'polished';
@@ -180,8 +183,7 @@ export default function Home() {
         `}
       >
         <Typography variant="h2">1inch Aggregation Protocol</Typography>
-
-        <div
+        {/* <div
           css={css`
             display: flex;
             justify-content: flex-start;
@@ -197,39 +199,119 @@ export default function Home() {
               chains={chainOptions ?? []}
             />
           </div>
-        </div>
-
+        </div> */}
         <div
-          css={(theme) => css`
+          css={css`
             display: flex;
-            flex-flow: column;
-            border-radius: 24px;
-            background-image: url('card-bg.svg');
-            background-color: ${theme.palette.background.paper};
+            flex-flow: row;
+            justify-content: center;
+            gap: 20px;
           `}
         >
-          <div
+          <MetricsCardWithLink
+            linkUrl="/treasury"
+            title={'DAO Treasury'}
+            backgroundImageUrl="dao.svg"
+            backgroundImageAlt="dao"
+            value={`${format(18013934.31, {
+              symbol: 'USD',
+              abbreviate: true,
+            })}`}
+            subValue={
+              <TrendLabelPercent
+                value={data?.allSelectedChains.lastWeekVolumeTrend}
+              />
+            }
+            footer="Net Worth (24h)"
+          />
+
+          <MetricsCardWithLink
+            linkUrl="/treasury"
+            title={'1inch Fusion'}
+            backgroundImageUrl="/vendors/1inch/fusion.webp"
+            backgroundImageAlt="dao"
+            value={format(23476937, { symbol: 'USD', abbreviate: true })}
+            subValue={
+              <TrendLabelPercent
+                value={data?.allSelectedChains.lastWeekVolumeTrend}
+              />
+            }
+            footer="Volume (24h)"
+          />
+
+          <MetricsCardWithLink
+            linkUrl="/treasury"
+            title={'Staked 1INCH'}
+            backgroundImageUrl="staked-1inch.webp"
+            backgroundImageAlt="staked 1inch"
+            value={format(14.1424252 * 1e6, {
+              symbol: 'USD',
+              abbreviate: true,
+            })}
+            subValue={
+              <TrendLabelPercent
+                value={data?.allSelectedChains.lastWeekVolumeTrend}
+              />
+            }
+            footer="Total Value Locked (24h)"
+          />
+        </div>
+        <div
+          css={(theme) => css`
+            position: relative;
+            border-radius: 24px;
+            background-color: ${rgba(theme.palette.background.paper, 0.5)};
+            z-index: 2;
+          `}
+        >
+          <img
+            alt="none"
+            src="card-bg-5.svg"
             css={css`
+              position: absolute;
+              border-radius: 24px;
+              left: 0;
+              top: 0;
+              width: 100%;
+              z-index: -1;
+              opacity: 0.5;
+            `}
+          />
+          <div
+            css={(theme) => css`
               display: flex;
               flex-flow: row;
+              ${theme.breakpoints.down('md')} {
+                flex-flow: column;
+              }
               padding: 20px;
-              gap: 5px;
+              gap: 20px;
+              justify-content: space-between;
               border-top-left-radius: 24px;
               border-top-right-radius: 24px;
-              align-items: center;
-              justify-content: space-between;
+              align-items: flex-start;
             `}
           >
-            <BarChartIcon />
-            <Typography variant="h3">Volume</Typography>
+            <div
+              css={css`
+                margin-top: 10px;
+                display: flex;
+                flex-flow: row;
+                gap: 5px;
+              `}
+            >
+              <BarChartIcon />
+              <Typography variant="h3">Volume</Typography>
+            </div>
             <div
               css={css`
                 display: flex;
                 flex-flow: row;
                 align-items: center;
                 justify-content: center;
-                width: 100%;
+                flex-wrap: wrap;
                 gap: 20px;
+                width: 100%;
               `}
             >
               <SlimMetricsCard
@@ -392,39 +474,64 @@ export default function Home() {
             </div>
           </div>
         </div>
-
         <div
           css={(theme) => css`
-            display: flex;
-            flex-flow: column;
+            position: relative;
             border-radius: 24px;
-            background-image: url('card-bg-5.svg');
-            background-color: ${theme.palette.background.paper};
+            background-color: ${rgba(theme.palette.background.paper, 0.7)};
+            z-index: 2;
           `}
         >
-          <div
+          <img
+            src="card-bg-4.svg"
+            alt="none"
             css={css`
+              position: absolute;
+              border-radius: 24px;
+              left: 0;
+              right: 0;
+              top: 0;
+              bottom: 0;
+              width: 100%;
+              z-index: -1;
+              opacity: 0.3;
+            `}
+          />
+          <div
+            css={(theme) => css`
               display: flex;
               flex-flow: row;
+              ${theme.breakpoints.down('md')} {
+                flex-flow: column;
+              }
               padding: 20px;
-              gap: 5px;
+              gap: 20px;
               border-top-left-radius: 24px;
               border-top-right-radius: 24px;
-              align-items: center;
+              align-items: flex-start;
               justify-content: space-between;
             `}
           >
-            <ReceiptIcon />
-            <Typography variant="h3">Transactions</Typography>
-
+            <div
+              css={css`
+                margin-top: 10px;
+                display: flex;
+                flex-flow: row;
+                gap: 5px;
+              `}
+            >
+              <ReceiptIcon />
+              <Typography variant="h3">Transactions</Typography>
+            </div>
             <div
               css={css`
                 display: flex;
                 flex-flow: row;
                 align-items: center;
                 justify-content: center;
-                width: 100%;
+                flex-wrap: wrap;
                 gap: 20px;
+                width: 100%;
               `}
             >
               <SlimMetricsCard
@@ -553,7 +660,7 @@ export default function Home() {
                 display: flex;
                 flex-flow: column;
                 gap: 20px;
-                background-color: ${rgba(theme.palette.background.paper, 0.5)};
+                background-color: ${rgba(theme.palette.background.paper, 0.7)};
                 border: 1px solid ${theme.palette.divider};
                 border-radius: 24px;
                 padding: 16px;
@@ -605,39 +712,62 @@ export default function Home() {
             </div>
           </div>
         </div>
-
         <div
           css={(theme) => css`
-            display: flex;
-            flex-flow: column;
+            position: relative;
             border-radius: 24px;
-            background-image: url('card-bg-4.svg');
+            z-index: 2;
             background-color: ${theme.palette.background.paper};
           `}
         >
-          <div
+          <img
+            src="card-bg-2.svg"
+            alt="none"
             css={css`
+              position: absolute;
+              border-radius: 24px;
+              width: 100%;
+              left: 0;
+              top: 0;
+              z-index: -1;
+              opacity: 0.3;
+            `}
+          />
+          <div
+            css={(theme) => css`
               display: flex;
               flex-flow: row;
+              ${theme.breakpoints.down('md')} {
+                flex-flow: column;
+              }
+              justify-content: space-between;
+              align-items: flex-start;
+              gap: 20px;
               padding: 20px;
-              gap: 5px;
               border-top-left-radius: 24px;
               border-top-right-radius: 24px;
-              align-items: center;
-              justify-content: space-between;
             `}
           >
-            <PersonIcon />
-            <Typography variant="h3">Users</Typography>
-
+            <div
+              css={css`
+                margin-top: 10px;
+                display: flex;
+                flex-flow: row;
+                gap: 5px;
+              `}
+            >
+              <PersonIcon />
+              <Typography variant="h3">Users</Typography>
+            </div>
             <div
               css={css`
                 display: flex;
                 flex-flow: row;
                 align-items: center;
                 justify-content: center;
-                width: 100%;
+                flex-wrap: wrap;
                 gap: 20px;
+                width: 100%;
               `}
             >
               <SlimMetricsCard
@@ -689,6 +819,7 @@ export default function Home() {
           >
             <div
               css={(theme) => css`
+                z-index: 2;
                 background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 display: flex;
                 flex-flow: column;
@@ -742,6 +873,7 @@ export default function Home() {
             </div>
             <div
               css={(theme) => css`
+                z-index: 2;
                 background-color: ${rgba(theme.palette.background.paper, 0.5)};
                 display: flex;
                 flex-flow: column;

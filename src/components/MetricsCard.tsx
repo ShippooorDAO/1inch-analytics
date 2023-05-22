@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { TrendingDown, TrendingUp } from '@mui/icons-material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Card, Typography } from '@mui/material';
 import React from 'react';
 
@@ -77,6 +78,128 @@ export function SlimMetricsCard({
   );
 }
 
+export function MetricsCardWithLink({
+  title,
+  value,
+  subValue,
+  footer,
+  loading,
+  linkUrl,
+  backgroundImageUrl,
+  backgroundImageAlt,
+  variant: variant_,
+}: {
+  loading?: boolean;
+  title: React.ReactNode;
+  backgroundImageUrl?: string;
+  backgroundImageAlt?: string;
+  value?: React.ReactNode;
+  subValue?: React.ReactNode;
+  footer?: React.ReactNode;
+  linkUrl: string;
+  variant?: 'default' | 'slim';
+}) {
+  const loading_ = !value || !!loading;
+  const value_ = !loading ? value : 12345;
+  const variant = variant_ || 'default';
+
+  return (
+    <a
+      href={linkUrl}
+      css={css`
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+      `}
+    >
+      <Card
+        css={(theme) => css`
+          border-radius: 24px;
+          padding: 20px;
+          display: flex;
+          flex-flow: column;
+          gap: 5px;
+          justify-content: flex-start;
+          position: relative;
+          background-color: transparent;
+          border: 1px solid ${theme.palette.divider};
+          :hover {
+            background-color: ${theme.palette.background.paper};
+          }
+        `}
+      >
+        {backgroundImageUrl && (
+          <img
+            src={backgroundImageUrl}
+            alt={backgroundImageAlt}
+            css={css`
+              position: absolute;
+              top: 50%;
+              right: 20px;
+              transform: translateY(-50%);
+              height: 100px;
+              width: 100px;
+              opacity: 15%;
+            `}
+          />
+        )}
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: space-between;
+          `}
+        >
+          <AutoSkeleton loading={loading_}>
+            <Typography variant="body2">{title}</Typography>
+          </AutoSkeleton>
+          <div
+            css={(theme) => css`
+              display: flex;
+              flex-flow: row;
+              gap: 5px;
+              align-items: center;
+            `}
+          >
+            <OpenInNewIcon fontSize="small" />
+          </div>
+        </div>
+        <AutoSkeleton loading={loading_}>
+          <div
+            css={css`
+              display: flex;
+              flex-flow: row;
+              gap: 10px;
+              align-items: center;
+              white-space: nowrap;
+            `}
+          >
+            <Typography variant="h1" fontWeight={300}>
+              {value}
+            </Typography>
+            {subValue !== undefined && typeof subValue === 'string' && (
+              <Typography variant="body2" color="textSecondary">
+                {subValue}
+              </Typography>
+            )}
+            {subValue !== undefined && typeof subValue !== 'string' && subValue}
+          </div>
+        </AutoSkeleton>
+        {footer && typeof footer !== 'string' && (
+          <AutoSkeleton loading={loading_}>{footer}</AutoSkeleton>
+        )}
+        {footer && typeof footer === 'string' && (
+          <AutoSkeleton loading={loading_}>
+            <Typography variant="body2" color="textSecondary" fontWeight={300}>
+              {footer}
+            </Typography>
+          </AutoSkeleton>
+        )}
+      </Card>
+    </a>
+  );
+}
+
 export function MetricsCard({
   title,
   value,
@@ -131,7 +254,7 @@ export function MetricsCard({
           {subValue !== undefined && typeof subValue !== 'string' && subValue}
         </div>
       </AutoSkeleton>
-      {/* {footer && typeof footer !== 'string' && (
+      {footer && typeof footer !== 'string' && (
         <AutoSkeleton loading={loading_}>{footer}</AutoSkeleton>
       )}
       {footer && typeof footer === 'string' && (
@@ -140,7 +263,7 @@ export function MetricsCard({
             {footer}
           </Typography>
         </AutoSkeleton>
-      )} */}
+      )}
     </Card>
   );
 }
