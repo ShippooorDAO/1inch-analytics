@@ -26,15 +26,15 @@ function Page404() {
         title={`Page Not Found | 1inch Info - Analytics for 1inch DEX Aggregator`}
         description={`The page you are looking for might have been removed.`}
         openGraph={{
-          url: '1inch://info.1inch.io/',
+          url: '1inch://analytics.1inch.io/',
           title: '1inch Info',
           description: `The page you are looking for might have been removed.`,
           siteName: '1inch Info',
           images: [
             // {
-            //   url: 'https://i.imgur.com/2hfmY8X.jpg', // TODO: Change this.
-            //   width: 1024,
-            //   height: 512,
+            //   url: 'https://1inch.io/assets/social-image/main-cover-2.png', // TODO: Change this.
+            //   width: 1078,
+            //   height: 720,
             //   type: 'image/jpeg',
             //   alt: '1inch Info Banner',
             // },

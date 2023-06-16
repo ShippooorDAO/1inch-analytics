@@ -66,7 +66,7 @@ function App({
                   {/* 
                   TODO: Hook up Google Analytics
                   <Script
-                    src="https://www.googletagmanager.com/gtag/js?id=G-7FF1E0RN1X"
+                    src="https://www.googletagmanager.com/gtag/js?id=G-N0J7NY0K8H"
                     strategy="afterInteractive"
                   />
                       <Script id="google-analytics" strategy="afterInteractive">
@@ -74,24 +74,24 @@ function App({
                   window.dataLayer = window.dataLayer || [];
                   function gtag(){window.dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', 'G-7FF1E0RN1X');
+                  gtag('config', 'G-N0J7NY0K8H');
                 `}
                   </Script> */}
                   <NextSeo
                     title="1inch Info | Analytics for 1inch DEX Aggregator"
                     description="1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1INCH fusion. Powered by Warden Finance."
-                    canonical="https://info.inch.io/"
+                    canonical="https://analytics.inch.io/"
                     openGraph={{
-                      url: 'https://info.inch.io/',
+                      url: 'https://analytics.inch.io/',
                       title: '1inch Info | Analytics for 1inch DEX Aggregator',
                       description:
                         '1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion. Powered by Warden Finance.',
                       siteName: '1inch Info',
                       images: [
                         {
-                          url: 'https://i.imgur.com/2hfmY8X.jpg', // TODO: Change this
-                          width: 1024,
-                          height: 512,
+                          url: 'https://1inch.io/assets/social-image/main-cover-2.png',
+                          width: 1278,
+                          height: 720,
                           type: 'image/jpeg',
                           alt: '1inch Info Banner',
                         },
