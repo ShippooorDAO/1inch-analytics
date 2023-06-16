@@ -105,6 +105,10 @@ export function scopeTimeseriesToTimeWindow(
   timeseries: Timeseries,
   timeWindow: TimeWindow
 ) {
+  if (timeWindow === TimeWindow.MAX) {
+    return timeseries;
+  }
+
   const startDate = getTimeWindowStartDate(timeWindow);
   const startTimestamp = Math.floor(startDate.getTime() / 1000);
 

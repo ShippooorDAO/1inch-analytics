@@ -3,6 +3,7 @@ import { Container, Typography } from '@mui/material';
 
 import Dashboard from '@/layouts/DashboardLayout';
 import {
+  getTimeIntervalLabel,
   getTimeWindowLabel,
   TimeInterval,
   Timeseries,
@@ -76,6 +77,7 @@ function ControlledHistogramChart({
     <HistogramChart
       timeseriesList={timeseriesList}
       timeWindow={timeWindow}
+      timeInterval={timeInterval}
       timeWindowOptions={[
         TimeWindow.SEVEN_DAYS,
         TimeWindow.ONE_MONTH,
@@ -85,21 +87,14 @@ function ControlledHistogramChart({
         value: timeWindow,
         label: getTimeWindowLabel(timeWindow),
       }))}
-      timeInterval={timeInterval}
       timeIntervalOptions={[
-        {
-          value: TimeInterval.DAILY,
-          label: 'Daily',
-        },
-        {
-          value: TimeInterval.WEEKLY,
-          label: 'Weekly',
-        },
-        {
-          value: TimeInterval.MONTHLY,
-          label: 'Monthly',
-        },
-      ]}
+        TimeInterval.DAILY,
+        TimeInterval.WEEKLY,
+        TimeInterval.MONTHLY,
+      ].map((timeInterval) => ({
+        value: timeInterval,
+        label: getTimeIntervalLabel(timeInterval),
+      }))}
       onTimeWindowChange={setTimeWindow}
       onTimeIntervalChange={setTimeInterval}
       formatter={formatter}

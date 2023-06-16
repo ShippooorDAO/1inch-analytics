@@ -43,6 +43,18 @@ export function getTimeWindowLabel(timeWindow: TimeWindow) {
   }
 }
 
+export function getTimeIntervalLabel(timeInterval: TimeInterval) {
+  switch (timeInterval) {
+    case TimeInterval.DAILY:
+      return 'Daily';
+    case TimeInterval.WEEKLY:
+      return 'Weekly';
+    case TimeInterval.MONTHLY:
+    default:
+      return 'Monthly';
+  }
+}
+
 export enum TimeInterval {
   DAILY = 1,
   WEEKLY = 2,
