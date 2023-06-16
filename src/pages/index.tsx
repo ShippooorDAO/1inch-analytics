@@ -467,6 +467,13 @@ export default function Home() {
                   abbreviate: true,
                 }
               ),
+              subValue: (
+                <TrendLabelPercent
+                  value={
+                    data?.allSelectedChains.transactionsCountLastMonthTrend
+                  }
+                />
+              ),
             },
           ]}
           rightContainer={{
@@ -593,6 +600,11 @@ export default function Home() {
               value: format(data?.allSelectedChains.walletsCountLastMonth, {
                 abbreviate: true,
               }),
+              subValue: (
+                <TrendLabelPercent
+                  value={data?.allSelectedChains.walletsCountLastMonthTrend}
+                />
+              ),
             },
           ]}
           leftContainer={{
