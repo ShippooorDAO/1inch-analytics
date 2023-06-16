@@ -79,18 +79,18 @@ export default class MyDocument extends Document {
         <DefaultSeo
           title="1inch Info | Analytics for 1inch DEX Aggregator"
           description="1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion mode. Powered by Warden Finance."
-          canonical="https://info.inch.io/"
+          canonical="https://analytics.inch.io/"
           openGraph={{
-            url: 'https://info.inch.io/',
+            url: 'https://analytics.inch.io/',
             title: '1inch Info | Analytics for 1inch DEX Aggregator',
             description:
               '1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion mode. Powered by Warden Finance.',
             siteName: '1inch Info',
             images: [
               {
-                url: 'https://i.imgur.com/2hfmY8X.jpg', // TODO: Change this
-                width: 1024,
-                height: 512,
+                url: 'https://1inch.io/assets/social-image/main-cover-2.png', // TODO: Change this
+                width: 1078,
+                height: 720,
                 type: 'image/jpeg',
                 alt: '1inch Info Banner',
               },
