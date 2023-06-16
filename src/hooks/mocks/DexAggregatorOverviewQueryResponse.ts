@@ -5,6 +5,11 @@ import {
   DexAggregatorOverviewQueryVolumesQueryResponse,
   DexAggregatorOverviewWalletsAndTransactionsQueryResponse,
 } from '../useDexAggregatorOverview';
+import {
+  createDailyTimestamps,
+  createMonthlyTimestamps,
+  createWeeklyTimestamps,
+} from './utils';
 
 function createMockWalletAndTransactionDataPoint(
   timestamp: number,
@@ -34,45 +39,6 @@ function createMockVolumeDataPoint(
     },
     volumeUsd: volumeUsd * Math.random(),
   };
-}
-
-function createDailyTimestamps(
-  startTimestamp: number,
-  endTimestamp: number
-): number[] {
-  const timestamps = [];
-  let timestamp = startTimestamp;
-  while (timestamp < endTimestamp) {
-    timestamps.push(timestamp);
-    timestamp += 86400;
-  }
-  return timestamps;
-}
-
-function createWeeklyTimestamps(
-  startTimestamp: number,
-  endTimestamp: number
-): number[] {
-  const timestamps = [];
-  let timestamp = startTimestamp;
-  while (timestamp < endTimestamp) {
-    timestamps.push(timestamp);
-    timestamp += 604800;
-  }
-  return timestamps;
-}
-
-function createMonthlyTimestamps(
-  startTimestamp: number,
-  endTimestamp: number
-): number[] {
-  const timestamps = [];
-  let timestamp = startTimestamp;
-  while (timestamp < endTimestamp) {
-    timestamps.push(timestamp);
-    timestamp += 2629743;
-  }
-  return timestamps;
 }
 
 export function createMockDexAggregatorOverviewResponse(

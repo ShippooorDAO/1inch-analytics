@@ -1,6 +1,11 @@
 import { css, Interpolation, Theme } from '@emotion/react';
-import { Typography } from '@mui/material';
-import { ClassAttributes, HTMLAttributes } from 'react';
+import {
+  Skeleton,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
+import { ClassAttributes, HTMLAttributes, useState } from 'react';
 
 export type SectionContainerProps = {
   title?: string;
@@ -45,6 +50,60 @@ export function SectionContainer({
         </Typography>
       )}
       <div>{children}</div>
+    </div>
+  );
+}
+
+interface MultiTabSectionContainerProps {
+  tabs: {
+    label: string;
+    content: React.ReactNode;
+  }[];
+  loading?: boolean;
+}
+
+export function MultiTabSection({
+  tabs,
+  loading,
+}: MultiTabSectionContainerProps) {
+  const [selectedTab, setSelectedTab] = useState(tabs[0].label);
+
+  return (
+    <div
+      css={css`
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+      `}
+    >
+      <ToggleButtonGroup
+        color="primary"
+        exclusive
+        disabled={loading}
+        aria-label="Select tab"
+        value={selectedTab}
+        onChange={(e, value) => {
+          if (value !== null) {
+            setSelectedTab(value);
+          }
+        }}
+      >
+        {tabs.map((tab) => (
+          <ToggleButton key={tab.label} value={tab.label}>
+            {loading ? <Skeleton variant="text" width="80px" /> : tab.label}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+      <div
+        css={css`
+          width: 100%;
+        `}
+      >
+        {tabs.find((tab) => tab.label === selectedTab)?.content}
+      </div>
     </div>
   );
 }

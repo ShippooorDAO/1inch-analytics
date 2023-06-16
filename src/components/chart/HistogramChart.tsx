@@ -10,7 +10,6 @@ import {
   createTooltipFormatter,
 } from '@/shared/Highcharts/HighchartsContextProvider';
 import {
-  getTimeWindowLabel,
   TimeInterval,
   Timeseries,
   TimeWindow,
@@ -113,7 +112,9 @@ function getTooltipRowForTimeseries(
 export interface HistogramChartProps {
   timeseriesList?: Timeseries[];
   timeWindow: TimeWindow;
+  timeWindowOptions?: { value: TimeWindow; label: string }[];
   timeInterval: TimeInterval;
+  timeIntervalOptions?: { value: TimeInterval; label: string }[];
   onTimeWindowChange: (timeWindow: TimeWindow) => void;
   onTimeIntervalChange: (timeInterval: TimeInterval) => void;
   formatter?: (y?: number) => string;
@@ -122,7 +123,9 @@ export interface HistogramChartProps {
 export function HistogramChart({
   timeseriesList,
   timeWindow,
+  timeWindowOptions,
   timeInterval,
+  timeIntervalOptions,
   onTimeWindowChange,
   onTimeIntervalChange,
   formatter,
@@ -236,23 +239,20 @@ export function HistogramChart({
             values={selectedTimeseries}
             onChange={setSelectedTimeseries}
           />
-
-          <TimeIntervalToggleButtonGroup
-            value={timeInterval}
-            onChange={handleTimeIntervalChange}
-          />
-          <TimeWindowToggleButtonGroup
-            value={timeWindow}
-            options={[
-              TimeWindow.SEVEN_DAYS,
-              TimeWindow.ONE_MONTH,
-              TimeWindow.ONE_YEAR,
-            ].map((timeWindow) => ({
-              value: timeWindow,
-              label: getTimeWindowLabel(timeWindow),
-            }))}
-            onChange={handleTimeWindowChange}
-          />
+          {timeIntervalOptions && (
+            <TimeIntervalToggleButtonGroup
+              value={timeInterval}
+              onChange={handleTimeIntervalChange}
+              options={timeIntervalOptions}
+            />
+          )}
+          {timeWindowOptions && (
+            <TimeWindowToggleButtonGroup
+              value={timeWindow}
+              options={timeWindowOptions}
+              onChange={handleTimeWindowChange}
+            />
+          )}
         </div>
 
         <HighchartsReact highcharts={Highcharts} options={options} />

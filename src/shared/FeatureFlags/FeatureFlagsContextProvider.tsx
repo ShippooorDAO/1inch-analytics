@@ -134,7 +134,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
     } else {
       storedForcedFeatureFlags = removeUndefinedFeatureFlags(
         storeFeatureFlags({
-          enableMockData: true,
+          enableMockData: false,
           ...storedForcedFeatureFlags,
           ...forcedFeatureFlagsFromQueryParams,
         })!

@@ -4,21 +4,23 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Card, Typography } from '@mui/material';
 import React from 'react';
 
-import { format } from '@/shared/Utils/Format';
+import { formatDelta } from '@/shared/Utils/Format';
 
 import { AutoSkeleton } from './AutoSkeleton';
+
+export interface SlimMetricsCardProps {
+  loading?: boolean;
+  title: React.ReactNode;
+  value?: React.ReactNode;
+  subValue?: React.ReactNode;
+}
 
 export function SlimMetricsCard({
   title,
   value,
   subValue,
   loading,
-}: {
-  loading?: boolean;
-  title: React.ReactNode;
-  value?: React.ReactNode;
-  subValue?: React.ReactNode;
-}) {
+}: SlimMetricsCardProps) {
   const loading_ = !value || !!loading;
 
   return (
@@ -40,6 +42,7 @@ export function SlimMetricsCard({
               border-radius-left: 10px;
               background-color: ${theme.palette.action.hover};
               padding: 10px;
+              white-space: nowrap;
             `
           }
         >
@@ -271,40 +274,54 @@ export function MetricsCard({
 interface TrendLabelProps {
   label?: string;
   variant?: 'up' | 'down';
+  iconAlign?: 'right' | 'left';
 }
 
-export function TrendLabel({ label, variant }: TrendLabelProps) {
+export function TrendLabel({
+  label,
+  variant,
+  iconAlign: iconAlign_,
+}: TrendLabelProps) {
+  const iconAlign = iconAlign_ || 'left';
+  const icon =
+    variant === 'up' ? (
+      <TrendingUp fontSize="small" />
+    ) : (
+      <TrendingDown fontSize="small" />
+    );
   return (
     <div
       css={(theme) => css`
         display: flex;
         flex-flow: row;
-        gap: 10px;
+        gap: 5px;
         align-items: center;
         color: ${variant === 'up'
           ? theme.palette.success.main
           : theme.palette.error.main};
       `}
     >
-      {variant === 'up' ? (
-        <TrendingUp fontSize="small" />
-      ) : (
-        <TrendingDown fontSize="small" />
-      )}
+      {iconAlign === 'left' && icon}
       <Typography variant="body2">{label}</Typography>
+      {iconAlign === 'right' && icon}
     </div>
   );
 }
 
 interface TrendLabelPercentProps {
   value?: number;
+  iconAlign?: 'right' | 'left';
 }
 
-export function TrendLabelPercent({ value }: TrendLabelPercentProps) {
+export function TrendLabelPercent({
+  value,
+  iconAlign,
+}: TrendLabelPercentProps) {
   return (
     <TrendLabel
-      label={format(value, { symbol: '%', decimals: 1 })}
+      label={formatDelta(value, '%')}
       variant={value && value > 0 ? 'up' : 'down'}
+      iconAlign={iconAlign}
     />
   );
 }

@@ -7,39 +7,30 @@ import {
 
 import { TimeInterval } from '@/shared/Model/Timeseries';
 
-export function TimeIntervalToggleButtonGroup(props: ToggleButtonGroupProps) {
+export interface TimeIntervalToggleButtonGroupProps
+  extends ToggleButtonGroupProps {
+  options: { value: TimeInterval; label: string }[];
+}
+
+export function TimeIntervalToggleButtonGroup({
+  options,
+  ...props
+}: TimeIntervalToggleButtonGroupProps) {
   return (
     <ToggleButtonGroup {...props} exclusive>
-      <ToggleButton
-        css={css`
-          padding-left: 10px;
-          padding-right: 10px;
-        `}
-        size="small"
-        value={TimeInterval.DAILY}
-      >
-        Daily
-      </ToggleButton>
-      <ToggleButton
-        css={css`
-          padding-left: 10px;
-          padding-right: 10px;
-        `}
-        size="small"
-        value={TimeInterval.WEEKLY}
-      >
-        Weekly
-      </ToggleButton>
-      <ToggleButton
-        css={css`
-          padding-left: 10px;
-          padding-right: 10px;
-        `}
-        size="small"
-        value={TimeInterval.MONTHLY}
-      >
-        Monthly
-      </ToggleButton>
+      {options.map(({ value, label }) => (
+        <ToggleButton
+          key={value}
+          value={value}
+          size="small"
+          css={css`
+            padding-left: 10px;
+            padding-right: 10px;
+          `}
+        >
+          {label}
+        </ToggleButton>
+      ))}
     </ToggleButtonGroup>
   );
 }

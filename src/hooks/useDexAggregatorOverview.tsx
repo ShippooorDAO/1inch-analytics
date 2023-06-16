@@ -3,6 +3,13 @@ import { useMemo } from 'react';
 
 import { useFeatureFlags } from '@/shared/FeatureFlags/FeatureFlagsContextProvider';
 import { ChainId } from '@/shared/Model/Chain';
+import {
+  DexAggregatorOverviewMetrics,
+  DexAggregatorOverviewMetricsDataset,
+  getLastPeriodValue,
+  getTimeseriesTrend,
+  sumTimeseries,
+} from '@/shared/Model/DexAggregator';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { Timeseries } from '@/shared/Model/Timeseries';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
@@ -97,58 +104,8 @@ export interface DexAggregatorOverviewQueryResponse {
   monthlyVolume: DexAggregatorOverviewQueryVolumesQueryResponse[];
 }
 
-interface DexAggregatorOverviewDataset {
-  allTimeTransactionsCount: number;
-  allTimeWalletsCount: number;
-  allTimeVolume: number;
-
-  lastDayTransactionsCount: number;
-  lastDayWalletsCount: number;
-  lastDayVolume: number;
-
-  lastWeekTransactionsCount: number;
-  lastWeekWalletsCount: number;
-  lastWeekVolume: number;
-
-  lastMonthTransactionsCount: number;
-  lastMonthWalletsCount: number;
-  lastMonthVolume: number;
-
-  lastDayTransactionsCountTrend: number;
-  lastDayWalletsCountTrend: number;
-  lastDayVolumeTrend: number;
-
-  lastWeekTransactionsCountTrend: number;
-  lastWeekWalletsCountTrend: number;
-  lastWeekVolumeTrend: number;
-
-  lastMonthTransactionsCountTrend: number;
-  lastMonthWalletsCountTrend: number;
-  lastMonthVolumeTrend: number;
-
-  allTimeTransactionsCountTimeseries: Timeseries;
-  allTimeWalletsCountTimeseries: Timeseries;
-  allTimeVolumeTimeseries: Timeseries;
-
-  dailyTransactionsCountTimeseries: Timeseries;
-  dailyWalletsCountTimeseries: Timeseries;
-  dailyVolumeTimeseries: Timeseries;
-
-  weeklyTransactionsCountTimeseries: Timeseries;
-  weeklyWalletsCountTimeseries: Timeseries;
-  weeklyVolumeTimeseries: Timeseries;
-
-  monthlyTransactionsCountTimeseries: Timeseries;
-  monthlyWalletsCountTimeseries: Timeseries;
-  monthlyVolumeTimeseries: Timeseries;
-}
-
 interface DexAggregatorOverview {
-  data?: {
-    byChain: Map<ChainId, DexAggregatorOverviewDataset>;
-    allChains: DexAggregatorOverviewDataset;
-    allSelectedChains: DexAggregatorOverviewDataset;
-  };
+  data?: DexAggregatorOverviewMetrics;
   loading: boolean;
   error?: string;
 }
@@ -236,167 +193,108 @@ function parseVolumeTimeseriesResponse(
   return volumeTimeseriesMap;
 }
 
-function sumTimeseries(timeseriesList: Timeseries[]): Timeseries {
-  const result: Timeseries = {
-    name: 'All Chains',
-    color: '#000000',
-    data: [],
-  };
-
-  const timestamps = new Set<number>();
-  for (const timeseries of timeseriesList) {
-    for (const { x } of timeseries.data) {
-      timestamps.add(x);
-    }
-  }
-
-  for (const timestamp of timestamps) {
-    let sum = 0;
-    for (const timeseries of timeseriesList) {
-      const value = timeseries.data.find((d) => d.x === timestamp)?.y;
-      if (value) {
-        sum += value;
-      }
-    }
-    result.data.push({ x: timestamp, y: sum });
-  }
-
-  return result;
-}
-
-function getCumulatedTimeseries(timeseries: Timeseries) {
-  let cumulated = 0;
-  return {
-    ...timeseries,
-    data: timeseries.data.map((d) => {
-      cumulated += d.y;
-      return { ...d, y: cumulated };
-    }),
-  };
-}
-
-function getTimeseriesTrend(timeseries: Timeseries) {
-  if (timeseries.data.length < 2) {
-    return 0;
-  }
-
-  return (
-    (timeseries.data[timeseries.data.length - 1].y -
-      timeseries.data[timeseries.data.length - 2].y) /
-    timeseries.data[timeseries.data.length - 2].y
-  );
-}
-
-function getLastPeriodValue(timeseries: Timeseries) {
-  if (timeseries.data.length < 1) {
-    return 0;
-  }
-
-  return timeseries.data[timeseries.data.length - 1].y;
-}
-
 function parseDexAggregatorOverviewQueryResponse(
   response: DexAggregatorOverviewQueryResponse,
   selectedChains: ChainId[],
   chainStore: ChainStore
 ): {
-  byChain: Map<ChainId, DexAggregatorOverviewDataset>;
-  allChains: DexAggregatorOverviewDataset;
-  allSelectedChains: DexAggregatorOverviewDataset;
+  byChain: Map<ChainId, DexAggregatorOverviewMetricsDataset>;
+  allChains: DexAggregatorOverviewMetricsDataset;
+  allSelectedChains: DexAggregatorOverviewMetricsDataset;
 } {
   const {
-    transactionsCount: allTimeTransactionsCountTimeseriesByChain,
-    walletsCount: allTimeWalletsCountTimeseriesByChain,
+    transactionsCount: transactionsCountAllTimeTimeseriesByChain,
+    walletsCount: walletsCountAllTimeTimeseriesByChain,
   } = parseWalletsAndTransactionsTimeseriesResponse(
     response.allTimeWalletsAndTransactionsCount,
     chainStore
   );
 
   const {
-    transactionsCount: dailyTransactionsCountTimeseriesByChain,
-    walletsCount: dailyWalletsCountTimeseriesByChain,
+    transactionsCount: transactionsCountDailyTimeseriesByChain,
+    walletsCount: walletsCountDailyTimeseriesByChain,
   } = parseWalletsAndTransactionsTimeseriesResponse(
     response.dailyWalletsAndTransactionsCount,
     chainStore
   );
 
   const {
-    transactionsCount: weeklyTransactionsCountTimeseriesByChain,
-    walletsCount: weeklyWalletsCountTimeseriesByChain,
+    transactionsCount: transactionsCountWeeklyTimeseriesByChain,
+    walletsCount: walletsCountWeeklyTimeseriesByChain,
   } = parseWalletsAndTransactionsTimeseriesResponse(
     response.weeklyWalletsAndTransactionsCount,
     chainStore
   );
 
   const {
-    transactionsCount: monthlyTransactionsCountTimeseriesByChain,
-    walletsCount: monthlyWalletsCountTimeseriesByChain,
+    transactionsCount: transactionsCountMonthlyTimeseriesByChain,
+    walletsCount: walletsCountMonthlyTimeseriesByChain,
   } = parseWalletsAndTransactionsTimeseriesResponse(
     response.monthlyWalletsAndTransactionsCount,
     chainStore
   );
 
-  const allTimeVolumeTimeseriesByChain = parseVolumeTimeseriesResponse(
+  const volumeAllTimeTimeseriesByChain = parseVolumeTimeseriesResponse(
     response.allTimeVolume,
     chainStore
   );
 
-  const dailyVolumeTimeseriesByChain = parseVolumeTimeseriesResponse(
+  const volumeDailyTimeseriesByChain = parseVolumeTimeseriesResponse(
     response.dailyVolume,
     chainStore
   );
 
-  const weeklyVolumeTimeseriesByChain = parseVolumeTimeseriesResponse(
+  const volumeWeeklyTimeseriesByChain = parseVolumeTimeseriesResponse(
     response.weeklyVolume,
     chainStore
   );
 
-  const monthlyVolumeTimeseriesByChain = parseVolumeTimeseriesResponse(
+  const volumeMonthlyTimeseriesByChain = parseVolumeTimeseriesResponse(
     response.monthlyVolume,
     chainStore
   );
 
-  const allTimeTransactionsCountTimeseries = sumTimeseries(
-    Array.from(allTimeTransactionsCountTimeseriesByChain.values())
+  const transactionsCountAllTimeTimeseries = sumTimeseries(
+    Array.from(transactionsCountAllTimeTimeseriesByChain.values())
   );
-  const allTimeWalletsCountTimeseries = sumTimeseries(
-    Array.from(allTimeWalletsCountTimeseriesByChain.values())
+  const walletsCountAllTimeTimeseries = sumTimeseries(
+    Array.from(walletsCountAllTimeTimeseriesByChain.values())
   );
-  const allTimeVolumeTimeseries = sumTimeseries(
-    Array.from(allTimeVolumeTimeseriesByChain.values())
-  );
-
-  const monthlyTransactionsCountTimeseries = sumTimeseries(
-    Array.from(monthlyTransactionsCountTimeseriesByChain.values())
-  );
-  const monthlyWalletsCountTimeseries = sumTimeseries(
-    Array.from(monthlyWalletsCountTimeseriesByChain.values())
-  );
-  const monthlyVolumeTimeseries = sumTimeseries(
-    Array.from(monthlyVolumeTimeseriesByChain.values())
+  const volumeAllTimeTimeseries = sumTimeseries(
+    Array.from(volumeAllTimeTimeseriesByChain.values())
   );
 
-  const weeklyTransactionsCountTimeseries = sumTimeseries(
-    Array.from(weeklyTransactionsCountTimeseriesByChain.values())
+  const transactionsCountMonthlyTimeseries = sumTimeseries(
+    Array.from(transactionsCountMonthlyTimeseriesByChain.values())
   );
-  const weeklyWalletsCountTimeseries = sumTimeseries(
-    Array.from(weeklyWalletsCountTimeseriesByChain.values())
+  const walletsCountMonthlyTimeseries = sumTimeseries(
+    Array.from(walletsCountMonthlyTimeseriesByChain.values())
   );
-  const weeklyVolumeTimeseries = sumTimeseries(
-    Array.from(weeklyVolumeTimeseriesByChain.values())
-  );
-
-  const dailyTransactionsCountTimeseries = sumTimeseries(
-    Array.from(dailyTransactionsCountTimeseriesByChain.values())
-  );
-  const dailyWalletsCountTimeseries = sumTimeseries(
-    Array.from(dailyWalletsCountTimeseriesByChain.values())
-  );
-  const dailyVolumeTimeseries = sumTimeseries(
-    Array.from(dailyVolumeTimeseriesByChain.values())
+  const volumeMonthlyTimeseries = sumTimeseries(
+    Array.from(volumeMonthlyTimeseriesByChain.values())
   );
 
-  const sumOfSelectedTimeseries = (ByChain: Map<ChainId, Timeseries>) => {
+  const transactionsCountWeeklyTimeseries = sumTimeseries(
+    Array.from(transactionsCountWeeklyTimeseriesByChain.values())
+  );
+  const walletsCountWeeklyTimeseries = sumTimeseries(
+    Array.from(walletsCountWeeklyTimeseriesByChain.values())
+  );
+  const volumeWeeklyTimeseries = sumTimeseries(
+    Array.from(volumeWeeklyTimeseriesByChain.values())
+  );
+
+  const transactionsCountDailyTimeseries = sumTimeseries(
+    Array.from(transactionsCountDailyTimeseriesByChain.values())
+  );
+  const walletsCountDailyTimeseries = sumTimeseries(
+    Array.from(walletsCountDailyTimeseriesByChain.values())
+  );
+  const volumeDailyTimeseries = sumTimeseries(
+    Array.from(volumeDailyTimeseriesByChain.values())
+  );
+
+  const getSumOfSelectedTimeseries = (ByChain: Map<ChainId, Timeseries>) => {
     return sumTimeseries(
       Array.from(ByChain.entries())
         .filter(([chainId]) => selectedChains.includes(chainId))
@@ -406,173 +304,173 @@ function parseDexAggregatorOverviewQueryResponse(
 
   return {
     allChains: {
-      allTimeTransactionsCount: getLastPeriodValue(
-        allTimeTransactionsCountTimeseries
+      transactionsCountAllTime: getLastPeriodValue(
+        transactionsCountAllTimeTimeseries
       ),
-      allTimeWalletsCount: getLastPeriodValue(allTimeWalletsCountTimeseries),
-      allTimeVolume: getLastPeriodValue(allTimeVolumeTimeseries),
+      walletsCountAllTime: getLastPeriodValue(walletsCountAllTimeTimeseries),
+      volumeAllTime: getLastPeriodValue(volumeAllTimeTimeseries),
 
-      lastDayTransactionsCount: getLastPeriodValue(
-        dailyTransactionsCountTimeseries
+      transactionsCountLastDay: getLastPeriodValue(
+        transactionsCountDailyTimeseries
       ),
-      lastDayWalletsCount: getLastPeriodValue(dailyWalletsCountTimeseries),
-      lastDayVolume: getLastPeriodValue(dailyVolumeTimeseries),
+      walletsCountLastDay: getLastPeriodValue(walletsCountDailyTimeseries),
+      volumeLastDay: getLastPeriodValue(volumeDailyTimeseries),
 
-      lastWeekTransactionsCount: getLastPeriodValue(
-        weeklyTransactionsCountTimeseries
+      transactionsCountLastWeek: getLastPeriodValue(
+        transactionsCountWeeklyTimeseries
       ),
-      lastWeekWalletsCount: getLastPeriodValue(weeklyWalletsCountTimeseries),
-      lastWeekVolume: getLastPeriodValue(weeklyVolumeTimeseries),
+      walletsCountLastWeek: getLastPeriodValue(walletsCountWeeklyTimeseries),
+      volumeLastWeek: getLastPeriodValue(volumeWeeklyTimeseries),
 
-      lastDayTransactionsCountTrend: getTimeseriesTrend(
-        dailyTransactionsCountTimeseries
+      transactionsCountLastDayTrend: getTimeseriesTrend(
+        transactionsCountDailyTimeseries
       ),
-      lastDayWalletsCountTrend: getTimeseriesTrend(dailyWalletsCountTimeseries),
-      lastDayVolumeTrend: getTimeseriesTrend(dailyVolumeTimeseries),
+      walletsCountLastDayTrend: getTimeseriesTrend(walletsCountDailyTimeseries),
+      volumeLastDayTrend: getTimeseriesTrend(volumeDailyTimeseries),
 
-      lastWeekTransactionsCountTrend: getTimeseriesTrend(
-        weeklyTransactionsCountTimeseries
+      transactionsCountLastWeekTrend: getTimeseriesTrend(
+        transactionsCountWeeklyTimeseries
       ),
-      lastWeekWalletsCountTrend: getTimeseriesTrend(
-        weeklyWalletsCountTimeseries
+      walletsCountLastWeekTrend: getTimeseriesTrend(
+        walletsCountWeeklyTimeseries
       ),
-      lastWeekVolumeTrend: getTimeseriesTrend(weeklyVolumeTimeseries),
+      volumeLastWeekTrend: getTimeseriesTrend(volumeWeeklyTimeseries),
 
-      lastMonthTransactionsCountTrend: getTimeseriesTrend(
-        monthlyTransactionsCountTimeseries
+      transactionsCountLastMonthTrend: getTimeseriesTrend(
+        transactionsCountMonthlyTimeseries
       ),
-      lastMonthWalletsCountTrend: getTimeseriesTrend(
-        monthlyWalletsCountTimeseries
+      walletsCountLastMonthTrend: getTimeseriesTrend(
+        walletsCountMonthlyTimeseries
       ),
-      lastMonthVolumeTrend: getTimeseriesTrend(monthlyVolumeTimeseries),
+      volumeLastMonthTrend: getTimeseriesTrend(volumeMonthlyTimeseries),
 
-      lastMonthTransactionsCount: getLastPeriodValue(
-        monthlyTransactionsCountTimeseries
+      transactionsCountLastMonth: getLastPeriodValue(
+        transactionsCountMonthlyTimeseries
       ),
-      lastMonthWalletsCount: getLastPeriodValue(monthlyWalletsCountTimeseries),
-      lastMonthVolume: getLastPeriodValue(monthlyVolumeTimeseries),
+      walletsCountLastMonth: getLastPeriodValue(walletsCountMonthlyTimeseries),
+      volumeLastMonth: getLastPeriodValue(volumeMonthlyTimeseries),
 
-      allTimeTransactionsCountTimeseries,
-      allTimeWalletsCountTimeseries,
-      allTimeVolumeTimeseries,
+      transactionsCountAllTimeTimeseries,
+      walletsCountAllTimeTimeseries,
+      volumeAllTimeTimeseries,
 
-      monthlyTransactionsCountTimeseries,
-      monthlyWalletsCountTimeseries,
-      monthlyVolumeTimeseries,
+      transactionsCountMonthlyTimeseries,
+      walletsCountMonthlyTimeseries,
+      volumeMonthlyTimeseries,
 
-      weeklyTransactionsCountTimeseries,
-      weeklyWalletsCountTimeseries,
-      weeklyVolumeTimeseries,
+      transactionsCountWeeklyTimeseries,
+      walletsCountWeeklyTimeseries,
+      volumeWeeklyTimeseries,
 
-      dailyTransactionsCountTimeseries,
-      dailyWalletsCountTimeseries,
-      dailyVolumeTimeseries,
+      transactionsCountDailyTimeseries,
+      walletsCountDailyTimeseries,
+      volumeDailyTimeseries,
     },
     byChain: new Map(
       chainStore.getAll().map((chain) => {
         return [
           chain.chainId,
           {
-            allTimeTransactionsCount: getLastPeriodValue(
-              allTimeTransactionsCountTimeseriesByChain.get(chain.chainId)!
+            transactionsCountAllTime: getLastPeriodValue(
+              transactionsCountAllTimeTimeseriesByChain.get(chain.chainId)!
             ),
-            allTimeWalletsCount: getLastPeriodValue(
-              allTimeWalletsCountTimeseriesByChain.get(chain.chainId)!
+            walletsCountAllTime: getLastPeriodValue(
+              walletsCountAllTimeTimeseriesByChain.get(chain.chainId)!
             ),
-            allTimeVolume: getLastPeriodValue(
-              allTimeVolumeTimeseriesByChain.get(chain.chainId)!
-            ),
-
-            lastDayTransactionsCountTrend: getTimeseriesTrend(
-              dailyTransactionsCountTimeseriesByChain.get(chain.chainId)!
-            ),
-            lastDayWalletsCountTrend: getTimeseriesTrend(
-              dailyWalletsCountTimeseriesByChain.get(chain.chainId)!
-            ),
-            lastDayVolumeTrend: getTimeseriesTrend(
-              dailyVolumeTimeseriesByChain.get(chain.chainId)!
+            volumeAllTime: getLastPeriodValue(
+              volumeAllTimeTimeseriesByChain.get(chain.chainId)!
             ),
 
-            lastWeekTransactionsCount: getLastPeriodValue(
-              weeklyTransactionsCountTimeseriesByChain.get(chain.chainId)!
+            transactionsCountLastDayTrend: getTimeseriesTrend(
+              transactionsCountDailyTimeseriesByChain.get(chain.chainId)!
             ),
-            lastWeekWalletsCount: getLastPeriodValue(
-              weeklyWalletsCountTimeseriesByChain.get(chain.chainId)!
+            walletsCountLastDayTrend: getTimeseriesTrend(
+              walletsCountDailyTimeseriesByChain.get(chain.chainId)!
             ),
-            lastWeekVolume: getLastPeriodValue(
-              weeklyVolumeTimeseriesByChain.get(chain.chainId)!
-            ),
-
-            lastMonthTransactionsCount: getLastPeriodValue(
-              monthlyTransactionsCountTimeseriesByChain.get(chain.chainId)!
-            ),
-            lastMonthWalletsCount: getLastPeriodValue(
-              monthlyWalletsCountTimeseriesByChain.get(chain.chainId)!
-            ),
-            lastMonthVolume: getLastPeriodValue(
-              monthlyVolumeTimeseriesByChain.get(chain.chainId)!
+            volumeLastDayTrend: getTimeseriesTrend(
+              volumeDailyTimeseriesByChain.get(chain.chainId)!
             ),
 
-            lastDayTransactionsCount: getLastPeriodValue(
-              dailyTransactionsCountTimeseriesByChain.get(chain.chainId)!
+            transactionsCountLastWeek: getLastPeriodValue(
+              transactionsCountWeeklyTimeseriesByChain.get(chain.chainId)!
             ),
-            lastDayWalletsCount: getLastPeriodValue(
-              dailyWalletsCountTimeseriesByChain.get(chain.chainId)!
+            walletsCountLastWeek: getLastPeriodValue(
+              walletsCountWeeklyTimeseriesByChain.get(chain.chainId)!
             ),
-            lastDayVolume: getLastPeriodValue(
-              dailyVolumeTimeseriesByChain.get(chain.chainId)!
-            ),
-
-            lastWeekTransactionsCountTrend: getTimeseriesTrend(
-              weeklyTransactionsCountTimeseriesByChain.get(chain.chainId)!
-            ),
-            lastWeekWalletsCountTrend: getTimeseriesTrend(
-              weeklyWalletsCountTimeseriesByChain.get(chain.chainId)!
-            ),
-            lastWeekVolumeTrend: getTimeseriesTrend(
-              weeklyVolumeTimeseriesByChain.get(chain.chainId)!
+            volumeLastWeek: getLastPeriodValue(
+              volumeWeeklyTimeseriesByChain.get(chain.chainId)!
             ),
 
-            lastMonthTransactionsCountTrend: getTimeseriesTrend(
-              monthlyTransactionsCountTimeseriesByChain.get(chain.chainId)!
+            transactionsCountLastMonth: getLastPeriodValue(
+              transactionsCountMonthlyTimeseriesByChain.get(chain.chainId)!
             ),
-            lastMonthWalletsCountTrend: getTimeseriesTrend(
-              monthlyWalletsCountTimeseriesByChain.get(chain.chainId)!
+            walletsCountLastMonth: getLastPeriodValue(
+              walletsCountMonthlyTimeseriesByChain.get(chain.chainId)!
             ),
-            lastMonthVolumeTrend: getTimeseriesTrend(
-              monthlyVolumeTimeseriesByChain.get(chain.chainId)!
+            volumeLastMonth: getLastPeriodValue(
+              volumeMonthlyTimeseriesByChain.get(chain.chainId)!
             ),
 
-            allTimeTransactionsCountTimeseries:
-              allTimeTransactionsCountTimeseriesByChain.get(chain.chainId)!,
-            allTimeWalletsCountTimeseries:
-              allTimeWalletsCountTimeseriesByChain.get(chain.chainId)!,
-            allTimeVolumeTimeseries: allTimeVolumeTimeseriesByChain.get(
+            transactionsCountLastDay: getLastPeriodValue(
+              transactionsCountDailyTimeseriesByChain.get(chain.chainId)!
+            ),
+            walletsCountLastDay: getLastPeriodValue(
+              walletsCountDailyTimeseriesByChain.get(chain.chainId)!
+            ),
+            volumeLastDay: getLastPeriodValue(
+              volumeDailyTimeseriesByChain.get(chain.chainId)!
+            ),
+
+            transactionsCountLastWeekTrend: getTimeseriesTrend(
+              transactionsCountWeeklyTimeseriesByChain.get(chain.chainId)!
+            ),
+            walletsCountLastWeekTrend: getTimeseriesTrend(
+              walletsCountWeeklyTimeseriesByChain.get(chain.chainId)!
+            ),
+            volumeLastWeekTrend: getTimeseriesTrend(
+              volumeWeeklyTimeseriesByChain.get(chain.chainId)!
+            ),
+
+            transactionsCountLastMonthTrend: getTimeseriesTrend(
+              transactionsCountMonthlyTimeseriesByChain.get(chain.chainId)!
+            ),
+            walletsCountLastMonthTrend: getTimeseriesTrend(
+              walletsCountMonthlyTimeseriesByChain.get(chain.chainId)!
+            ),
+            volumeLastMonthTrend: getTimeseriesTrend(
+              volumeMonthlyTimeseriesByChain.get(chain.chainId)!
+            ),
+
+            transactionsCountAllTimeTimeseries:
+              transactionsCountAllTimeTimeseriesByChain.get(chain.chainId)!,
+            walletsCountAllTimeTimeseries:
+              walletsCountAllTimeTimeseriesByChain.get(chain.chainId)!,
+            volumeAllTimeTimeseries: volumeAllTimeTimeseriesByChain.get(
               chain.chainId
             )!,
 
-            weeklyTransactionsCountTimeseries:
-              weeklyTransactionsCountTimeseriesByChain.get(chain.chainId)!,
-            weeklyWalletsCountTimeseries:
-              weeklyWalletsCountTimeseriesByChain.get(chain.chainId)!,
-            weeklyVolumeTimeseries: weeklyVolumeTimeseriesByChain.get(
+            transactionsCountWeeklyTimeseries:
+              transactionsCountWeeklyTimeseriesByChain.get(chain.chainId)!,
+            walletsCountWeeklyTimeseries:
+              walletsCountWeeklyTimeseriesByChain.get(chain.chainId)!,
+            volumeWeeklyTimeseries: volumeWeeklyTimeseriesByChain.get(
               chain.chainId
             )!,
 
-            monthlyTransactionsCountTimeseries:
-              monthlyTransactionsCountTimeseriesByChain.get(chain.chainId)!,
-            monthlyWalletsCountTimeseries:
-              monthlyWalletsCountTimeseriesByChain.get(chain.chainId)!,
-            monthlyVolumeTimeseries: monthlyVolumeTimeseriesByChain.get(
+            transactionsCountMonthlyTimeseries:
+              transactionsCountMonthlyTimeseriesByChain.get(chain.chainId)!,
+            walletsCountMonthlyTimeseries:
+              walletsCountMonthlyTimeseriesByChain.get(chain.chainId)!,
+            volumeMonthlyTimeseries: volumeMonthlyTimeseriesByChain.get(
               chain.chainId
             )!,
 
-            dailyTransactionsCountTimeseries:
-              dailyTransactionsCountTimeseriesByChain.get(chain.chainId)!,
-            dailyWalletsCountTimeseries: dailyWalletsCountTimeseriesByChain.get(
+            transactionsCountDailyTimeseries:
+              transactionsCountDailyTimeseriesByChain.get(chain.chainId)!,
+            walletsCountDailyTimeseries: walletsCountDailyTimeseriesByChain.get(
               chain.chainId
             )!,
-            dailyVolumeTimeseries: dailyVolumeTimeseriesByChain.get(
+            volumeDailyTimeseries: volumeDailyTimeseriesByChain.get(
               chain.chainId
             )!,
           },
@@ -580,114 +478,114 @@ function parseDexAggregatorOverviewQueryResponse(
       })
     ),
     allSelectedChains: {
-      allTimeTransactionsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(allTimeTransactionsCountTimeseriesByChain)
+      transactionsCountAllTime: getLastPeriodValue(
+        getSumOfSelectedTimeseries(transactionsCountAllTimeTimeseriesByChain)
       ),
-      allTimeWalletsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(allTimeWalletsCountTimeseriesByChain)
+      walletsCountAllTime: getLastPeriodValue(
+        getSumOfSelectedTimeseries(walletsCountAllTimeTimeseriesByChain)
       ),
-      allTimeVolume: getLastPeriodValue(
-        sumOfSelectedTimeseries(allTimeVolumeTimeseriesByChain)
-      ),
-
-      lastDayTransactionsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(dailyTransactionsCountTimeseriesByChain)
-      ),
-      lastDayWalletsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(dailyWalletsCountTimeseriesByChain)
-      ),
-      lastDayVolume: getLastPeriodValue(
-        sumOfSelectedTimeseries(dailyVolumeTimeseriesByChain)
+      volumeAllTime: getLastPeriodValue(
+        getSumOfSelectedTimeseries(volumeAllTimeTimeseriesByChain)
       ),
 
-      lastWeekTransactionsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(weeklyTransactionsCountTimeseriesByChain)
+      transactionsCountLastDay: getLastPeriodValue(
+        getSumOfSelectedTimeseries(transactionsCountDailyTimeseriesByChain)
       ),
-      lastWeekWalletsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(weeklyWalletsCountTimeseriesByChain)
+      walletsCountLastDay: getLastPeriodValue(
+        getSumOfSelectedTimeseries(walletsCountDailyTimeseriesByChain)
       ),
-      lastWeekVolume: getLastPeriodValue(
-        sumOfSelectedTimeseries(weeklyVolumeTimeseriesByChain)
-      ),
-
-      lastMonthTransactionsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(monthlyTransactionsCountTimeseriesByChain)
-      ),
-      lastMonthWalletsCount: getLastPeriodValue(
-        sumOfSelectedTimeseries(monthlyWalletsCountTimeseriesByChain)
-      ),
-      lastMonthVolume: getLastPeriodValue(
-        sumOfSelectedTimeseries(monthlyVolumeTimeseriesByChain)
+      volumeLastDay: getLastPeriodValue(
+        getSumOfSelectedTimeseries(volumeDailyTimeseriesByChain)
       ),
 
-      lastDayTransactionsCountTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(dailyTransactionsCountTimeseriesByChain)
+      transactionsCountLastWeek: getLastPeriodValue(
+        getSumOfSelectedTimeseries(transactionsCountWeeklyTimeseriesByChain)
       ),
-      lastDayWalletsCountTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(dailyWalletsCountTimeseriesByChain)
+      walletsCountLastWeek: getLastPeriodValue(
+        getSumOfSelectedTimeseries(walletsCountWeeklyTimeseriesByChain)
       ),
-      lastDayVolumeTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(dailyVolumeTimeseriesByChain)
-      ),
-
-      lastWeekTransactionsCountTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(weeklyTransactionsCountTimeseriesByChain)
-      ),
-      lastWeekWalletsCountTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(weeklyWalletsCountTimeseriesByChain)
-      ),
-      lastWeekVolumeTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(weeklyVolumeTimeseriesByChain)
+      volumeLastWeek: getLastPeriodValue(
+        getSumOfSelectedTimeseries(volumeWeeklyTimeseriesByChain)
       ),
 
-      lastMonthTransactionsCountTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(monthlyTransactionsCountTimeseriesByChain)
+      transactionsCountLastMonth: getLastPeriodValue(
+        getSumOfSelectedTimeseries(transactionsCountMonthlyTimeseriesByChain)
       ),
-      lastMonthWalletsCountTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(monthlyWalletsCountTimeseriesByChain)
+      walletsCountLastMonth: getLastPeriodValue(
+        getSumOfSelectedTimeseries(walletsCountMonthlyTimeseriesByChain)
       ),
-      lastMonthVolumeTrend: getTimeseriesTrend(
-        sumOfSelectedTimeseries(monthlyVolumeTimeseriesByChain)
-      ),
-
-      allTimeTransactionsCountTimeseries: sumOfSelectedTimeseries(
-        allTimeTransactionsCountTimeseriesByChain
-      ),
-      allTimeWalletsCountTimeseries: sumOfSelectedTimeseries(
-        allTimeWalletsCountTimeseriesByChain
-      ),
-      allTimeVolumeTimeseries: sumOfSelectedTimeseries(
-        allTimeVolumeTimeseriesByChain
+      volumeLastMonth: getLastPeriodValue(
+        getSumOfSelectedTimeseries(volumeMonthlyTimeseriesByChain)
       ),
 
-      weeklyTransactionsCountTimeseries: sumOfSelectedTimeseries(
-        weeklyTransactionsCountTimeseriesByChain
+      transactionsCountLastDayTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(transactionsCountDailyTimeseriesByChain)
       ),
-      weeklyWalletsCountTimeseries: sumOfSelectedTimeseries(
-        weeklyWalletsCountTimeseriesByChain
+      walletsCountLastDayTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(walletsCountDailyTimeseriesByChain)
       ),
-      weeklyVolumeTimeseries: sumOfSelectedTimeseries(
-        weeklyVolumeTimeseriesByChain
-      ),
-
-      monthlyTransactionsCountTimeseries: sumOfSelectedTimeseries(
-        monthlyTransactionsCountTimeseriesByChain
-      ),
-      monthlyWalletsCountTimeseries: sumOfSelectedTimeseries(
-        monthlyWalletsCountTimeseriesByChain
-      ),
-      monthlyVolumeTimeseries: sumOfSelectedTimeseries(
-        monthlyVolumeTimeseriesByChain
+      volumeLastDayTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(volumeDailyTimeseriesByChain)
       ),
 
-      dailyTransactionsCountTimeseries: sumOfSelectedTimeseries(
-        dailyTransactionsCountTimeseriesByChain
+      transactionsCountLastWeekTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(transactionsCountWeeklyTimeseriesByChain)
       ),
-      dailyWalletsCountTimeseries: sumOfSelectedTimeseries(
-        dailyWalletsCountTimeseriesByChain
+      walletsCountLastWeekTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(walletsCountWeeklyTimeseriesByChain)
       ),
-      dailyVolumeTimeseries: sumOfSelectedTimeseries(
-        dailyVolumeTimeseriesByChain
+      volumeLastWeekTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(volumeWeeklyTimeseriesByChain)
+      ),
+
+      transactionsCountLastMonthTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(transactionsCountMonthlyTimeseriesByChain)
+      ),
+      walletsCountLastMonthTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(walletsCountMonthlyTimeseriesByChain)
+      ),
+      volumeLastMonthTrend: getTimeseriesTrend(
+        getSumOfSelectedTimeseries(volumeMonthlyTimeseriesByChain)
+      ),
+
+      transactionsCountAllTimeTimeseries: getSumOfSelectedTimeseries(
+        transactionsCountAllTimeTimeseriesByChain
+      ),
+      walletsCountAllTimeTimeseries: getSumOfSelectedTimeseries(
+        walletsCountAllTimeTimeseriesByChain
+      ),
+      volumeAllTimeTimeseries: getSumOfSelectedTimeseries(
+        volumeAllTimeTimeseriesByChain
+      ),
+
+      transactionsCountWeeklyTimeseries: getSumOfSelectedTimeseries(
+        transactionsCountWeeklyTimeseriesByChain
+      ),
+      walletsCountWeeklyTimeseries: getSumOfSelectedTimeseries(
+        walletsCountWeeklyTimeseriesByChain
+      ),
+      volumeWeeklyTimeseries: getSumOfSelectedTimeseries(
+        volumeWeeklyTimeseriesByChain
+      ),
+
+      transactionsCountMonthlyTimeseries: getSumOfSelectedTimeseries(
+        transactionsCountMonthlyTimeseriesByChain
+      ),
+      walletsCountMonthlyTimeseries: getSumOfSelectedTimeseries(
+        walletsCountMonthlyTimeseriesByChain
+      ),
+      volumeMonthlyTimeseries: getSumOfSelectedTimeseries(
+        volumeMonthlyTimeseriesByChain
+      ),
+
+      transactionsCountDailyTimeseries: getSumOfSelectedTimeseries(
+        transactionsCountDailyTimeseriesByChain
+      ),
+      walletsCountDailyTimeseries: getSumOfSelectedTimeseries(
+        walletsCountDailyTimeseriesByChain
+      ),
+      volumeDailyTimeseries: getSumOfSelectedTimeseries(
+        volumeDailyTimeseriesByChain
       ),
     },
   };

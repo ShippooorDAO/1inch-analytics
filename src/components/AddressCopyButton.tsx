@@ -9,7 +9,9 @@ export interface AddressCopyButtonProps {
 }
 
 export function AddressCopyButton({ address, size }: AddressCopyButtonProps) {
-  const [tooltipText, setTooltipText] = useState<string>('Click to copy');
+  const [tooltipText, setTooltipText] = useState<string>(
+    'Click to copy address'
+  );
 
   const handleCopyButton = () => {
     if (!address) {
