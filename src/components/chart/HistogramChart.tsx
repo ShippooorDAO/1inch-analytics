@@ -178,7 +178,7 @@ export function HistogramChart({
   }, [loading, selectedTimeseries, timeseriesList]);
 
   const handleTimeIntervalChange = (e: any, value: any) => {
-    if (e) {
+    if (value) {
       onTimeIntervalChange(value);
     }
   };

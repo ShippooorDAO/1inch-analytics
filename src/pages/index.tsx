@@ -26,6 +26,7 @@ import { useMemo, useState } from 'react';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { StatsContainer } from '@/components/StatsContainer';
+import { scopeTimeseriesToTimeWindow } from '@/shared/Utils/Chart';
 
 interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
@@ -47,18 +48,25 @@ function ControlledHistogramChart({
 
   const timeseriesList = useMemo(() => {
     if (timeInterval === TimeInterval.DAILY) {
-      return dailyTimeseriesList;
+      return dailyTimeseriesList?.map((t) =>
+        scopeTimeseriesToTimeWindow(t, timeWindow)
+      );
     }
 
     if (timeInterval === TimeInterval.WEEKLY) {
-      return weeklyTimeseriesList;
+      return weeklyTimeseriesList?.map((t) =>
+        scopeTimeseriesToTimeWindow(t, timeWindow)
+      );
     }
 
     if (timeInterval === TimeInterval.MONTHLY) {
-      return monthlyTimeseriesList;
+      return monthlyTimeseriesList?.map((t) =>
+        scopeTimeseriesToTimeWindow(t, timeWindow)
+      );
     }
   }, [
     timeInterval,
+    timeWindow,
     dailyTimeseriesList,
     weeklyTimeseriesList,
     monthlyTimeseriesList,
@@ -72,6 +80,7 @@ function ControlledHistogramChart({
         TimeWindow.SEVEN_DAYS,
         TimeWindow.ONE_MONTH,
         TimeWindow.ONE_YEAR,
+        TimeWindow.MAX,
       ].map((timeWindow) => ({
         value: timeWindow,
         label: getTimeWindowLabel(timeWindow),

@@ -43,7 +43,7 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
       return startOf3MonthsAgo;
     case TimeWindow.ONE_YEAR:
       return startOfYearAgo;
-    case TimeWindow.YEAR_TO_DAY:
+    case TimeWindow.YEAR_TO_DATE:
       return startOfYearToDate;
     default:
       return startOfYearToDate;
@@ -97,6 +97,23 @@ export function sumTimeseriesList(
 
   return {
     name,
+    data,
+  };
+}
+
+export function scopeTimeseriesToTimeWindow(
+  timeseries: Timeseries,
+  timeWindow: TimeWindow
+) {
+  const startDate = getTimeWindowStartDate(timeWindow);
+  const startTimestamp = Math.floor(startDate.getTime() / 1000);
+
+  const data = timeseries.data.filter((dataPoint) => {
+    return dataPoint.x >= startTimestamp;
+  });
+
+  return {
+    ...timeseries,
     data,
   };
 }
