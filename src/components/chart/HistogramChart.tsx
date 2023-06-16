@@ -1,12 +1,13 @@
 import { css, Theme, useTheme } from '@emotion/react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { LoadingWrapper } from '@/components/SkeletonWrapper';
 import {
   chartDateTooltipFormatter,
+  createGradient,
   createTooltipFormatter,
 } from '@/shared/Highcharts/HighchartsContextProvider';
 import {
@@ -149,7 +150,7 @@ export function HistogramChart({
     setSelectedTimeseries(timeseriesList);
   }, [loading, timeseriesList]);
 
-  const series: Highcharts.SeriesOptionsType[] = useMemo(() => {
+  const series: Highcharts.SeriesOptionsType[] = (() => {
     const series = new Array<Highcharts.SeriesOptionsType>();
 
     if (loading) {
@@ -159,10 +160,13 @@ export function HistogramChart({
     series.push(
       // @ts-ignore
       ...selectedTimeseries.map((t) => ({
-        type: 'column',
+        type: 'areaspline',
         color: t.color,
+        fillColor: t.color
+          ? createGradient(t.color, 0.3, 0.7, 'up')
+          : undefined,
         name: t.name,
-        data: t.data,
+        data: [...t.data],
         visible: !!timeseriesList?.find((t_) => t.name === t_.name),
         stack: 1,
         stacking: 'normal',
@@ -175,7 +179,7 @@ export function HistogramChart({
     );
 
     return series;
-  }, [loading, selectedTimeseries, timeseriesList]);
+  })();
 
   const handleTimeIntervalChange = (e: any, value: any) => {
     if (value) {

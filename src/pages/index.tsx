@@ -42,29 +42,31 @@ function ControlledHistogramChart({
   monthlyTimeseriesList,
   formatter,
 }: ControllerHistogramChartProps) {
-  const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
+  const [timeWindow, setTimeWindow] = useState<TimeWindow>(
+    TimeWindow.YEAR_TO_DATE
+  );
   const [timeInterval, setTimeInterval] = useState<TimeInterval>(
-    TimeInterval.DAILY
+    TimeInterval.WEEKLY
   );
 
   const timeseriesList = useMemo(() => {
-    if (timeInterval === TimeInterval.DAILY) {
-      return dailyTimeseriesList?.map((t) =>
-        scopeTimeseriesToTimeWindow(t, timeWindow)
-      );
-    }
+    const timeseriesListForSelectedTimeInterval = (() => {
+      if (timeInterval === TimeInterval.DAILY) {
+        return dailyTimeseriesList;
+      }
 
-    if (timeInterval === TimeInterval.WEEKLY) {
-      return weeklyTimeseriesList?.map((t) =>
-        scopeTimeseriesToTimeWindow(t, timeWindow)
-      );
-    }
+      if (timeInterval === TimeInterval.WEEKLY) {
+        return weeklyTimeseriesList;
+      }
 
-    if (timeInterval === TimeInterval.MONTHLY) {
-      return monthlyTimeseriesList?.map((t) =>
-        scopeTimeseriesToTimeWindow(t, timeWindow)
-      );
-    }
+      if (timeInterval === TimeInterval.MONTHLY) {
+        return monthlyTimeseriesList;
+      }
+    })();
+
+    return timeseriesListForSelectedTimeInterval?.map((t) =>
+      scopeTimeseriesToTimeWindow(t, timeWindow)
+    );
   }, [
     timeInterval,
     timeWindow,
@@ -82,6 +84,7 @@ function ControlledHistogramChart({
         TimeWindow.SEVEN_DAYS,
         TimeWindow.ONE_MONTH,
         TimeWindow.ONE_YEAR,
+        TimeWindow.YEAR_TO_DATE,
         TimeWindow.MAX,
       ].map((timeWindow) => ({
         value: timeWindow,
