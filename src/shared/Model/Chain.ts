@@ -76,3 +76,30 @@ export function getChainImageUrl(chainId: number): string {
       return '';
   }
 }
+
+export function getChainName(chainId: number): string {
+  switch (chainId) {
+    case ChainId.ETHEREUM:
+      return 'Ethereum';
+    case ChainId.OPTIMISM:
+      return 'Optimism';
+    case ChainId.AURORA:
+      return 'Aurora';
+    case ChainId.ARBITRUM:
+      return 'Arbitrum';
+    case ChainId.POLYGON:
+      return 'Polygon';
+    case ChainId.BSC:
+      return 'Binance Smart Chain';
+    case ChainId.FANTOM:
+      return 'Fantom';
+    case ChainId.GNOSIS:
+      return 'Gnosis';
+    case ChainId.KLAYTN:
+      return 'Klaytn';
+    case ChainId.AVALANCHE:
+      return 'Avalanche';
+    default:
+      return '';
+  }
+}

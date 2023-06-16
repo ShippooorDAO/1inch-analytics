@@ -187,7 +187,7 @@ export default function Home() {
   }, [chainStore]);
 
   const { data } = useDexAggregatorOverview({
-    chainIds: displayedChains?.map((chain) => chain.chainId),
+    chainIds: displayedChains?.map((chain) => chain.id),
   });
 
   return (
@@ -382,7 +382,7 @@ export default function Home() {
                   const volume =
                     data?.byChain.get(chain.chainId)?.volumeLastWeek ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -391,7 +391,7 @@ export default function Home() {
                   const volume =
                     data?.byChain.get(chain.chainId)?.volumeLastMonth ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -400,7 +400,7 @@ export default function Home() {
                   const volume =
                     data?.byChain.get(chain.chainId)?.volumeAllTime ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -479,7 +479,7 @@ export default function Home() {
                     data?.byChain.get(chain.chainId)
                       ?.transactionsCountLastWeek ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -489,7 +489,7 @@ export default function Home() {
                     data?.byChain.get(chain.chainId)
                       ?.transactionsCountLastMonth ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -499,7 +499,7 @@ export default function Home() {
                     data?.byChain.get(chain.chainId)
                       ?.transactionsCountAllTime ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -639,7 +639,7 @@ export default function Home() {
                   const volume =
                     data?.byChain.get(chain.chainId)?.walletsCountLastWeek ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -649,7 +649,7 @@ export default function Home() {
                     data?.byChain.get(chain.chainId)?.walletsCountLastMonth ??
                     0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };
@@ -658,7 +658,7 @@ export default function Home() {
                   const volume =
                     data?.byChain.get(chain.chainId)?.walletsCountAllTime ?? 0;
                   return {
-                    name: chain.name,
+                    name: chain.displayName,
                     y: volume,
                     color: chain.color,
                   };

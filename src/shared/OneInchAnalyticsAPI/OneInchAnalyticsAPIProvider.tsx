@@ -18,6 +18,7 @@ import {
   ChainId,
   getChainColor,
   getChainImageUrl,
+  getChainName,
 } from '../Model/Chain';
 import { AssetStore } from '../Model/Stores/AssetStore';
 import { ChainStore } from '../Model/Stores/ChainStore';
@@ -76,7 +77,7 @@ export function processGlobalSystemResponse(
     return {
       ...chain,
       chainId: chain.chainIdentifier,
-      displayName: chain.name,
+      displayName: getChainName(chain.chainIdentifier),
       imageUrl: getChainImageUrl(chain.chainIdentifier),
       color: getChainColor(chain.chainIdentifier),
       nativeToken: {

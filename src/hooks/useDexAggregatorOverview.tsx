@@ -111,7 +111,7 @@ interface DexAggregatorOverview {
 }
 
 function parseWalletsAndTransactionsTimeseriesResponse(
-  walletsAndTransactions: DexAggregatorOverviewWalletsAndTransactionsQueryResponse[],
+  response: DexAggregatorOverviewWalletsAndTransactionsQueryResponse[],
   chainStore: ChainStore
 ) {
   const transactionsTimeseriesMap = new Map<ChainId, Timeseries>();
@@ -122,8 +122,8 @@ function parseWalletsAndTransactionsTimeseriesResponse(
     transactionCount,
     walletCount,
     chain: chainResponse,
-  } of walletsAndTransactions) {
-    const chain = chainStore.getById(chainResponse.chainIdentifier);
+  } of response) {
+    const chain = chainStore.getByChainId(chainResponse.chainIdentifier);
     if (!chain) {
       continue;
     }
@@ -157,6 +157,26 @@ function parseWalletsAndTransactionsTimeseriesResponse(
     });
   }
 
+  for (const chain of chainStore.getAll()) {
+    if (!transactionsTimeseriesMap.has(chain.chainId)) {
+      transactionsTimeseriesMap.set(chain.chainId, {
+        name: chain.displayName,
+        imageUrl: chain?.imageUrl,
+        color: chain.color,
+        data: [],
+      });
+    }
+
+    if (!walletsTimeseriesMap.has(chain.chainId)) {
+      walletsTimeseriesMap.set(chain.chainId, {
+        name: chain.displayName,
+        imageUrl: chain?.imageUrl,
+        color: chain.color,
+        data: [],
+      });
+    }
+  }
+
   return {
     transactionsCount: transactionsTimeseriesMap,
     walletsCount: walletsTimeseriesMap,
@@ -164,13 +184,13 @@ function parseWalletsAndTransactionsTimeseriesResponse(
 }
 
 function parseVolumeTimeseriesResponse(
-  volumes: DexAggregatorOverviewQueryVolumesQueryResponse[],
+  response: DexAggregatorOverviewQueryVolumesQueryResponse[],
   chainStore: ChainStore
 ) {
   const volumeTimeseriesMap = new Map<ChainId, Timeseries>();
 
-  for (const { timestamp, volumeUsd, chain: chainResponse } of volumes) {
-    const chain = chainStore.getById(chainResponse.chainIdentifier);
+  for (const { timestamp, volumeUsd, chain: chainResponse } of response) {
+    const chain = chainStore.getByChainId(chainResponse.chainIdentifier);
     if (!chain) {
       continue;
     }
@@ -188,6 +208,17 @@ function parseVolumeTimeseriesResponse(
       x: timestamp,
       y: volumeUsd,
     });
+  }
+
+  for (const chain of chainStore.getAll()) {
+    if (!volumeTimeseriesMap.has(chain.chainId)) {
+      volumeTimeseriesMap.set(chain.chainId, {
+        name: chain.displayName,
+        imageUrl: chain?.imageUrl,
+        color: chain.color,
+        data: [],
+      });
+    }
   }
 
   return volumeTimeseriesMap;
@@ -594,7 +625,7 @@ function parseDexAggregatorOverviewQueryResponse(
 export function useDexAggregatorOverview({
   chainIds,
 }: {
-  chainIds?: ChainId[];
+  chainIds?: string[];
 }): DexAggregatorOverview {
   const { chainStore } = useOneInchAnalyticsAPIContext();
 
@@ -619,7 +650,7 @@ export function useDexAggregatorOverview({
       const response = createMockDexAggregatorOverviewResponse();
       return parseDexAggregatorOverviewQueryResponse(
         response,
-        chainIds,
+        chainIds.map((id) => chainStore.getById(id)!.chainId),
         chainStore
       );
     }
@@ -628,7 +659,11 @@ export function useDexAggregatorOverview({
       return undefined;
     }
 
-    return parseDexAggregatorOverviewQueryResponse(data, chainIds, chainStore);
+    return parseDexAggregatorOverviewQueryResponse(
+      data,
+      chainIds.map((id) => chainStore.getById(id)!.chainId),
+      chainStore
+    );
   }, [data, chainStore, chainIds, featureFlags.enableMockData]);
 
   return {
