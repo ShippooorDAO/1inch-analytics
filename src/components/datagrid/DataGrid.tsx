@@ -25,13 +25,13 @@ export function DataGrid<R extends GridValidRowModel = any>({
           borderColor: 'rgba(255, 255, 255, 0)',
         },
         '& .MuiDataGrid-row:hover': {
-          backgroundColor: theme.palette.wardenTeal[800],
+          backgroundColor: theme.palette.material.analogousPrimary[800],
         },
       }}
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0
-          ? emotionCss`background-color: ${theme.palette.wardenTeal[700]};`
-          : emotionCss`background-color: ${theme.palette.wardenTeal[500]};`
+          ? emotionCss`background-color: ${theme.palette.material.analogousPrimary[700]};`
+          : emotionCss`background-color: ${theme.palette.material.analogousPrimary[500]};`
       }
       rows={!props.loading ? rows : []}
       {...props}

@@ -42,14 +42,14 @@ function OptionRow<T>({
           border-radius: 10px;
           gap: 5px;
           justify-content: flex-start;
-          background-color: ${theme.palette.wardenTeal[700]};
+          background-color: ${theme.palette.material.analogousPrimary[700]};
           &:hover {
             background-color: ${theme.palette.action.hover};
           }
         `,
         index % 2 === 0 &&
           css`
-            background-color: ${theme.palette.wardenTeal[500]};
+            background-color: ${theme.palette.material.analogousPrimary[500]};
           `,
       ]}
       onClick={() => {

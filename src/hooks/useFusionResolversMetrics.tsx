@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { useTheme } from '@mui/material';
 import { useMemo } from 'react';
 
 import { useFeatureFlags } from '@/shared/FeatureFlags/FeatureFlagsContextProvider';
@@ -95,8 +96,8 @@ function parseFusionResolverResponses(
     if (!transactionsCountTimeseriesByResolver.has(entry.resolver)) {
       transactionsCountTimeseriesByResolver.set(entry.resolver, {
         name: entry.resolver,
+        color: fusionResolver?.color,
         imageUrl,
-        // color: chain.color, TODO: use resolver color
         data: [],
       });
     }
@@ -104,6 +105,7 @@ function parseFusionResolverResponses(
     if (!walletsCountTimeseriesByResolver.has(entry.resolver)) {
       walletsCountTimeseriesByResolver.set(entry.resolver, {
         name: entry.resolver,
+        color: fusionResolver?.color,
         imageUrl,
         data: [],
       });
@@ -112,6 +114,7 @@ function parseFusionResolverResponses(
     if (!volumeTimeseriesByResolver.has(entry.resolver)) {
       volumeTimeseriesByResolver.set(entry.resolver, {
         name: entry.resolver,
+        color: fusionResolver?.color,
         imageUrl,
         data: [],
       });
@@ -242,6 +245,7 @@ function parseFusionResolversQueryResponse(
 }
 
 export function useFusionResolversMetrics(fusionResolvers?: FusionResolver[]) {
+  const muiTheme = useTheme();
   const { chainStore } = useOneInchAnalyticsAPIContext();
 
   const featureFlags = useFeatureFlags();
@@ -272,7 +276,13 @@ export function useFusionResolversMetrics(fusionResolvers?: FusionResolver[]) {
     }
 
     return parseFusionResolversQueryResponse(data, fusionResolvers);
-  }, [data, chainStore, featureFlags.enableMockData, fusionResolvers]);
+  }, [
+    data,
+    chainStore,
+    featureFlags.enableMockData,
+    fusionResolvers,
+    muiTheme,
+  ]);
 
   return {
     data: parsedData,

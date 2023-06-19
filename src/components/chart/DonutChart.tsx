@@ -21,7 +21,7 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
 
   const pieColors = (() => {
     const colors = [];
-    const base = theme.palette.wardenPurple[300];
+    const base = theme.palette.material.analogousSecondary[300];
     let i;
     if (typeof Highcharts === 'object') {
       for (i = 0; i < 10; i += 1) {
@@ -64,16 +64,7 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
       visible: false,
     },
     tooltip: {
-      backgroundColor: theme.palette.wardenTeal[700],
-      borderColor: theme.palette.divider,
-      borderRadius: 8,
-      borderWidth: 1,
-      shadow: true,
-      style: {
-        fontFamily: theme.typography.fontFamily,
-        color: theme.palette.text.primary,
-      },
-      useHTML: true,
+      ...chartOptions.tooltip,
       formatter() {
         const totalY = this.series.data.reduce((acc, curr) => acc + curr.y!, 0);
         return createTooltipFormatter(
@@ -81,6 +72,7 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
             x: this.point.name,
             series: [
               {
+                color: this.point.color as string,
                 name: this.series.name,
                 y: innerFormatter(this.y),
               },

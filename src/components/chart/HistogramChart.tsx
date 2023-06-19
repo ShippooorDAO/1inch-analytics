@@ -160,7 +160,7 @@ export function HistogramChart({
     series.push(
       // @ts-ignore
       ...selectedTimeseries.map((t) => ({
-        type: 'areaspline',
+        type: 'area',
         color: t.color,
         fillColor: t.color
           ? createGradient(t.color, 0.3, 0.7, 'up')

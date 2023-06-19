@@ -6,6 +6,7 @@ export interface FusionResolver {
   name: string;
   description?: string;
   imageUrl: string;
+  color: string;
   isVerified?: boolean;
 }
 

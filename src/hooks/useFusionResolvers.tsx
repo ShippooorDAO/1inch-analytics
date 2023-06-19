@@ -4,6 +4,7 @@ import useSWR from 'swr';
 
 import { FusionResolver } from '@/shared/Model/FusionResolver';
 import { getAddressShorthand } from '@/shared/Utils/Format';
+import { chartColors } from '@/theme/variants';
 
 type FusionResolversResponse = {
   [key: string]: {
@@ -25,21 +26,24 @@ function parseResolversResponse(
   fusionResolversResponse: FusionResolversResponse,
   fusionResolversBalancesResponse: FusionResolversBalancesResponse
 ): FusionResolver[] {
-  return Object.entries(fusionResolversResponse).map(([address, resolver]) => {
-    const fusionResolverBalances = fusionResolversBalancesResponse.find(
-      (balance) => balance.resolver === address
-    );
-    return {
-      id: address,
-      address,
-      name: resolver.ensName ?? getAddressShorthand(address),
-      isVerified: resolver.isVerified,
-      imageUrl: resolver.image ?? 'resolver-placeholder.webp',
-      description: resolver.about?.join('\n'),
-      share: Number(fusionResolverBalances?.share ?? '0'),
-      balance: formatUnits(fusionResolverBalances?.balance ?? '0', 18),
-    };
-  });
+  return Object.entries(fusionResolversResponse).map(
+    ([address, resolver], i) => {
+      const fusionResolverBalances = fusionResolversBalancesResponse.find(
+        (balance) => balance.resolver === address
+      );
+      return {
+        id: address,
+        address,
+        name: resolver.ensName ?? getAddressShorthand(address),
+        color: chartColors[i],
+        isVerified: resolver.isVerified,
+        imageUrl: resolver.image ?? 'resolver-placeholder.webp',
+        description: resolver.about?.join('\n'),
+        share: Number(fusionResolverBalances?.share ?? '0'),
+        balance: formatUnits(fusionResolverBalances?.balance ?? '0', 18),
+      };
+    }
+  );
 }
 
 function fetcher(url: string) {

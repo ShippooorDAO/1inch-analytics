@@ -43,11 +43,18 @@ export function SearchInput({ rootProps, ...props }: SearchInputProps) {
         css`
           border-radius: 10px;
           border: 1px solid ${rgba(theme.palette.text.primary, 0.1)};
-          background-color: ${muiSystemTheme.palette.wardenTeal[700]};
+          background-color: ${rgba(
+            muiSystemTheme.palette.material.primary[500],
+            0.3
+          )};
           display: block;
           position: relative;
           width: 100%;
           &:hover {
+            background-color: ${rgba(
+              muiSystemTheme.palette.material.primary[500],
+              0.4
+            )};
             outline-offset: -2px;
             border: 1px solid ${rgba(theme.palette.text.primary, 0.3)};
             outline: 2px solid ${rgba(theme.palette.text.primary, 0.3)};
@@ -66,7 +73,6 @@ export function SearchInput({ rootProps, ...props }: SearchInputProps) {
           display: flex;
           align-items: center;
           justify-content: center;
-
           svg {
             width: 22px;
             height: 22px;
@@ -106,7 +112,8 @@ function SearchResultRow({ children }: SearchResultRowProps) {
         border-radius: 10px;
         padding: 5px;
         &:hover {
-          background-color: ${muiSystemTheme.palette.wardenTeal[700]};
+          background-color: ${muiSystemTheme.palette.material
+            .analogousPrimary[700]};
         }
         cursor: pointer;
       `}

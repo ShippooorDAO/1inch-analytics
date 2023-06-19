@@ -1,7 +1,7 @@
 import * as emotionCss from '@emotion/css';
 import { Theme, useTheme } from '@emotion/react';
 import Highcharts from 'highcharts';
-import { rgba } from 'polished';
+import { lighten, rgba } from 'polished';
 import { createContext, FC, ReactNode, useContext } from 'react';
 
 import { format } from '../Utils/Format';
@@ -27,16 +27,16 @@ export function createTooltipFormatter(
         gap: 10px;
         text-align: left;
         padding: 5px;
+        font-size: ${theme.typography.body1.fontSize};
       `}">
       <div class="${emotionCss.css`
           display: flex;
           flex-flow: row;
           justify-content: space-between;
           gap: 20px;`}">
-        <div class=${emotionCss.css`
-          font-weight: 300;
-          font-size: ${theme.typography.body1.fontSize};
-        `}>
+        <div class="${emotionCss.css`
+          color: ${theme.palette.text.secondary};
+        `}">
           ${x}
         </div> 
       </div>${series
@@ -46,11 +46,8 @@ export function createTooltipFormatter(
           flex-flow: row;
           justify-content: space-between;
           gap: 20px;
-          font-size: ${theme.typography.body2.fontSize};
       `}">
         <div class=${emotionCss.css`
-            font-weight: 300;
-            font-size: ${theme.typography.body1.fontSize};
         `}>
           <div class="${emotionCss.css`display: flex; flex-flow: row; justify-content: flex-start; align-items: center; gap: 5px;`}">
             ${
@@ -157,21 +154,13 @@ export const HighchartsContextProvider: FC<HighchartsContextProviderProps> = ({
   const theme = useTheme();
   const axisColor = rgba(theme.palette.text.primary, 0.2);
 
-  const colors = [
-    rgba(theme.palette.wardenPurple[300], 1),
-    rgba('#7a5195', 1),
-    rgba('#bc5090', 1),
-    rgba('#ef5675', 1),
-    rgba('#ff764a', 1),
-    rgba('#ffa600', 1),
-  ];
-
+  const colors = theme.palette.chart as string[];
   const specialColors = {
     error: [theme.palette.error.main],
   };
 
   const areaChartColors: Highcharts.GradientColorObject[] = colors.map(
-    (color) => createGradient(color, 0.4, 0.6, 'up')
+    (color: string) => createGradient(color, 0.4, 0.6, 'up')
   );
 
   const areaChartSpecialColors: { error: Highcharts.GradientColorObject[] } = {
@@ -181,7 +170,7 @@ export const HighchartsContextProvider: FC<HighchartsContextProviderProps> = ({
   };
 
   const columnChartColors: Highcharts.GradientColorObject[] = colors.map(
-    (color) => createGradient(color, 1, 1)
+    (color: string) => createGradient(color, 1, 1)
   );
 
   const columnChartSpecialColors: { error: Highcharts.GradientColorObject[] } =
@@ -213,14 +202,15 @@ export const HighchartsContextProvider: FC<HighchartsContextProviderProps> = ({
         },
       },
       area: {
-        lineColor: theme.palette.wardenTeal[200],
+        lineColor: theme.palette.material.analogousPrimary[200],
         lineWidth: 2,
+        fillColor: areaChartColors[0],
         color: areaChartColors[0],
         negativeColor: areaChartSpecialColors.error[0],
       },
     },
     tooltip: {
-      backgroundColor: theme.palette.wardenTeal[700],
+      backgroundColor: lighten(0.1, theme.palette.background.paper),
       borderColor: theme.palette.divider,
       borderRadius: 8,
       borderWidth: 1,

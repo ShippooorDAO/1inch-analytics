@@ -1,53 +1,115 @@
 import * as muiColors from '@mui/material/colors';
 // @ts-ignore
 import merge from 'deepmerge';
-import { lighten } from 'polished';
+import { lighten, rgba } from 'polished';
 
 import { THEMES } from '../constants';
 
-const customBlue = {
-  50: '#e9f0fb',
-  100: '#c8daf4',
-  200: '#a3c1ed',
-  300: '#7ea8e5',
-  400: '#6395e0',
-  500: '#4782da',
-  600: '#407ad6',
-  700: '#376fd0',
-  800: '#2f65cb',
-  900: '#2052c2 ',
+/**
+ * Generated using Google Material UI color palette generator using #2F8AF5 as primary color
+ * https://m2.material.io/design/color/the-color-system.html#tools-for-picking-colors
+ */
+const primary = {
+  50: '#e4f3ff',
+  100: '#bde0ff',
+  200: '#93cdff',
+  300: '#68b9ff',
+  400: '#48a9ff',
+  500: '#2f9aff',
+  600: '#2f8bf5',
+  700: '#2d79e1',
+  800: '#2b67cf',
+  900: '#2648af ',
 };
 
-const wardenTeal = {
-  50: '#e3e7ea',
-  100: '#bac3cb',
-  200: '#8c9ba9',
-  300: '#5d7386',
-  400: '#3b556c',
-  500: '#183752',
-  600: '#15314b',
-  700: '#112a41',
-  800: '#0e2338',
-  900: '#081628',
-  950: '#050e1a',
+const complementary = {
+  50: '#fef3e2',
+  100: '#fcdfb7',
+  200: '#facb89',
+  300: '#f8b65d',
+  400: '#f7a73f',
+  500: '#f5992f',
+  600: '#f08d2c',
+  700: '#ea7f29',
+  800: '#e27026',
+  900: '#d75a23',
 };
 
-const wardenBackgroundDark = {};
-
-const wardenPurple = {
-  50: '#e6ecfb',
-  100: '#c1cff5',
-  200: '#98b0ef',
-  300: '#6f90e9',
-  400: '#5078e4',
-  500: '#3160df',
-  600: '#2c58db',
-  700: '#254ed7',
-  800: '#1f44d2',
-  900: '#1333ca',
+const analogousPrimary = {
+  50: '#d8fbfc',
+  100: '#9bf5f7',
+  200: '#2feef5',
+  300: '#00e5f1',
+  400: '#00dcec',
+  500: '#00d4ea',
+  600: '#00c3d6',
+  700: '#00adbb',
+  800: '#0098a1',
+  900: '#007472',
 };
 
-const wardenWhite = '#fffffb';
+const analogousSecondary = {
+  50: '#eee7fe',
+  100: '#d2c4fd',
+  200: '#b29dfd',
+  300: '#8f74fe',
+  400: '#7054fe',
+  500: '#4933fc',
+  600: '#362ff5',
+  700: '#0027ec',
+  800: '#0022e7',
+  900: '#0014e1',
+};
+
+const triadicPrimary = {
+  50: '#f2e5fd',
+  100: '#dcbefb',
+  200: '#c591f9',
+  300: '#ad5ff7',
+  400: '#992ff5',
+  500: '#8300f1',
+  600: '#7700eb',
+  700: '#6600e3',
+  800: '#5500df',
+  900: '#3800d1',
+};
+
+const triadicSecondary = {
+  50: '#fce4ef',
+  100: '#f9bad8',
+  200: '#f78dbd',
+  300: '#f65ca2',
+  400: '#f52f8b',
+  500: '#f60074',
+  600: '#e40071',
+  700: '#cd006b',
+  800: '#b70067',
+  900: '#90005e',
+};
+
+export const chartColors = [
+  rgba(analogousSecondary[300], 1),
+  rgba('#7a5195', 1),
+  rgba('#bc5090', 1),
+  rgba('#ef5675', 1),
+  rgba('#ff764a', 1),
+  rgba('#ffa600', 1),
+  lighten(0.2, '#7a5195'),
+  lighten(0.2, '#bc5090'),
+  lighten(0.2, '#ef5675'),
+  lighten(0.2, '#ff764a'),
+  lighten(0.2, '#ffa600'),
+  lighten(0.4, '#7a5195'),
+  lighten(0.4, '#bc5090'),
+  lighten(0.4, '#ef5675'),
+  lighten(0.4, '#ff764a'),
+  lighten(0.4, '#ffa600'),
+  lighten(0.6, '#7a5195'),
+  lighten(0.6, '#bc5090'),
+  lighten(0.6, '#ef5675'),
+  lighten(0.6, '#ff764a'),
+  lighten(0.6, '#ffa600'),
+];
 
 const defaultVariant = {
   name: THEMES.DEFAULT,
@@ -55,19 +117,26 @@ const defaultVariant = {
     mui: muiColors,
     mode: 'light',
     primary: {
-      main: customBlue[700],
+      main: primary[700],
       contrastText: '#FFF',
     },
     secondary: {
-      main: customBlue[500],
+      main: primary[500],
       contrastText: '#FFF',
     },
     background: {
       default: '#F7F9FC',
       paper: '#FFF',
     },
-    wardenPurple,
-    wardenTeal,
+    material: {
+      primary,
+      complementary,
+      analogousPrimary,
+      analogousSecondary,
+      triadicPrimary,
+      triadicSecondary,
+    },
+    chart: chartColors,
   },
   header: {
     color: muiColors.grey[500],
@@ -76,7 +145,7 @@ const defaultVariant = {
       color: muiColors.grey[800],
     },
     indicator: {
-      background: customBlue[600],
+      background: primary[600],
     },
   },
   footer: {
@@ -85,12 +154,12 @@ const defaultVariant = {
   },
   sidebar: {
     color: muiColors.grey[200],
-    background: wardenTeal[500],
+    background: analogousPrimary[500],
     header: {
       color: muiColors.grey[200],
-      background: wardenTeal[500],
+      background: analogousPrimary[500],
       brand: {
-        color: wardenTeal[500],
+        color: analogousPrimary[500],
       },
     },
     footer: {
@@ -102,7 +171,7 @@ const defaultVariant = {
     },
     badge: {
       color: '#FFF',
-      background: customBlue[500],
+      background: primary[500],
     },
   },
 };
@@ -116,7 +185,7 @@ const darkVariant = merge(defaultVariant, {
   palette: {
     mode: 'dark',
     primary: {
-      main: customBlue[600],
+      main: primary[600],
       contrastText: '#FFF',
     },
     background: {
@@ -139,14 +208,14 @@ const darkVariant = merge(defaultVariant, {
   },
   header: {
     color: muiColors.grey[300],
-    background: wardenTeal[950],
+    background: analogousPrimary[900],
     search: {
       color: muiColors.grey[200],
     },
   },
   footer: {
     color: muiColors.grey[300],
-    background: wardenTeal[950],
+    background: analogousPrimary[900],
   },
 });
 
