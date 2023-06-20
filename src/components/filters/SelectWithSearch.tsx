@@ -80,6 +80,7 @@ export interface SelectWithSearchProps<T> {
   options: SelectWithSearchOption<T>[];
   searchPlaceholder?: string;
   popperPlacement?: PopperPlacementType;
+  disablePortal?: boolean;
   value?: T | T[] | null;
   getKey?: (value: T) => string;
   onChange: (newValue: T | T[] | null) => void;
@@ -96,6 +97,7 @@ export function SelectWithSearch<T>({
   options,
   searchPlaceholder,
   popperPlacement,
+  disablePortal,
   getKey,
   onChange,
   onSearchChange,
@@ -284,7 +286,7 @@ export function SelectWithSearch<T>({
         <div>
           <Popper
             id="popper"
-            disablePortal={true}
+            disablePortal={!disablePortal}
             open={panelOpen}
             anchorEl={panelAnchorEl.current}
             css={css`

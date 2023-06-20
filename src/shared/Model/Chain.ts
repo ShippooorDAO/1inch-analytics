@@ -8,6 +8,7 @@ export interface Chain {
   color: string;
   imageUrl: string;
   nativeToken: Asset;
+  gasSymbol: string;
 }
 
 export enum ChainId {

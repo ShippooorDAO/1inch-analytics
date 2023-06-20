@@ -3,6 +3,7 @@ import { Menu } from '@mui/icons-material';
 import { Drawer, IconButton, PaperProps } from '@mui/material';
 import Link from 'next/link';
 
+import { GasMeter } from '../GasMeter';
 import { SidebarFooter } from './SidebarFooter';
 import SidebarNav, { SidebarNavProps } from './SidebarNav';
 
@@ -69,6 +70,16 @@ const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
       </div>
 
       <SidebarNav {...sidebarNavProps} />
+
+      <div
+        css={(theme) => css`
+          display: flex;
+          justify-content: center;
+          background-color: ${theme.sidebar.background};
+      `}>
+        <GasMeter />
+      </div>
+
       <SidebarFooter />
     </Drawer>
   );

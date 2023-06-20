@@ -185,14 +185,6 @@ export default function Home() {
     return selectedChains;
   }, [selectedChains, chainStore]);
 
-  const chainOptions = useMemo(() => {
-    if (!chainStore) {
-      return undefined;
-    }
-
-    return chainStore.getAll();
-  }, [chainStore]);
-
   const { data } = useDexAggregatorOverview({
     chainIds: displayedChains?.map((chain) => chain.id),
   });

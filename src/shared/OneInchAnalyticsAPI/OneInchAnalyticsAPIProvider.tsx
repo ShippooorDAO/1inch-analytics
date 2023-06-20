@@ -80,6 +80,7 @@ export function processGlobalSystemResponse(
       displayName: getChainName(chain.chainIdentifier),
       imageUrl: getChainImageUrl(chain.chainIdentifier),
       color: getChainColor(chain.chainIdentifier),
+      gasSymbol: chain.nativeToken,
       nativeToken: {
         id: chain.nativeToken, // TODO: Make sure to link with correct property.
       } as Asset,
