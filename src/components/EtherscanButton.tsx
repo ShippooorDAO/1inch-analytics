@@ -7,7 +7,17 @@ export interface EtherscanButtonProps {
 }
 
 export function EtherscanButton({ address, size }: EtherscanButtonProps) {
-  const imageHeight = size === 'small' ? '20px' : '30px';
+  const imageHeight = (() => {
+    switch (size) {
+      case 'small':
+        return '16px';
+      case 'medium':
+        return '20px';
+      case 'large':
+      default:
+        return '30px';
+    }
+  })();
 
   return (
     <IconButton

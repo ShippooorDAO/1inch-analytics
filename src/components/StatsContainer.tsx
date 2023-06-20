@@ -37,12 +37,11 @@ export function StatsContainer({
         display: flex;
         flex-flow: column;
         gap: 20px;
-        border: 1px solid ${theme.palette.divider};
         border-radius: 24px;
         background-color: ${lighten(0.05, theme.palette.background.paper)};
         padding: 16px;
         width: calc(100% - 420px);
-        ${theme.breakpoints.down('lg')} {
+        ${theme.breakpoints.down('md')} {
           width: 100%;
         }
       `}
@@ -65,12 +64,11 @@ export function StatsContainer({
         flex-flow: column;
         gap: 20px;
         background-color: ${lighten(0.05, theme.palette.background.paper)};
-        border: 1px solid ${theme.palette.divider};
         border-radius: 24px;
         justify-content: space-between;
         padding: 16px;
         width: 400px;
-        ${theme.breakpoints.down('lg')} {
+        ${theme.breakpoints.down('md')} {
           width: 100%;
         }
       `}

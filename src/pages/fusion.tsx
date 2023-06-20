@@ -1,5 +1,14 @@
 import { css } from '@emotion/react';
-import { Button, Container, Typography } from '@mui/material';
+import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
+import {
+  Button,
+  Container,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@mui/material';
+import { lighten } from 'polished';
 import { useMemo, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
@@ -7,6 +16,7 @@ import { DonutChart } from '@/components/chart/DonutChart';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { EtherscanButton } from '@/components/EtherscanButton';
+import { AddressIcon } from '@/components/icons/AddressIcon';
 import { RoundedImageIcon } from '@/components/icons/RoundedImageIcon';
 import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { MultiTabSection } from '@/components/SectionContainer';
@@ -17,13 +27,15 @@ import {
   FusionResolversMetrics,
   useFusionResolversMetrics,
 } from '@/hooks/useFusionResolversMetrics';
+import { useFusionTopTraders } from '@/hooks/useFusionTopTraders';
 import Dashboard from '@/layouts/DashboardLayout';
 import {
   FusionResolver,
   getDuneResolverNameFromResolverAddress,
 } from '@/shared/Model/FusionResolver';
+import { FusionTrader } from '@/shared/Model/FusionTrader';
 import { TimeInterval, TimeWindow } from '@/shared/Model/Timeseries';
-import { format } from '@/shared/Utils/Format';
+import { format, getAddressShorthand } from '@/shared/Utils/Format';
 
 interface ControlledDonutChartProps {
   seriesName: string;
@@ -100,6 +112,9 @@ function ControlledDonutChart({
 
 function useFusionPageData() {
   const fusionResolversContext = useFusionResolvers();
+  const { fusionTopTraders } = useFusionTopTraders({
+    pageSize: 1000,
+  });
   const fusionResolversMetricsContext = useFusionResolversMetrics(
     fusionResolversContext.data
   );
@@ -127,6 +142,7 @@ function useFusionPageData() {
 
   return {
     getFusionResolverMetrics,
+    fusionTraders: fusionTopTraders,
     fusionResolversMetrics: fusionResolversMetricsContext.data,
     fusionResolvers: fusionResolversContext.data,
     loading,
@@ -149,6 +165,36 @@ function FusionResolversTable({
   const [sortBy, setSortBy] = useState<'volume' | 'transactions' | 'wallets'>(
     'volume'
   );
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(8);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const sortMenuOpen = Boolean(anchorEl);
+  const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleSortMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const loading = fusionResolvers === undefined;
+  const isLastPage =
+    pageSize * (pageNumber + 1) >= (fusionResolvers?.length ?? 0);
+  const isFirstPage = pageNumber === 0;
+
+  const nextPage = () => {
+    if (
+      fusionResolvers?.length &&
+      fusionResolvers.length < pageSize * pageNumber
+    )
+      return;
+    setPageNumber(pageNumber + 1);
+  };
+
+  const previousPage = () => {
+    if (pageNumber === 0) return;
+    setPageNumber(pageNumber - 1);
+  };
+
   const sortedFusionResolvers = useMemo(() => {
     if (!fusionResolvers) {
       return undefined;
@@ -177,92 +223,79 @@ function FusionResolversTable({
     });
   }, [sortBy, fusionResolvers, getFusionResolverMetrics]);
 
+  const displayedFusionResolvers = sortedFusionResolvers?.slice(
+    pageNumber * pageSize,
+    pageNumber * pageSize + pageSize
+  );
+
   return (
     <div
       css={css`
         display: flex;
         flex-flow: column;
         justify-content: space-between;
+        height: 100%;
       `}
     >
-      <div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            gap: 10px;
-            align-items: center;
-            padding: 10px 20px;
-          `}
-        >
-          <div
-            css={css`
-              width: 440px;
-              text-align: left;
-            `}
-          >
-            <Typography variant="body2" color="textSecondary">
-              Resolver
-            </Typography>
-          </div>
-          <div
-            css={css`
-              flex-grow: 1;
-              text-align: right;
-            `}
-          >
-            <Button variant="text" onClick={() => setSortBy('volume')}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                fontWeight={sortBy === 'volume' ? 'bold' : 'normal'}
-              >
-                Volume (7d)
-              </Typography>
-            </Button>
-          </div>
-          <div
-            css={css`
-              flex-grow: 1;
-              text-align: right;
-            `}
-          >
-            <Button variant="text" onClick={() => setSortBy('transactions')}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                fontWeight={sortBy === 'transactions' ? 'bold' : 'normal'}
-              >
-                Transactions (7d)
-              </Typography>
-            </Button>
-          </div>
-          <div
-            css={css`
-              flex-grow: 1;
-              text-align: right;
-            `}
-          >
-            <Button variant="text" onClick={() => setSortBy('wallets')}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                fontWeight={sortBy === 'wallets' ? 'bold' : 'normal'}
-              >
-                Unique wallets (7d)
-              </Typography>
-            </Button>
-          </div>
-        </div>
-      </div>
       <div
         css={css`
           display: flex;
           flex-flow: column;
-          gap: 20px;
+          justify-content: flex-start;
+          gap: 10px;
+          padding-left: 10px;
+          padding-right: 10px;
         `}
       >
-        {sortedFusionResolvers?.map((fusionResolver) => (
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: space-between;
+            align-items: center;
+            white-space: nowrap;
+            padding: 10px 10px 0 10px;
+            width: 100%;
+          `}
+        >
+          <Typography variant="h3">Top Fusion Resolvers</Typography>
+          <Button
+            onClick={handleSortMenuClick}
+            endIcon={<Sort />}
+            css={(theme) =>
+              css`
+                color: ${theme.palette.text.secondary};
+              `
+            }
+          >
+            Sort by
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={sortMenuOpen}
+            onClose={handleSortMenuClose}
+          >
+            <MenuItem
+              selected={sortBy === 'volume'}
+              onClick={() => setSortBy('volume')}
+            >
+              Volume
+            </MenuItem>
+            <MenuItem
+              selected={sortBy === 'transactions'}
+              onClick={() => setSortBy('transactions')}
+            >
+              Transactions
+            </MenuItem>
+            <MenuItem
+              selected={sortBy === 'wallets'}
+              onClick={() => setSortBy('wallets')}
+            >
+              Wallets
+            </MenuItem>
+          </Menu>
+        </div>
+        {displayedFusionResolvers?.map((fusionResolver) => (
           <div
             key={fusionResolver.id}
             css={(theme) => css`
@@ -270,46 +303,60 @@ function FusionResolversTable({
               flex-flow: row;
               gap: 10px;
               align-items: center;
-              padding: 20px;
+              padding: 10px 20px;
               border-radius: 24px;
-              background-color: ${theme.palette.background.paper};
+              background-color: ${lighten(
+                0.05,
+                theme.palette.background.paper
+              )};
+              white-space: nowrap;
             `}
           >
-            <img
-              src={fusionResolver.imageUrl}
-              alt={fusionResolver.name}
+            <div
               css={css`
-                height: 40px;
-                width: 40px;
+                display: flex;
+                flex-flow: row;
+                gap: 10px;
               `}
-            />
-            <div>
-              <div
+            >
+              <img
+                src={fusionResolver.imageUrl}
+                alt={fusionResolver.name}
                 css={css`
-                  display: flex;
-                  flex-flow: row;
-                  align-items: center;
-                  gap: 10px;
-                  width: 350px;
+                  height: 40px;
+                  width: 40px;
                 `}
-              >
-                <a
-                  href={`https://app.1inch.io/#/1/earn/delegate/${fusionResolver.address}`}
+              />
+              <div>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    align-items: center;
+                    gap: 10px;
+                    width: 200px;
+                  `}
                 >
-                  <Typography variant="h3">{fusionResolver.name}</Typography>
-                </a>
-                <EtherscanButton
-                  size="small"
-                  address={fusionResolver.address}
-                />
-                <AddressCopyButton
-                  size="small"
-                  address={fusionResolver.address}
-                />
+                  <a
+                    href={`https://app.1inch.io/#/1/earn/delegate/${fusionResolver.address}`}
+                  >
+                    <Typography variant="body2">
+                      {fusionResolver.name}
+                    </Typography>
+                  </a>
+                  <EtherscanButton
+                    size="small"
+                    address={fusionResolver.address}
+                  />
+                  <AddressCopyButton
+                    size="small"
+                    address={fusionResolver.address}
+                  />
+                </div>
+                <Typography variant="body1" color="textSecondary">
+                  {getAddressShorthand(fusionResolver.address)}
+                </Typography>
               </div>
-              <Typography variant="body2" color="textSecondary">
-                {fusionResolver.address}
-              </Typography>
             </div>
             <div
               css={css`
@@ -330,11 +377,12 @@ function FusionResolversTable({
                   padding-left: 20px;
                 `}
               >
-                <Typography variant="h3" fontWeight={400}>
+                <Typography variant="body2">
                   {format(
                     getFusionResolverMetrics(fusionResolver)?.volumeLastWeek,
-                    { symbol: 'USD', decimals: 0 }
-                  )}
+                    { symbol: 'USD', decimals: 1, abbreviate: true }
+                  )}{' '}
+                  volume
                 </Typography>
                 <TrendLabelPercent
                   value={
@@ -343,7 +391,7 @@ function FusionResolversTable({
                   }
                   iconAlign="left"
                 />
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body1" color="textSecondary">
                   {format(
                     (getFusionResolverMetrics(fusionResolver)?.volumeLastWeek ??
                       0) /
@@ -351,7 +399,7 @@ function FusionResolversTable({
                         1),
                     { symbol: '%' }
                   )}{' '}
-                  of total volume
+                  of total
                 </Typography>
               </div>
             </div>
@@ -365,14 +413,13 @@ function FusionResolversTable({
                 padding-left: 20px;
               `}
             >
-              <Typography variant="h3" fontWeight={400}>
+              <Typography variant="body2">
                 {format(
                   getFusionResolverMetrics(fusionResolver)
                     ?.transactionsCountLastWeek,
-                  {
-                    decimals: 0,
-                  }
-                )}
+                  { decimals: 1, abbreviate: true }
+                )}{' '}
+                transactions
               </Typography>
               <TrendLabelPercent
                 value={
@@ -380,7 +427,7 @@ function FusionResolversTable({
                 }
                 iconAlign="left"
               />
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body1" color="textSecondary">
                 {format(
                   (getFusionResolverMetrics(fusionResolver)
                     ?.transactionsCountLastWeek ?? 0) /
@@ -388,7 +435,7 @@ function FusionResolversTable({
                       .transactionsCountLastWeek ?? 1),
                   { symbol: '%' }
                 )}{' '}
-                of total trades
+                of total
               </Typography>
             </div>
             <div
@@ -401,14 +448,13 @@ function FusionResolversTable({
                 padding-left: 20px;
               `}
             >
-              <Typography variant="h3" fontWeight={400}>
+              <Typography variant="body2">
                 {format(
                   getFusionResolverMetrics(fusionResolver)
                     ?.walletsCountLastWeek,
-                  {
-                    decimals: 0,
-                  }
-                )}
+                  { decimals: 1, abbreviate: true }
+                )}{' '}
+                wallets
               </Typography>
               <TrendLabelPercent
                 value={
@@ -417,7 +463,7 @@ function FusionResolversTable({
                 }
                 iconAlign="left"
               />
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="body1" color="textSecondary">
                 {format(
                   (getFusionResolverMetrics(fusionResolver)
                     ?.walletsCountLastWeek ?? 0) /
@@ -425,20 +471,268 @@ function FusionResolversTable({
                       .walletsCountLastWeek ?? 1),
                   { symbol: '%' }
                 )}{' '}
-                of total wallets
+                of total
               </Typography>
             </div>
           </div>
         ))}
       </div>
+      <div
+        css={css`
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+        `}
+      >
+        <IconButton onClick={previousPage} disabled={loading || isFirstPage}>
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="body1" fontWeight={500}>
+          {pageNumber + 1} /{' '}
+          {Math.ceil((fusionResolvers?.length ?? 0) / pageSize)}
+        </Typography>
+
+        <IconButton onClick={nextPage} disabled={loading || isLastPage}>
+          <ArrowForward />
+        </IconButton>
+      </div>
     </div>
   );
 }
+
+interface FusionTradersTableProps {
+  fusionTraders: FusionTrader[] | null;
+}
+
+function FusionTradersTable({ fusionTraders }: FusionTradersTableProps) {
+  const rows = fusionTraders ?? undefined;
+
+  const [sortBy, setSortBy] = useState<'volume' | 'transactions'>('volume');
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(8);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const sortMenuOpen = Boolean(anchorEl);
+  const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleSortMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const loading = rows === undefined;
+  const isLastPage = pageSize * (pageNumber + 1) >= (rows?.length ?? 0);
+  const isFirstPage = pageNumber === 0;
+
+  const displayedRows = rows?.slice(
+    pageNumber * pageSize,
+    pageNumber * pageSize + pageSize
+  );
+
+  const nextPage = () => {
+    if (rows?.length && rows.length < pageSize * pageNumber) return;
+    setPageNumber(pageNumber + 1);
+  };
+
+  const previousPage = () => {
+    if (pageNumber === 0) return;
+    setPageNumber(pageNumber - 1);
+  };
+
+  return (
+    <div
+      css={css`
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+        height: 100%;
+      `}
+    >
+      <div
+        css={css`
+          display: flex;
+          flex-flow: column;
+          gap: 10px;
+          white-space: nowrap;
+          padding-left: 10px;
+          padding-right: 10px;
+        `}
+      >
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: space-between;
+            align-items: center;
+            white-space: nowrap;
+            padding: 10px 10px 0 10px;
+            width: 100%;
+          `}
+        >
+          <Typography variant="h3">Top Fusion Traders</Typography>
+          <Button
+            onClick={handleSortMenuClick}
+            endIcon={<Sort />}
+            css={(theme) =>
+              css`
+                color: ${theme.palette.text.secondary};
+              `
+            }
+          >
+            Sort by
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={sortMenuOpen}
+            onClose={handleSortMenuClose}
+          >
+            <MenuItem
+              selected={sortBy === 'volume'}
+              onClick={() => setSortBy('volume')}
+            >
+              Volume
+            </MenuItem>
+            <MenuItem
+              selected={sortBy === 'transactions'}
+              onClick={() => setSortBy('transactions')}
+            >
+              Transactions
+            </MenuItem>
+          </Menu>
+        </div>
+        {displayedRows?.map((fusionTrader) => (
+          <div
+            key={fusionTrader.id}
+            css={(theme) => css`
+              display: flex;
+              flex-flow: row;
+              height: 82px;
+              gap: 10px;
+              align-items: center;
+              justify-content: space-between;
+              padding: 10px 20px;
+              border-radius: 24px;
+              background-color: ${lighten(
+                0.05,
+                theme.palette.background.paper
+              )};
+            `}
+          >
+            <div
+              css={css`
+                display: flex;
+                flex-flow: row;
+                gap: 10px;
+              `}
+            >
+              <AddressIcon address={fusionTrader.address} />
+              <div>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    align-items: center;
+                    gap: 10px;
+                  `}
+                >
+                  <a
+                    href={`https://etherscan.io/address/${fusionTrader.address}`}
+                  >
+                    <Typography variant="body2">
+                      {getAddressShorthand(fusionTrader.address)}
+                    </Typography>
+                  </a>
+                  <EtherscanButton
+                    size="small"
+                    address={fusionTrader.address}
+                  />
+                  <AddressCopyButton
+                    size="small"
+                    address={fusionTrader.address}
+                  />
+                </div>
+                <Typography variant="body1" color="textSecondary">
+                  {getAddressShorthand(fusionTrader.address)}
+                </Typography>
+              </div>
+            </div>
+            <div
+              css={css`
+                display: flex;
+                flex-flow: column;
+                justify-content: space-between;
+                gap: 5px;
+                align-items: flex-end;
+              `}
+            >
+              <div
+                css={css`
+                  display: flex;
+                  flex-flow: row;
+                  flex-grow: 1;
+                  justify-content: flex-end;
+                  align-items: flex-end;
+                `}
+              >
+                <Typography variant="body2">
+                  {format(fusionTrader.volumeUsd, {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  })}{' '}
+                  volume
+                </Typography>
+              </div>
+              <div
+                css={css`
+                  display: flex;
+                  flex-flow: row;
+                  flex-grow: 1;
+                  justify-content: flex-end;
+                  align-items: flex-end;
+                `}
+              >
+                <Typography variant="body1" color="textSecondary">
+                  {format(fusionTrader.transactionCount, {
+                    decimals: 0,
+                  })}{' '}
+                  transactions
+                </Typography>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+        `}
+      >
+        <IconButton onClick={previousPage} disabled={loading || isFirstPage}>
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="body1" fontWeight={500}>
+          {pageNumber + 1} / {Math.ceil((rows?.length ?? 0) / pageSize)}
+        </Typography>
+
+        <IconButton onClick={nextPage} disabled={loading || isLastPage}>
+          <ArrowForward />
+        </IconButton>
+      </div>
+    </div>
+  );
+}
+
 export default function FusionPage() {
   const {
     getFusionResolverMetrics,
     fusionResolvers,
     fusionResolversMetrics,
+    fusionTraders,
     loading,
   } = useFusionPageData();
 
@@ -466,8 +760,112 @@ export default function FusionPage() {
         css={css`
           display: flex;
           flex-flow: column;
+          gap: 10px;
+          padding-bottom: 20px;
+        `}
+      >
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+          `}
+        >
+          <SlimMetricsCard
+            title="Volume (All Time)"
+            value={format(fusionResolversMetrics?.allResolvers.volumeAllTime, {
+              symbol: 'USD',
+              abbreviate: true,
+            })}
+          />
+          <SlimMetricsCard
+            title="Transactions (All Time)"
+            value={format(
+              fusionResolversMetrics?.allResolvers.transactionsCountAllTime,
+              {
+                abbreviate: true,
+              }
+            )}
+          />
+          <SlimMetricsCard
+            title="Users (All Time)"
+            value={format(
+              fusionResolversMetrics?.allResolvers.walletsCountAllTime,
+              {
+                abbreviate: true,
+              }
+            )}
+          />
+        </div>
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+          `}
+        >
+          <SlimMetricsCard
+            title="Volume (7D)"
+            value={format(
+              fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
+              {
+                symbol: 'USD',
+                abbreviate: true,
+              }
+            )}
+            subValue={
+              <TrendLabelPercent
+                value={
+                  fusionResolversMetrics?.allResolvers.walletsCountLastWeekTrend
+                }
+              />
+            }
+          />
+          <SlimMetricsCard
+            title="Transactions (7D)"
+            value={format(
+              fusionResolversMetrics?.allResolvers.transactionsCountLastWeek,
+              {
+                symbol: 'USD',
+                abbreviate: true,
+              }
+            )}
+            subValue={
+              <TrendLabelPercent
+                value={
+                  fusionResolversMetrics?.allResolvers
+                    .transactionsCountLastWeekTrend
+                }
+              />
+            }
+          />
+          <SlimMetricsCard
+            title="Users (7D)"
+            value={format(
+              fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
+              {
+                abbreviate: true,
+              }
+            )}
+            subValue={
+              <TrendLabelPercent
+                value={
+                  fusionResolversMetrics?.allResolvers.walletsCountLastWeekTrend
+                }
+              />
+            }
+          />
+        </div>
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-flow: column;
           gap: 20px;
-          margin-top: -40px;
         `}
       >
         <MultiTabSection
@@ -626,120 +1024,46 @@ export default function FusionPage() {
             },
           ]}
         />
+
         <div
           css={css`
             display: flex;
-            flex-flow: column;
-            gap: 10px;
+            flex-flow: row;
+            flex-wrap: wrap;
+            gap: 20px;
           `}
         >
           <div
-            css={css`
-              display: flex;
-              flex-flow: row;
-              justify-content: center;
-              gap: 10px;
-              flex-wrap: wrap;
+            css={(theme) => css`
+              width: calc(65% - 10px);
+              background-color: ${theme.palette.background.paper};
+              border-radius: 24px;
+              width: 400px;
+              ${theme.breakpoints.down('md')} {
+                width: 100%;
+              }
             `}
           >
-            <SlimMetricsCard
-              title="Volume (All Time)"
-              value={format(
-                fusionResolversMetrics?.allResolvers.volumeAllTime,
-                {
-                  symbol: 'USD',
-                  abbreviate: true,
-                }
-              )}
-            />
-            <SlimMetricsCard
-              title="Transactions (All Time)"
-              value={format(
-                fusionResolversMetrics?.allResolvers.transactionsCountAllTime,
-                {
-                  abbreviate: true,
-                }
-              )}
-            />
-            <SlimMetricsCard
-              title="Users (All Time)"
-              value={format(
-                fusionResolversMetrics?.allResolvers.walletsCountAllTime,
-                {
-                  abbreviate: true,
-                }
-              )}
-            />
+            <FusionTradersTable fusionTraders={fusionTraders} />
           </div>
           <div
-            css={css`
-              display: flex;
-              flex-flow: row;
-              justify-content: center;
-              gap: 10px;
-              flex-wrap: wrap;
+            css={(theme) => css`
+              width: 35%;
+              background-color: ${theme.palette.background.paper};
+              border-radius: 24px;
+              width: calc(100% - 420px);
+              ${theme.breakpoints.down('md')} {
+                width: 100%;
+              }
             `}
           >
-            <SlimMetricsCard
-              title="Volume (7D)"
-              value={format(
-                fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
-                {
-                  symbol: 'USD',
-                  abbreviate: true,
-                }
-              )}
-              subValue={
-                <TrendLabelPercent
-                  value={
-                    fusionResolversMetrics?.allResolvers
-                      .walletsCountLastWeekTrend
-                  }
-                />
-              }
-            />
-            <SlimMetricsCard
-              title="Transactions (7D)"
-              value={format(
-                fusionResolversMetrics?.allResolvers.transactionsCountLastWeek,
-                {
-                  symbol: 'USD',
-                  abbreviate: true,
-                }
-              )}
-              subValue={
-                <TrendLabelPercent
-                  value={
-                    fusionResolversMetrics?.allResolvers
-                      .transactionsCountLastWeekTrend
-                  }
-                />
-              }
-            />
-            <SlimMetricsCard
-              title="Users (7D)"
-              value={format(
-                fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
-                {
-                  abbreviate: true,
-                }
-              )}
-              subValue={
-                <TrendLabelPercent
-                  value={
-                    fusionResolversMetrics?.allResolvers
-                      .walletsCountLastWeekTrend
-                  }
-                />
-              }
+            <FusionResolversTable
+              fusionResolvers={fusionResolvers}
+              fusionResolversMetrics={fusionResolversMetrics}
+              getFusionResolverMetrics={getFusionResolverMetrics}
             />
           </div>
         </div>
-        <FusionResolversTable
-          fusionResolvers={fusionResolvers}
-          fusionResolversMetrics={fusionResolversMetrics}
-          getFusionResolverMetrics={getFusionResolverMetrics}
-        />
       </div>
     </Container>
   );

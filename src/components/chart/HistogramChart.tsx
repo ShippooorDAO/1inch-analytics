@@ -52,10 +52,7 @@ function getTooltipFormatter(
   }, 0);
 
   tooltipRows.push({
-    y: selectedTimeseries.reduce((acc, t) => {
-      const data = t.data.find((d) => d.x === xValue);
-      return acc + (data?.y || 0);
-    }, 0),
+    y: totalY,
     row: {
       color: 'white',
       name: 'Total (all selected chains)',
@@ -88,10 +85,10 @@ function getTooltipRowForTimeseries(
     const index = timeseries.data.findIndex((data) => {
       return data.x >= x;
     });
-    if (index === -1 || index === 0) {
+    if (index === -1) {
       return null;
     }
-    return timeseries.data[index - 1];
+    return timeseries.data[index];
   })();
 
   const share = data?.y ? data.y / totalY : 0;

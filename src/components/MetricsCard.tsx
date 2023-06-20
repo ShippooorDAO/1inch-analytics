@@ -302,7 +302,7 @@ export function TrendLabel({
       `}
     >
       {iconAlign === 'left' && icon}
-      <Typography variant="body2">{label}</Typography>
+      <Typography variant="body1">{label}</Typography>
       {iconAlign === 'right' && icon}
     </div>
   );
