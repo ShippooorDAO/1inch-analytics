@@ -3,6 +3,8 @@ import { Menu } from '@mui/icons-material';
 import { Drawer, IconButton, PaperProps } from '@mui/material';
 import Link from 'next/link';
 
+import { UniswapV3SubgraphProvider } from '@/shared/UniswapV3Subgraph/UniswapV3SubgraphProvider';
+
 import { GasMeter } from '../GasMeter';
 import { SidebarFooter } from './SidebarFooter';
 import SidebarNav, { SidebarNavProps } from './SidebarNav';
@@ -78,7 +80,9 @@ const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
           background-color: ${theme.sidebar.background};
         `}
       >
-        <GasMeter />
+        <UniswapV3SubgraphProvider>
+          <GasMeter />
+        </UniswapV3SubgraphProvider>
       </div>
 
       <SidebarFooter />

@@ -8,6 +8,10 @@ import {
 } from '@/hooks/useNativeTokenRates';
 import { Chain } from '@/shared/Model/Chain';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
+import {
+  TimedGasPrice,
+  useUniswapV3SubgraphContext,
+} from '@/shared/UniswapV3Subgraph/UniswapV3SubgraphProvider';
 
 import { AutoSkeleton } from './AutoSkeleton';
 import { ChainSelect } from './filters/ChainSelect';
@@ -21,10 +25,13 @@ function formatSwapPrice(chainGasPrice: number, gasTokenPrice: number) {
 export function GasMeter() {
   const theme = useTheme();
   const { chainStore } = useOneInchAnalyticsAPIContext();
+  const { latestGasPrices } = useUniswapV3SubgraphContext();
   const gasData = useNativeTokenRates();
 
   const [selectedChain, setSelectedChain] = useState<Chain | null>();
   const [chainGasData, setChainGasData] = useState<ChainGasPrice | undefined>();
+  const [ethGasPrices, setEthGasPrices] = useState<TimedGasPrice[]>([]);
+  const [displayGasTrend, setDisplayGasTrend] = useState<boolean>(false);
 
   const chainOptions = useMemo(() => {
     if (!chainStore) {
@@ -50,6 +57,16 @@ export function GasMeter() {
       setChainGasData(chainData);
     }
   }, [selectedChain, gasData]);
+
+  useEffect(() => {
+    if (latestGasPrices && selectedChain?.chainId === 1) {
+      setEthGasPrices(latestGasPrices);
+      setDisplayGasTrend(true);
+    } else {
+      setEthGasPrices([]);
+      setDisplayGasTrend(false);
+    }
+  }, [selectedChain, latestGasPrices]);
 
   useEffect(() => {
     if (selectedChain) {
@@ -103,7 +120,7 @@ export function GasMeter() {
                   <Typography variant="subtitle2">
                     {selectedChain?.gasSymbol} price:
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" color="textSecondary">
                     ${chainGasData.gasTokenPriceUsd.toFixed(2)}
                   </Typography>
                 </div>
@@ -112,6 +129,13 @@ export function GasMeter() {
                     Estimated swap costs:
                   </Typography>
                 </div>
+                <hr
+                  css={css`
+                    width: 100%;
+                    height: 1px;
+                    border: 1px solid rgba(255, 255, 225, 0.1);
+                  `}
+                />
                 <div
                   css={css`
                     width: 100%;
@@ -137,7 +161,7 @@ export function GasMeter() {
                         {chainGasValue.displayText} (
                         {chainGasValue.gwei.toFixed(0)} gwei)
                       </Typography>
-                      <Typography variant="body2">
+                      <Typography variant="body2" color="textSecondary">
                         ~$
                         {formatSwapPrice(
                           chainGasValue.gwei,
@@ -147,6 +171,26 @@ export function GasMeter() {
                     </div>
                   ))}
                 </div>
+                {displayGasTrend ? (
+                  <>
+                    <div
+                      css={css`
+                        margin-top: 5px;
+                      `}
+                    >
+                      <Typography variant="subtitle2">
+                        Gas price trend:
+                      </Typography>
+                    </div>
+                    <hr
+                      css={css`
+                        width: 100%;
+                        height: 1px;
+                        border: 1px solid rgba(255, 255, 225, 0.1);
+                      `}
+                    />
+                  </>
+                ) : undefined}
               </div>
             </>
           ) : undefined}
