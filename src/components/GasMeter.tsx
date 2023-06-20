@@ -47,8 +47,6 @@ export function GasMeter() {
         (chainData) => chainData.chainId === selectedChain.chainId
       );
 
-      console.log(chainData);
-
       setChainGasData(chainData);
     }
   }, [selectedChain, gasData]);

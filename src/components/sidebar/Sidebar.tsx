@@ -18,7 +18,7 @@ export interface SidebarProps {
 const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
   return (
     <Drawer
-      css={(theme) => css`
+      css={css`
         border-right: 0;
         > div {
           border-right: 0;
@@ -76,7 +76,8 @@ const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
           display: flex;
           justify-content: center;
           background-color: ${theme.sidebar.background};
-      `}>
+        `}
+      >
         <GasMeter />
       </div>
 
