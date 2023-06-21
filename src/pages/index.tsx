@@ -107,7 +107,8 @@ function ControlledHistogramChart({
 
 interface ControlledDonutChartProps {
   seriesName: string;
-  formatter: (y?: number | null) => string;
+  tooltipFormatter: (y?: number | null) => string;
+  labelFormatter: (y?: number | null) => string;
   volumeLastWeek?: {
     name: string;
     y: number;
@@ -128,7 +129,8 @@ interface ControlledDonutChartProps {
 
 function ControlledDonutChart({
   seriesName,
-  formatter,
+  tooltipFormatter,
+  labelFormatter,
   volumeLastWeek,
   volumeLastMonth,
   volumeAllTime,
@@ -164,7 +166,12 @@ function ControlledDonutChart({
           { value: TimeWindow.MAX, label: 'All Time' },
         ]}
       />
-      <DonutChart seriesName={seriesName} data={data} formatter={formatter} />
+      <DonutChart
+        seriesName={seriesName}
+        data={data}
+        tooltipFormatter={tooltipFormatter}
+        labelFormatter={labelFormatter}
+      />
     </>
   );
 }
@@ -404,7 +411,10 @@ export default function Home() {
                     color: chain.color,
                   };
                 })}
-                formatter={(y) => format(y, { symbol: 'USD' })}
+                tooltipFormatter={(y) => format(y, { symbol: 'USD' })}
+                labelFormatter={(y) =>
+                  format(y, { abbreviate: true, symbol: 'USD' })
+                }
               />
             ),
           }}
@@ -510,7 +520,10 @@ export default function Home() {
                     color: chain.color,
                   };
                 })}
-                formatter={(y) => format(y, { decimals: 0 })}
+                labelFormatter={(y) =>
+                  format(y, { decimals: 0, abbreviate: true })
+                }
+                tooltipFormatter={(y) => format(y, { decimals: 0 })}
               />
             ),
           }}
@@ -674,7 +687,10 @@ export default function Home() {
                     color: chain.color,
                   };
                 })}
-                formatter={(y) => format(y, { decimals: 0 })}
+                labelFormatter={(y) =>
+                  format(y, { decimals: 0, abbreviate: true })
+                }
+                tooltipFormatter={(y) => format(y, { decimals: 0 })}
               />
             ),
           }}
