@@ -8,8 +8,18 @@ import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 
 const QUERY = gql`
-  query getFusionTopTraders {
-    fusionTopTraders {
+  query getFusionTopTraders(
+    $sortBy: String
+    $sortDirection: SortDirection
+    $pageNumber: Int
+    $pageSize: Int
+  ) {
+    fusionTopTraders(
+      sortBy: $sortBy
+      sortDirection: $sortDirection
+      pageNumber: $pageNumber
+      pageSize: $pageSize
+    ) {
       fusionTopTraders {
         id
         address

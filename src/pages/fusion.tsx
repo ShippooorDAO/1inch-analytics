@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { lighten } from 'polished';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
 import { DonutChart } from '@/components/chart/DonutChart';
@@ -33,7 +33,6 @@ import {
   FusionResolver,
   getDuneResolverNameFromResolverAddress,
 } from '@/shared/Model/FusionResolver';
-import { FusionTrader } from '@/shared/Model/FusionTrader';
 import { TimeInterval, TimeWindow } from '@/shared/Model/Timeseries';
 import { format, getAddressShorthand } from '@/shared/Utils/Format';
 
@@ -112,9 +111,7 @@ function ControlledDonutChart({
 
 function useFusionPageData() {
   const fusionResolversContext = useFusionResolvers();
-  const { fusionTopTraders } = useFusionTopTraders({
-    pageSize: 1000,
-  });
+
   const fusionResolversMetricsContext = useFusionResolversMetrics(
     fusionResolversContext.data
   );
@@ -142,7 +139,6 @@ function useFusionPageData() {
 
   return {
     getFusionResolverMetrics,
-    fusionTraders: fusionTopTraders,
     fusionResolversMetrics: fusionResolversMetricsContext.data,
     fusionResolvers: fusionResolversContext.data,
     loading,
@@ -277,19 +273,28 @@ function FusionResolversTable({
           >
             <MenuItem
               selected={sortBy === 'volume'}
-              onClick={() => setSortBy('volume')}
+              onClick={() => {
+                setSortBy('volume');
+                handleSortMenuClose();
+              }}
             >
               Volume
             </MenuItem>
             <MenuItem
               selected={sortBy === 'transactions'}
-              onClick={() => setSortBy('transactions')}
+              onClick={() => {
+                setSortBy('transactions');
+                handleSortMenuClose();
+              }}
             >
               Transactions
             </MenuItem>
             <MenuItem
               selected={sortBy === 'wallets'}
-              onClick={() => setSortBy('wallets')}
+              onClick={() => {
+                setSortBy('wallets');
+                handleSortMenuClose();
+              }}
             >
               Wallets
             </MenuItem>
@@ -502,18 +507,26 @@ function FusionResolversTable({
   );
 }
 
-interface FusionTradersTableProps {
-  fusionTraders: FusionTrader[] | null;
-}
-
-function FusionTradersTable({ fusionTraders }: FusionTradersTableProps) {
-  const rows = fusionTraders ?? undefined;
-
-  const [sortBy, setSortBy] = useState<'volume' | 'transactions'>('volume');
+function FusionTradersTable() {
+  const [sortBy, setSortBy] = useState<'volumeUsd' | 'transactionCount'>(
+    'volumeUsd'
+  );
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(8);
+  const { fusionTopTraders } = useFusionTopTraders({
+    pageSize: 1000,
+    pageNumber: 1,
+    sortBy,
+  });
+  const rows = fusionTopTraders ?? undefined;
+
+  useEffect(() => {
+    setPageNumber(0);
+  }, [sortBy]);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const sortMenuOpen = Boolean(anchorEl);
+
   const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -588,14 +601,20 @@ function FusionTradersTable({ fusionTraders }: FusionTradersTableProps) {
             onClose={handleSortMenuClose}
           >
             <MenuItem
-              selected={sortBy === 'volume'}
-              onClick={() => setSortBy('volume')}
+              selected={sortBy === 'volumeUsd'}
+              onClick={() => {
+                setSortBy('volumeUsd');
+                handleSortMenuClose();
+              }}
             >
               Volume
             </MenuItem>
             <MenuItem
-              selected={sortBy === 'transactions'}
-              onClick={() => setSortBy('transactions')}
+              selected={sortBy === 'transactionCount'}
+              onClick={() => {
+                setSortBy('transactionCount');
+                handleSortMenuClose();
+              }}
             >
               Transactions
             </MenuItem>
@@ -728,13 +747,8 @@ function FusionTradersTable({ fusionTraders }: FusionTradersTableProps) {
 }
 
 export default function FusionPage() {
-  const {
-    getFusionResolverMetrics,
-    fusionResolvers,
-    fusionResolversMetrics,
-    fusionTraders,
-    loading,
-  } = useFusionPageData();
+  const { getFusionResolverMetrics, fusionResolvers, fusionResolversMetrics } =
+    useFusionPageData();
 
   return (
     <Container
@@ -1044,7 +1058,7 @@ export default function FusionPage() {
               }
             `}
           >
-            <FusionTradersTable fusionTraders={fusionTraders} />
+            <FusionTradersTable />
           </div>
           <div
             css={(theme) => css`
