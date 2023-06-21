@@ -10,11 +10,18 @@ import { format } from '@/shared/Utils/Format';
 import { useChartOptions } from './useChartOptions';
 
 interface UseDonutChartOptionsProps {
-  formatter?: (y?: number | null) => string;
+  tooltipFormatter?: (y?: number | null) => string;
+  labelFormatter?: (y?: number | null) => string;
 }
 
-function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
-  const innerFormatter = formatter ?? ((y) => format(y, { symbol: 'USD' }));
+function useDonutChartOptions({
+  tooltipFormatter,
+  labelFormatter,
+}: UseDonutChartOptionsProps) {
+  const innerTooltipFormatter =
+    tooltipFormatter ?? ((y) => format(y, { symbol: 'USD' }));
+  const innerLabelFormatter =
+    labelFormatter ?? ((y) => format(y, { symbol: 'USD', abbreviate: true }));
 
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
@@ -74,7 +81,7 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
               {
                 color: this.point.color as string,
                 name: this.series.name,
-                y: innerFormatter(this.y),
+                y: innerTooltipFormatter(this.y),
               },
               {
                 name: 'Share',
@@ -95,7 +102,7 @@ function useDonutChartOptions({ formatter }: UseDonutChartOptionsProps) {
           crop: false,
           enabled: true,
           formatter() {
-            return `${this.point.name}: ${innerFormatter(this.y)}`;
+            return `${this.point.name}: ${innerLabelFormatter(this.y)}`;
           },
           style: {
             fontFamily: theme.typography.fontFamily,
@@ -119,11 +126,20 @@ export interface DonutChartProps {
     imageUrl?: string;
     color?: string;
   }>;
-  formatter?: (y?: number | null) => string;
+  tooltipFormatter?: (y?: number | null) => string;
+  labelFormatter?: (y?: number | null) => string;
 }
 
-export function DonutChart({ data, seriesName, formatter }: DonutChartProps) {
-  const { chartOptions } = useDonutChartOptions({ formatter });
+export function DonutChart({
+  data,
+  seriesName,
+  tooltipFormatter,
+  labelFormatter,
+}: DonutChartProps) {
+  const { chartOptions } = useDonutChartOptions({
+    tooltipFormatter,
+    labelFormatter,
+  });
 
   const sortedData = [...(data ?? [])];
   sortedData.sort((a, b) => b.y - a.y);

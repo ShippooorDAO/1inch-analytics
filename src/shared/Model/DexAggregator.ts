@@ -1,3 +1,5 @@
+import { sum } from 'lodash';
+
 import { ChainId } from './Chain';
 import { Timeseries } from './Timeseries';
 
@@ -66,6 +68,26 @@ export function getCumulatedTimeseries(timeseries: Timeseries) {
 
 export function getAllTimeTotal(timeseries: Timeseries) {
   return timeseries.data.reduce((sum, d) => sum + d.y, 0);
+}
+
+export function getAllTimeShare(
+  timeseries: Timeseries,
+  allTimeseries: Timeseries[]
+) {
+  const allTimeTimeseriesTotal = getAllTimeTotal(timeseries);
+  const allTimeTotal = sum(allTimeseries.map((t) => getAllTimeTotal(t)));
+  return allTimeTimeseriesTotal / allTimeTotal;
+}
+
+export function getLastPeriodShare(
+  timeseries: Timeseries,
+  allTimeseries: Timeseries[]
+) {
+  const lastPeriodValue = getLastPeriodValue(timeseries);
+  const lastPeriodValueTotal = sum(
+    allTimeseries.map((t) => getLastPeriodValue(t))
+  );
+  return lastPeriodValue / lastPeriodValueTotal;
 }
 
 export function getLastPeriodValue(timeseries: Timeseries) {

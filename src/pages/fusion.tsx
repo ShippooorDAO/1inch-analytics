@@ -38,7 +38,8 @@ import { format, getAddressShorthand } from '@/shared/Utils/Format';
 
 interface ControlledDonutChartProps {
   seriesName: string;
-  formatter: (y?: number | null) => string;
+  tooltipFormatter: (y?: number | null) => string;
+  labelFormatter: (y?: number | null) => string;
   volumeLastWeek?: {
     name: string;
     y: number;
@@ -58,7 +59,8 @@ interface ControlledDonutChartProps {
 
 function ControlledDonutChart({
   seriesName,
-  formatter,
+  tooltipFormatter,
+  labelFormatter,
   volumeLastWeek,
   volumeLastMonth,
   volumeAllTime,
@@ -104,7 +106,12 @@ function ControlledDonutChart({
         onChange={handleTimeWindowChange}
         options={options}
       />
-      <DonutChart seriesName={seriesName} data={data} formatter={formatter} />
+      <DonutChart
+        seriesName={seriesName}
+        data={data}
+        tooltipFormatter={tooltipFormatter}
+        labelFormatter={labelFormatter}
+      />
     </>
   );
 }
@@ -156,13 +163,13 @@ interface FusionResolversTableProps {
 function FusionResolversTable({
   fusionResolvers,
   getFusionResolverMetrics,
-  fusionResolversMetrics,
 }: FusionResolversTableProps) {
   const [sortBy, setSortBy] = useState<'volume' | 'transactions' | 'wallets'>(
     'volume'
   );
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(8);
+  const [timeWindow, setTimeWindow] = useState(TimeWindow.SEVEN_DAYS);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const sortMenuOpen = Boolean(anchorEl);
   const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -191,35 +198,87 @@ function FusionResolversTable({
     setPageNumber(pageNumber - 1);
   };
 
-  const sortedFusionResolvers = useMemo(() => {
+  const rows = useMemo(() => {
     if (!fusionResolvers) {
       return undefined;
     }
 
-    return fusionResolvers.sort((a, b) => {
-      const aMetrics = getFusionResolverMetrics(a);
-      const bMetrics = getFusionResolverMetrics(b);
+    return fusionResolvers
+      .map((resolver) => {
+        const metrics = getFusionResolverMetrics(resolver);
 
-      if (!aMetrics || !bMetrics) {
+        if (!metrics) {
+          return undefined;
+        }
+
+        const timeWindowMetrics = (() => {
+          switch (timeWindow) {
+            case TimeWindow.SEVEN_DAYS:
+              return {
+                transactionsCount: metrics.transactionsCountLastWeek,
+                walletsCount: metrics.walletsCountLastWeek,
+                volume: metrics.volumeLastWeek,
+
+                transactionsCountTrend: metrics.transactionsCountLastWeekTrend,
+                walletsCountTrend: metrics.walletsCountLastWeekTrend,
+                volumeTrend: metrics.volumeLastWeekTrend,
+
+                transactionsCountPercent:
+                  metrics.transactionsCountLastWeekPercent,
+                walletsCountPercent: metrics.walletsCountLastWeekPercent,
+                volumePercent: metrics.volumeLastWeekPercent,
+              };
+            case TimeWindow.MAX:
+            default:
+              return {
+                transactionsCount: metrics.transactionsCountAllTime,
+                walletsCount: metrics.walletsCountAllTime,
+                volume: metrics.volumeAllTime,
+
+                transactionsCountTrend: metrics.transactionsCountLastWeekTrend,
+                walletsCountTrend: metrics.walletsCountLastWeekTrend,
+                volumeTrend: metrics.volumeLastWeekTrend,
+
+                transactionsCountPercent:
+                  metrics.transactionsCountAllTimePercent,
+                walletsCountPercent: metrics.walletsCountAllTimePercent,
+                volumePercent: metrics.volumeAllTimePercent,
+              };
+          }
+        })();
+
+        return {
+          resolver,
+          metrics: timeWindowMetrics,
+        };
+      })
+      .filter((r) => r !== undefined)
+      .map((r) => r!);
+  }, [fusionResolvers, getFusionResolverMetrics, timeWindow]);
+
+  const sortedRows = useMemo(() => {
+    if (!rows) {
+      return undefined;
+    }
+
+    return rows?.sort((a, b) => {
+      if (!a || !b) {
         return 0;
       }
 
       switch (sortBy) {
         case 'transactions':
-          return (
-            bMetrics.transactionsCountLastWeek -
-            aMetrics.transactionsCountLastWeek
-          );
+          return b.metrics.transactionsCount - a.metrics.transactionsCount;
         case 'wallets':
-          return bMetrics.walletsCountLastWeek - aMetrics.walletsCountLastWeek;
+          return b.metrics.walletsCount - a.metrics.walletsCount;
         case 'volume':
         default:
-          return bMetrics.volumeLastWeek - aMetrics.volumeLastWeek;
+          return b.metrics.volume - a.metrics.volume;
       }
     });
-  }, [sortBy, fusionResolvers, getFusionResolverMetrics]);
+  }, [sortBy, rows]);
 
-  const displayedFusionResolvers = sortedFusionResolvers?.slice(
+  const displayedRows = sortedRows?.slice(
     pageNumber * pageSize,
     pageNumber * pageSize + pageSize
   );
@@ -255,6 +314,14 @@ function FusionResolversTable({
           `}
         >
           <Typography variant="h3">Top Fusion Resolvers</Typography>
+          <TimeWindowToggleButtonGroup
+            value={timeWindow}
+            onChange={(e, value) => setTimeWindow(value)}
+            options={[
+              { value: TimeWindow.SEVEN_DAYS, label: 'Last Week' },
+              { value: TimeWindow.MAX, label: 'All Time' },
+            ]}
+          />
           <Button
             onClick={handleSortMenuClick}
             endIcon={<Sort />}
@@ -300,9 +367,9 @@ function FusionResolversTable({
             </MenuItem>
           </Menu>
         </div>
-        {displayedFusionResolvers?.map((fusionResolver) => (
+        {displayedRows?.map((row) => (
           <div
-            key={fusionResolver.id}
+            key={row?.resolver.id}
             css={(theme) => css`
               display: flex;
               flex-flow: row;
@@ -325,8 +392,8 @@ function FusionResolversTable({
               `}
             >
               <img
-                src={fusionResolver.imageUrl}
-                alt={fusionResolver.name}
+                src={row?.resolver.imageUrl}
+                alt={row?.resolver.name}
                 css={css`
                   height: 40px;
                   width: 40px;
@@ -343,23 +410,23 @@ function FusionResolversTable({
                   `}
                 >
                   <a
-                    href={`https://app.1inch.io/#/1/earn/delegate/${fusionResolver.address}`}
+                    href={`https://app.1inch.io/#/1/earn/delegate/${row.resolver.address}`}
                   >
                     <Typography variant="body2">
-                      {fusionResolver.name}
+                      {row?.resolver.name}
                     </Typography>
                   </a>
                   <EtherscanButton
                     size="small"
-                    address={fusionResolver.address}
+                    address={row?.resolver.address}
                   />
                   <AddressCopyButton
                     size="small"
-                    address={fusionResolver.address}
+                    address={row?.resolver.address}
                   />
                 </div>
                 <Typography variant="body1" color="textSecondary">
-                  {getAddressShorthand(fusionResolver.address)}
+                  {getAddressShorthand(row?.resolver.address)}
                 </Typography>
               </div>
             </div>
@@ -383,27 +450,21 @@ function FusionResolversTable({
                 `}
               >
                 <Typography variant="body2">
-                  {format(
-                    getFusionResolverMetrics(fusionResolver)?.volumeLastWeek,
-                    { symbol: 'USD', decimals: 1, abbreviate: true }
-                  )}{' '}
+                  {format(row?.metrics.volume, {
+                    symbol: 'USD',
+                    decimals: 1,
+                    abbreviate: true,
+                  })}{' '}
                   volume
                 </Typography>
                 <TrendLabelPercent
-                  value={
-                    getFusionResolverMetrics(fusionResolver)
-                      ?.volumeLastWeekTrend
-                  }
+                  value={row?.metrics.volumeTrend}
                   iconAlign="left"
                 />
                 <Typography variant="body1" color="textSecondary">
-                  {format(
-                    (getFusionResolverMetrics(fusionResolver)?.volumeLastWeek ??
-                      0) /
-                      (fusionResolversMetrics?.allResolvers.volumeLastWeek ??
-                        1),
-                    { symbol: '%' }
-                  )}{' '}
+                  {format(row?.metrics.transactionsCountPercent, {
+                    symbol: '%',
+                  })}{' '}
                   of total
                 </Typography>
               </div>
@@ -419,27 +480,18 @@ function FusionResolversTable({
               `}
             >
               <Typography variant="body2">
-                {format(
-                  getFusionResolverMetrics(fusionResolver)
-                    ?.transactionsCountLastWeek,
-                  { decimals: 1, abbreviate: true }
-                )}{' '}
+                {format(row?.metrics.transactionsCount, {
+                  decimals: 1,
+                  abbreviate: true,
+                })}{' '}
                 transactions
               </Typography>
               <TrendLabelPercent
-                value={
-                  getFusionResolverMetrics(fusionResolver)?.volumeLastWeekTrend
-                }
+                value={row?.metrics.transactionsCountTrend}
                 iconAlign="left"
               />
               <Typography variant="body1" color="textSecondary">
-                {format(
-                  (getFusionResolverMetrics(fusionResolver)
-                    ?.transactionsCountLastWeek ?? 0) /
-                    (fusionResolversMetrics?.allResolvers
-                      .transactionsCountLastWeek ?? 1),
-                  { symbol: '%' }
-                )}{' '}
+                {format(row?.metrics.transactionsCountPercent, { symbol: '%' })}{' '}
                 of total
               </Typography>
             </div>
@@ -454,29 +506,19 @@ function FusionResolversTable({
               `}
             >
               <Typography variant="body2">
-                {format(
-                  getFusionResolverMetrics(fusionResolver)
-                    ?.walletsCountLastWeek,
-                  { decimals: 1, abbreviate: true }
-                )}{' '}
+                {format(row?.metrics.walletsCount, {
+                  decimals: 1,
+                  abbreviate: true,
+                })}{' '}
                 wallets
               </Typography>
               <TrendLabelPercent
-                value={
-                  getFusionResolverMetrics(fusionResolver)
-                    ?.walletsCountLastWeekTrend
-                }
+                value={row?.metrics.walletsCountTrend}
                 iconAlign="left"
               />
               <Typography variant="body1" color="textSecondary">
-                {format(
-                  (getFusionResolverMetrics(fusionResolver)
-                    ?.walletsCountLastWeek ?? 0) /
-                    (fusionResolversMetrics?.allResolvers
-                      .walletsCountLastWeek ?? 1),
-                  { symbol: '%' }
-                )}{' '}
-                of total
+                {format(row?.metrics.walletsCountPercent, { symbol: '%' })} of
+                total
               </Typography>
             </div>
           </div>
@@ -514,7 +556,7 @@ function FusionTradersTable() {
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(8);
   const { fusionTopTraders } = useFusionTopTraders({
-    pageSize: 1000,
+    pageSize: pageSize * 100,
     pageNumber: 1,
     sortBy,
   });
@@ -927,7 +969,10 @@ export default function FusionPage() {
                             color: m.volumeWeeklyTimeseries.color,
                           };
                         })}
-                        formatter={(y) => format(y, { symbol: 'USD' })}
+                        tooltipFormatter={(y) => format(y, { symbol: 'USD' })}
+                        labelFormatter={(y) =>
+                          format(y, { symbol: 'USD', abbreviate: true })
+                        }
                       />
                     ),
                   }}
@@ -978,7 +1023,8 @@ export default function FusionPage() {
                             color: m.transactionsCountWeeklyTimeseries.color,
                           };
                         })}
-                        formatter={(y) => format(y, { abbreviate: true })}
+                        tooltipFormatter={(y) => format(y)}
+                        labelFormatter={(y) => format(y, { abbreviate: true })}
                       />
                     ),
                   }}
@@ -1029,7 +1075,8 @@ export default function FusionPage() {
                             color: m.walletsCountWeeklyTimeseries.color,
                           };
                         })}
-                        formatter={(y) => format(y, { abbreviate: true })}
+                        tooltipFormatter={(y) => format(y)}
+                        labelFormatter={(y) => format(y, { abbreviate: true })}
                       />
                     ),
                   }}

@@ -4,7 +4,9 @@ import { useMemo } from 'react';
 
 import { useFeatureFlags } from '@/shared/FeatureFlags/FeatureFlagsContextProvider';
 import {
+  getAllTimeShare,
   getAllTimeTotal,
+  getLastPeriodShare,
   getLastPeriodValue,
   getTimeseriesTrend,
   sumTimeseries,
@@ -55,9 +57,17 @@ export interface FusionResolverMetrics {
   walletsCountAllTime: number;
   volumeAllTime: number;
 
+  transactionsCountAllTimePercent: number;
+  walletsCountAllTimePercent: number;
+  volumeAllTimePercent: number;
+
   transactionsCountLastWeek: number;
   walletsCountLastWeek: number;
   volumeLastWeek: number;
+
+  transactionsCountLastWeekPercent: number;
+  walletsCountLastWeekPercent: number;
+  volumeLastWeekPercent: number;
 
   transactionsCountLastWeekTrend: number;
   walletsCountLastWeekTrend: number;
@@ -156,15 +166,22 @@ function parseFusionResolversQueryResponse(
 
   const { resolvers } = weeklyTimeseries;
 
-  const transactionsCountWeeklyTimeseries = sumTimeseries(
-    Array.from(weeklyTimeseries.transactionsCountTimeseriesByResolver.values())
+  const allTransactionCountTimeseries = Array.from(
+    weeklyTimeseries.transactionsCountTimeseriesByResolver.values()
   );
-  const walletsCountWeeklyTimeseries = sumTimeseries(
-    Array.from(weeklyTimeseries.walletsCountTimeseriesByResolver.values())
+  const allWalletsCountTimeseries = Array.from(
+    weeklyTimeseries.walletsCountTimeseriesByResolver.values()
   );
-  const volumeWeeklyTimeseries = sumTimeseries(
-    Array.from(weeklyTimeseries.volumeTimeseriesByResolver.values())
+  const allVolumeWeeklyTimeseries = Array.from(
+    weeklyTimeseries.volumeTimeseriesByResolver.values()
   );
+  const transactionsCountWeeklyTotalTimeseries = sumTimeseries(
+    allTransactionCountTimeseries
+  );
+  const walletsCountWeeklyTotalTimeseries = sumTimeseries(
+    allWalletsCountTimeseries
+  );
+  const volumeWeeklyTotalTimeseries = sumTimeseries(allVolumeWeeklyTimeseries);
 
   return {
     byResolver: new Map(
@@ -193,6 +210,19 @@ function parseFusionResolversQueryResponse(
             walletsCountAllTime: getAllTimeTotal(walletsCountWeeklyTimeseries),
             volumeAllTime: getAllTimeTotal(volumeWeeklyTimeseries),
 
+            volumeAllTimePercent: getAllTimeShare(
+              volumeWeeklyTimeseries,
+              allVolumeWeeklyTimeseries
+            ),
+            walletsCountAllTimePercent: getAllTimeShare(
+              walletsCountWeeklyTimeseries,
+              allWalletsCountTimeseries
+            ),
+            transactionsCountAllTimePercent: getAllTimeShare(
+              transactionsCountWeeklyTimeseries,
+              allTransactionCountTimeseries
+            ),
+
             transactionsCountLastWeek: getLastPeriodValue(
               transactionsCountWeeklyTimeseries
             ),
@@ -200,6 +230,19 @@ function parseFusionResolversQueryResponse(
               walletsCountWeeklyTimeseries
             ),
             volumeLastWeek: getLastPeriodValue(volumeWeeklyTimeseries),
+
+            transactionsCountLastWeekPercent: getLastPeriodShare(
+              transactionsCountWeeklyTimeseries,
+              allTransactionCountTimeseries
+            ),
+            walletsCountLastWeekPercent: getLastPeriodShare(
+              walletsCountWeeklyTimeseries,
+              allWalletsCountTimeseries
+            ),
+            volumeLastWeekPercent: getLastPeriodShare(
+              volumeWeeklyTimeseries,
+              allVolumeWeeklyTimeseries
+            ),
 
             transactionsCountLastWeekTrend: getTimeseriesTrend(
               transactionsCountWeeklyTimeseries
@@ -218,28 +261,56 @@ function parseFusionResolversQueryResponse(
     ),
     allResolvers: {
       transactionsCountAllTime: getAllTimeTotal(
-        transactionsCountWeeklyTimeseries
+        transactionsCountWeeklyTotalTimeseries
       ),
-      walletsCountAllTime: getAllTimeTotal(walletsCountWeeklyTimeseries),
-      volumeAllTime: getAllTimeTotal(volumeWeeklyTimeseries),
+      walletsCountAllTime: getAllTimeTotal(walletsCountWeeklyTotalTimeseries),
+      volumeAllTime: getAllTimeTotal(volumeWeeklyTotalTimeseries),
+
+      volumeAllTimePercent: getAllTimeShare(
+        volumeWeeklyTotalTimeseries,
+        allVolumeWeeklyTimeseries
+      ),
+      walletsCountAllTimePercent: getAllTimeShare(
+        walletsCountWeeklyTotalTimeseries,
+        allWalletsCountTimeseries
+      ),
+      transactionsCountAllTimePercent: getAllTimeShare(
+        transactionsCountWeeklyTotalTimeseries,
+        allTransactionCountTimeseries
+      ),
 
       transactionsCountLastWeek: getLastPeriodValue(
-        transactionsCountWeeklyTimeseries
+        transactionsCountWeeklyTotalTimeseries
       ),
-      walletsCountLastWeek: getLastPeriodValue(walletsCountWeeklyTimeseries),
-      volumeLastWeek: getLastPeriodValue(volumeWeeklyTimeseries),
+      walletsCountLastWeek: getLastPeriodValue(
+        walletsCountWeeklyTotalTimeseries
+      ),
+      volumeLastWeek: getLastPeriodValue(volumeWeeklyTotalTimeseries),
+
+      transactionsCountLastWeekPercent: getLastPeriodShare(
+        transactionsCountWeeklyTotalTimeseries,
+        allTransactionCountTimeseries
+      ),
+      walletsCountLastWeekPercent: getLastPeriodShare(
+        walletsCountWeeklyTotalTimeseries,
+        allWalletsCountTimeseries
+      ),
+      volumeLastWeekPercent: getLastPeriodShare(
+        volumeWeeklyTotalTimeseries,
+        allVolumeWeeklyTimeseries
+      ),
 
       transactionsCountLastWeekTrend: getTimeseriesTrend(
-        transactionsCountWeeklyTimeseries
+        transactionsCountWeeklyTotalTimeseries
       ),
       walletsCountLastWeekTrend: getTimeseriesTrend(
-        walletsCountWeeklyTimeseries
+        walletsCountWeeklyTotalTimeseries
       ),
-      volumeLastWeekTrend: getTimeseriesTrend(volumeWeeklyTimeseries),
+      volumeLastWeekTrend: getTimeseriesTrend(volumeWeeklyTotalTimeseries),
 
-      transactionsCountWeeklyTimeseries,
-      walletsCountWeeklyTimeseries,
-      volumeWeeklyTimeseries,
+      transactionsCountWeeklyTimeseries: transactionsCountWeeklyTotalTimeseries,
+      walletsCountWeeklyTimeseries: walletsCountWeeklyTotalTimeseries,
+      volumeWeeklyTimeseries: volumeWeeklyTotalTimeseries,
     },
   };
 }
