@@ -375,6 +375,7 @@ function FusionResolversTable({
               flex-flow: row;
               gap: 10px;
               align-items: center;
+              justify-content: space-between;
               padding: 10px 20px;
               border-radius: 24px;
               background-color: ${lighten(
@@ -389,6 +390,7 @@ function FusionResolversTable({
                 display: flex;
                 flex-flow: row;
                 gap: 10px;
+                width: 250px;
               `}
             >
               <img
@@ -436,7 +438,7 @@ function FusionResolversTable({
                 flex-flow: row;
                 align-items: center;
                 gap: 10px;
-                flex-grow: 1;
+                width: 150px;
               `}
             >
               <div
@@ -473,10 +475,10 @@ function FusionResolversTable({
               css={css`
                 display: flex;
                 flex-flow: column;
-                flex-grow: 1;
                 justify-content: flex-end;
                 align-items: flex-end;
                 padding-left: 20px;
+                width: 150px;
               `}
             >
               <Typography variant="body2">
@@ -499,7 +501,7 @@ function FusionResolversTable({
               css={css`
                 display: flex;
                 flex-flow: column;
-                flex-grow: 1;
+                width: 150px;
                 justify-content: flex-end;
                 align-items: flex-end;
                 padding-left: 20px;
