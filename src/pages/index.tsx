@@ -210,7 +210,7 @@ export default function Home() {
           gap: 40px;
         `}
       >
-        <Typography variant="h2">1inch Aggregation Protocol</Typography>
+        <Typography variant="h3">1inch Aggregation Protocol</Typography>
         {/* <div
           css={css`
             display: flex;

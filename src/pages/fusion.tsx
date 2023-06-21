@@ -17,7 +17,6 @@ import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
-import { RoundedImageIcon } from '@/components/icons/RoundedImageIcon';
 import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { MultiTabSection } from '@/components/SectionContainer';
 import { StatsContainer } from '@/components/StatsContainer';
@@ -811,119 +810,15 @@ export default function FusionPage() {
           justify-content: flex-start;
         `}
       >
-        <RoundedImageIcon src="/vendors/1inch/fusion.webp" size="medium" />
-        <Typography variant="h1">Fusion Mode</Typography>
+        <Typography variant="h3">Fusion Mode</Typography>
       </div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: column;
-          gap: 10px;
-          padding-bottom: 20px;
-        `}
-      >
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-          `}
-        >
-          <SlimMetricsCard
-            title="Volume (All Time)"
-            value={format(fusionResolversMetrics?.allResolvers.volumeAllTime, {
-              symbol: 'USD',
-              abbreviate: true,
-            })}
-          />
-          <SlimMetricsCard
-            title="Transactions (All Time)"
-            value={format(
-              fusionResolversMetrics?.allResolvers.transactionsCountAllTime,
-              {
-                abbreviate: true,
-              }
-            )}
-          />
-          <SlimMetricsCard
-            title="Users (All Time)"
-            value={format(
-              fusionResolversMetrics?.allResolvers.walletsCountAllTime,
-              {
-                abbreviate: true,
-              }
-            )}
-          />
-        </div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-          `}
-        >
-          <SlimMetricsCard
-            title="Volume (7D)"
-            value={format(
-              fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
-              {
-                symbol: 'USD',
-                abbreviate: true,
-              }
-            )}
-            subValue={
-              <TrendLabelPercent
-                value={
-                  fusionResolversMetrics?.allResolvers.walletsCountLastWeekTrend
-                }
-              />
-            }
-          />
-          <SlimMetricsCard
-            title="Transactions (7D)"
-            value={format(
-              fusionResolversMetrics?.allResolvers.transactionsCountLastWeek,
-              {
-                symbol: 'USD',
-                abbreviate: true,
-              }
-            )}
-            subValue={
-              <TrendLabelPercent
-                value={
-                  fusionResolversMetrics?.allResolvers
-                    .transactionsCountLastWeekTrend
-                }
-              />
-            }
-          />
-          <SlimMetricsCard
-            title="Users (7D)"
-            value={format(
-              fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
-              {
-                abbreviate: true,
-              }
-            )}
-            subValue={
-              <TrendLabelPercent
-                value={
-                  fusionResolversMetrics?.allResolvers.walletsCountLastWeekTrend
-                }
-              />
-            }
-          />
-        </div>
-      </div>
+
       <div
         css={css`
           display: flex;
           flex-flow: column;
           gap: 20px;
+          margin-top: -40px;
         `}
       >
         <MultiTabSection
@@ -1087,6 +982,117 @@ export default function FusionPage() {
             },
           ]}
         />
+
+        <div
+          css={css`
+            display: flex;
+            flex-flow: column;
+            gap: 10px;
+            padding-bottom: 20px;
+          `}
+        >
+          <div
+            css={css`
+              display: flex;
+              flex-flow: row;
+              justify-content: center;
+              gap: 10px;
+              flex-wrap: wrap;
+            `}
+          >
+            <SlimMetricsCard
+              title="Volume (All Time)"
+              value={format(
+                fusionResolversMetrics?.allResolvers.volumeAllTime,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              )}
+            />
+            <SlimMetricsCard
+              title="Transactions (All Time)"
+              value={format(
+                fusionResolversMetrics?.allResolvers.transactionsCountAllTime,
+                {
+                  abbreviate: true,
+                }
+              )}
+            />
+            <SlimMetricsCard
+              title="Users (All Time)"
+              value={format(
+                fusionResolversMetrics?.allResolvers.walletsCountAllTime,
+                {
+                  abbreviate: true,
+                }
+              )}
+            />
+          </div>
+          <div
+            css={css`
+              display: flex;
+              flex-flow: row;
+              justify-content: center;
+              gap: 10px;
+              flex-wrap: wrap;
+            `}
+          >
+            <SlimMetricsCard
+              title="Volume (7D)"
+              value={format(
+                fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              )}
+              subValue={
+                <TrendLabelPercent
+                  value={
+                    fusionResolversMetrics?.allResolvers
+                      .walletsCountLastWeekTrend
+                  }
+                />
+              }
+            />
+            <SlimMetricsCard
+              title="Transactions (7D)"
+              value={format(
+                fusionResolversMetrics?.allResolvers.transactionsCountLastWeek,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              )}
+              subValue={
+                <TrendLabelPercent
+                  value={
+                    fusionResolversMetrics?.allResolvers
+                      .transactionsCountLastWeekTrend
+                  }
+                />
+              }
+            />
+            <SlimMetricsCard
+              title="Users (7D)"
+              value={format(
+                fusionResolversMetrics?.allResolvers.walletsCountLastWeek,
+                {
+                  abbreviate: true,
+                }
+              )}
+              subValue={
+                <TrendLabelPercent
+                  value={
+                    fusionResolversMetrics?.allResolvers
+                      .walletsCountLastWeekTrend
+                  }
+                />
+              }
+            />
+          </div>
+        </div>
 
         <div
           css={css`
