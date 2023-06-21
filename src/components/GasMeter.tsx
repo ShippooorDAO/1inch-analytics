@@ -96,7 +96,8 @@ export function GasMeter() {
     }
   }, [selectedChain]);
 
-  const loading = !chainGasData;
+  const loading = !chainGasData || chainGasData.gasPrices.length === 0;
+  const displayedChainGasData = loading ? MOCK_CHAIN_GAS_PRICE : chainGasData;
 
   return (
     <>
@@ -107,7 +108,7 @@ export function GasMeter() {
           align-items: center;
           background-color: ${theme.palette.background.paper};
           border-radius: 10px;
-          max-width: 270px;
+          width: 270px;
           min-height: 180px;
           padding: 10px;
         `}
@@ -144,10 +145,7 @@ export function GasMeter() {
                   {selectedChain?.gasSymbol} price:
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  $
-                  {(
-                    chainGasData ?? MOCK_CHAIN_GAS_PRICE
-                  ).gasTokenPriceUsd.toFixed(2)}
+                  ${displayedChainGasData.gasTokenPriceUsd.toFixed(2)}
                 </Typography>
               </AutoSkeleton>
             </div>
@@ -173,39 +171,33 @@ export function GasMeter() {
                 margin-top: 5px;
               `}
             >
-              {(chainGasData ?? MOCK_CHAIN_GAS_PRICE).gasPrices.map(
-                (chainGasValue) => (
-                  <AutoSkeleton
-                    loading={loading}
-                    key={chainGasValue.displayText}
+              {displayedChainGasData.gasPrices.map((chainGasValue) => (
+                <AutoSkeleton loading={loading} key={chainGasValue.displayText}>
+                  <div
+                    css={css`
+                      width: 100%;
+                      display: flex;
+                      flex-direction: row;
+                      flex-wrap: wrap;
+                      justify-content: space-between;
+                      text-transform: capitalize;
+                      margin-top: 3px;
+                    `}
                   >
-                    <div
-                      css={css`
-                        width: 100%;
-                        display: flex;
-                        flex-direction: row;
-                        flex-wrap: wrap;
-                        justify-content: space-between;
-                        text-transform: capitalize;
-                        margin-top: 3px;
-                      `}
-                    >
-                      <Typography variant="body2">
-                        {chainGasValue.displayText} (
-                        {chainGasValue.gwei.toFixed(0)} gwei)
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        ~$
-                        {formatSwapPrice(
-                          chainGasValue.gwei,
-                          (chainGasData ?? MOCK_CHAIN_GAS_PRICE)
-                            .gasTokenPriceUsd
-                        )}
-                      </Typography>
-                    </div>
-                  </AutoSkeleton>
-                )
-              )}
+                    <Typography variant="body2">
+                      {chainGasValue.displayText} (
+                      {chainGasValue.gwei.toFixed(0)} gwei)
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      ~$
+                      {formatSwapPrice(
+                        chainGasValue.gwei,
+                        displayedChainGasData.gasTokenPriceUsd
+                      )}
+                    </Typography>
+                  </div>
+                </AutoSkeleton>
+              ))}
             </div>
             {displayGasTrend ? (
               <div

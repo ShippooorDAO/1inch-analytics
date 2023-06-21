@@ -1,16 +1,18 @@
 import styled from '@emotion/styled';
 import { InputBase, InputBaseProps } from '@mui/material';
-import { darken } from 'polished';
+import { rgba } from 'polished';
 import { Search as SearchIcon } from 'react-feather';
 
 const Search = styled.div`
   border-radius: 10px;
-  background-color: ${(props) => props.theme.header.background};
+  background-color: ${(props) =>
+    rgba(props.theme.palette.material.primary[500], 0.2)};
   display: block;
   position: relative;
   width: 100%;
   &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
+    background-color: ${(props) =>
+      rgba(props.theme.palette.material.primary[500], 0.3)};
   }
 `;
 

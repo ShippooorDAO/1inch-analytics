@@ -11,6 +11,7 @@ import {
   PopperPlacementType,
   Radio,
 } from '@mui/material';
+import { rgba } from 'polished';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { SearchInput } from '@/components/filters/SearchInput';
@@ -42,14 +43,14 @@ function OptionRow<T>({
           border-radius: 10px;
           gap: 5px;
           justify-content: flex-start;
-          background-color: ${theme.palette.material.analogousPrimary[700]};
+          background-color: ${rgba(theme.palette.material.primary[500], 0.2)};
           &:hover {
-            background-color: ${theme.palette.action.hover};
+            background-color: ${rgba(theme.palette.material.primary[500], 0.3)};
           }
         `,
         index % 2 === 0 &&
           css`
-            background-color: ${theme.palette.material.analogousPrimary[500]};
+            background-color: ${rgba(theme.palette.material.primary[500], 0.1)};
           `,
       ]}
       onClick={() => {
