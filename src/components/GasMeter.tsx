@@ -15,12 +15,32 @@ import {
 
 import { AutoSkeleton } from './AutoSkeleton';
 import { ChainSelect } from './filters/ChainSelect';
+import { GasPriceChart } from './GasPriceChart';
 
 function formatSwapPrice(chainGasPrice: number, gasTokenPrice: number) {
   const usdPrice = ((chainGasPrice * gasTokenPrice) / 1e9) * 100000;
 
   return usdPrice.toFixed(2);
 }
+
+const MOCK_CHAIN_GAS_PRICE: ChainGasPrice = {
+  chainId: 1,
+  gasPrices: [
+    {
+      displayText: 'slow',
+      gwei: 50,
+    },
+    {
+      displayText: 'average',
+      gwei: 50,
+    },
+    {
+      displayText: 'fast',
+      gwei: 50,
+    },
+  ],
+  gasTokenPriceUsd: 0,
+};
 
 export function GasMeter() {
   const theme = useTheme();
@@ -76,6 +96,8 @@ export function GasMeter() {
     }
   }, [selectedChain]);
 
+  const loading = !chainGasData;
+
   return (
     <>
       <div
@@ -85,68 +107,79 @@ export function GasMeter() {
           align-items: center;
           background-color: ${theme.palette.background.paper};
           border-radius: 10px;
-          max-width: 240px;
+          max-width: 270px;
           min-height: 180px;
           padding: 10px;
         `}
       >
-        <ChainSelect
-          chains={chainOptions || []}
-          onChange={setSelectedChain}
-          value={selectedChain}
-        />
-        <AutoSkeleton loading={!chainGasData} width={220} height={200}>
-          {chainGasData ? (
-            <>
-              <div
-                css={css`
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                  width: 100%;
-                  padding: 10px;
-                `}
-              >
-                <div
-                  css={css`
-                    width: 100%;
-                    display: flex;
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    justify-content: space-between;
-                    margin-bottom: 5px;
-                  `}
-                >
-                  <Typography variant="subtitle2">
-                    {selectedChain?.gasSymbol} price:
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    ${chainGasData.gasTokenPriceUsd.toFixed(2)}
-                  </Typography>
-                </div>
-                <div>
-                  <Typography variant="subtitle2">
-                    Estimated swap costs:
-                  </Typography>
-                </div>
-                <hr
-                  css={css`
-                    width: 100%;
-                    height: 1px;
-                    border: 1px solid rgba(255, 255, 225, 0.1);
-                  `}
-                />
-                <div
-                  css={css`
-                    width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    margin-top: 5px;
-                  `}
-                >
-                  {chainGasData.gasPrices.map((chainGasValue) => (
+        <AutoSkeleton loading={loading}>
+          <ChainSelect
+            chains={chainOptions || []}
+            onChange={setSelectedChain}
+            value={selectedChain}
+          />
+        </AutoSkeleton>
+        <>
+          <div
+            css={css`
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              width: 100%;
+              padding: 10px;
+            `}
+          >
+            <div
+              css={css`
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                margin-bottom: 20px;
+              `}
+            >
+              <AutoSkeleton loading={loading}>
+                <Typography variant="subtitle2">
+                  {selectedChain?.gasSymbol} price:
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  $
+                  {(
+                    chainGasData ?? MOCK_CHAIN_GAS_PRICE
+                  ).gasTokenPriceUsd.toFixed(2)}
+                </Typography>
+              </AutoSkeleton>
+            </div>
+            <div>
+              <AutoSkeleton loading={loading}>
+                <Typography variant="subtitle2">
+                  Estimated swap costs:
+                </Typography>
+              </AutoSkeleton>
+            </div>
+            <hr
+              css={css`
+                width: 100%;
+                height: 1px;
+                border: 1px solid rgba(255, 255, 225, 0.1);
+              `}
+            />
+            <div
+              css={css`
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                margin-top: 5px;
+              `}
+            >
+              {(chainGasData ?? MOCK_CHAIN_GAS_PRICE).gasPrices.map(
+                (chainGasValue) => (
+                  <AutoSkeleton
+                    loading={loading}
+                    key={chainGasValue.displayText}
+                  >
                     <div
-                      key={chainGasValue.displayText}
                       css={css`
                         width: 100%;
                         display: flex;
@@ -165,36 +198,43 @@ export function GasMeter() {
                         ~$
                         {formatSwapPrice(
                           chainGasValue.gwei,
-                          chainGasData.gasTokenPriceUsd
+                          (chainGasData ?? MOCK_CHAIN_GAS_PRICE)
+                            .gasTokenPriceUsd
                         )}
                       </Typography>
                     </div>
-                  ))}
+                  </AutoSkeleton>
+                )
+              )}
+            </div>
+            {displayGasTrend ? (
+              <div
+                css={css`
+                  margin-top: 20px;
+                  width: 100%;
+                `}
+              >
+                <AutoSkeleton loading={ethGasPrices.length === 0}>
+                  <Typography variant="subtitle2">Gas price trend:</Typography>
+                </AutoSkeleton>
+                <hr
+                  css={css`
+                    width: 100%;
+                    height: 1px;
+                    border: 1px solid rgba(255, 255, 225, 0.1);
+                  `}
+                />
+                <div
+                  css={css`
+                    width: 100%;
+                  `}
+                >
+                  <GasPriceChart data={ethGasPrices} />
                 </div>
-                {displayGasTrend ? (
-                  <>
-                    <div
-                      css={css`
-                        margin-top: 5px;
-                      `}
-                    >
-                      <Typography variant="subtitle2">
-                        Gas price trend:
-                      </Typography>
-                    </div>
-                    <hr
-                      css={css`
-                        width: 100%;
-                        height: 1px;
-                        border: 1px solid rgba(255, 255, 225, 0.1);
-                      `}
-                    />
-                  </>
-                ) : undefined}
               </div>
-            </>
-          ) : undefined}
-        </AutoSkeleton>
+            ) : undefined}
+          </div>
+        </>
       </div>
     </>
   );

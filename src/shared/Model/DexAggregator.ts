@@ -82,8 +82,7 @@ export function getTimeseriesTrend(timeseries: Timeseries) {
   }
 
   return (
-    (timeseries.data[timeseries.data.length - 1].y -
-      timeseries.data[timeseries.data.length - 2].y) /
+    timeseries.data[timeseries.data.length - 1].y /
     timeseries.data[timeseries.data.length - 2].y
   );
 }
