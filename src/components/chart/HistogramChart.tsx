@@ -83,7 +83,7 @@ function getTooltipRowForTimeseries(
 
   const data = (() => {
     const index = timeseries.data.findIndex((data) => {
-      return data.x >= x;
+      return data.x === x;
     });
     if (index === -1) {
       return null;
