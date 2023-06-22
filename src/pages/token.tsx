@@ -453,7 +453,7 @@ export default function TokenPage() {
                 }),
                 subValue: (
                   <TrendLabelPercent
-                    value={marketData?.currentMarketData.usd24hChange / 100}
+                    value={marketData?.currentMarketData.usd24hChange}
                   />
                 ),
               },
