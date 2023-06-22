@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import {
   Button,
   Container,
@@ -12,10 +13,14 @@ import { lighten } from 'polished';
 import { useEffect, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
+import { LineChart } from '@/components/chart/LineChart';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { RoundedImageIcon } from '@/components/icons/RoundedImageIcon';
+import { TrendLabelPercent } from '@/components/MetricsCard';
+import { StatsSingleContainer } from '@/components/StatsSingleContainer';
 import { StakingVersionToggleButtonGroup } from '@/components/table/StakingVersionToggleButtonGroup';
+import { useCoingeckoMarketData } from '@/hooks/useCoingeckoMarketData';
 import {
   StakingWalletsQueryVariables,
   useStakingWallets,
@@ -25,6 +30,11 @@ import {
   StakingWallet,
   StakingWalletVersion,
 } from '@/shared/Model/StakingWallet';
+import {
+  getTimeWindowLabel,
+  Timeseries,
+  TimeWindow,
+} from '@/shared/Model/Timeseries';
 import { format, getAddressShorthand } from '@/shared/Utils/Format';
 
 function useTokenPageData() {
@@ -36,14 +46,18 @@ function useTokenPageData() {
     version: 'ALL',
   };
 
+  const marketDataContext = useCoingeckoMarketData(TimeWindow.MAX, '1inch');
   const stakingWalletsContext = useStakingWallets(initialStakingWalletsParams);
 
-  const { loading } = stakingWalletsContext;
+  const loading =
+    !stakingWalletsContext.stakingWallets || !marketDataContext.data;
 
   return {
+    marketData: marketDataContext.data,
     stakingWallets: stakingWalletsContext.stakingWallets,
     pagination: stakingWalletsContext.pagination,
     refetchStakingWallets: stakingWalletsContext.refetchStakingWallets,
+    updateMarketDataTimeWindow: marketDataContext.updateTimeWindow,
     loading,
   };
 }
@@ -155,6 +169,11 @@ function StakingWalletsTable({
           `}
         >
           <Typography variant="h3">Staking Wallets</Typography>
+          <StakingVersionToggleButtonGroup
+            value={stakingVersion}
+            onChange={handleVersionChange}
+            options={versionOptions}
+          />
           <Button
             onClick={handleSortMenuClick}
             endIcon={<Sort />}
@@ -190,21 +209,6 @@ function StakingWalletsTable({
               Address
             </MenuItem>
           </Menu>
-        </div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: flex-start;
-            padding: 0 10px 5px 10px;
-            width: 100%;
-          `}
-        >
-          <StakingVersionToggleButtonGroup
-            value={stakingVersion}
-            onChange={handleVersionChange}
-            options={versionOptions}
-          />
         </div>
         {rows?.map((stakingWallet) => (
           <div
@@ -328,9 +332,67 @@ function StakingWalletsTable({
   );
 }
 
+interface ControllerLineChartProps {
+  timeseriesList?: Timeseries[];
+  formatter?: (y?: number | null) => string;
+  updateTimeWindow: (TimeWindow: TimeWindow) => void;
+}
+
+function ControlledLineChart({
+  timeseriesList,
+  formatter,
+  updateTimeWindow,
+}: ControllerLineChartProps) {
+  const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
+
+  useEffect(() => {
+    if (timeWindow) {
+      updateTimeWindow(timeWindow);
+    }
+  }, [timeWindow]);
+
+  return (
+    <LineChart
+      timeseriesList={timeseriesList}
+      timeWindow={timeWindow}
+      timeWindowOptions={[
+        TimeWindow.ONE_DAY,
+        TimeWindow.SEVEN_DAYS,
+        TimeWindow.ONE_MONTH,
+        TimeWindow.ONE_YEAR,
+        TimeWindow.YEAR_TO_DATE,
+        TimeWindow.MAX,
+      ].map((timeWindow) => ({
+        value: timeWindow,
+        label: getTimeWindowLabel(timeWindow),
+      }))}
+      onTimeWindowChange={setTimeWindow}
+      formatter={formatter}
+    />
+  );
+}
+
 export default function TokenPage() {
-  const { stakingWallets, pagination, refetchStakingWallets } =
-    useTokenPageData();
+  const {
+    marketData,
+    stakingWallets,
+    pagination,
+    updateMarketDataTimeWindow,
+    refetchStakingWallets,
+  } = useTokenPageData();
+
+  const tokenPriceTimeseries: Timeseries[] = [
+    {
+      name: 'Token price',
+      data: marketData?.historicalMarketData?.prices || [],
+      yAxis: 0,
+    },
+    {
+      name: 'Market cap',
+      data: marketData?.historicalMarketData?.marketCaps || [],
+      yAxis: 1,
+    },
+  ];
 
   return (
     <Container
@@ -368,6 +430,59 @@ export default function TokenPage() {
             gap: 20px;
           `}
         >
+          <StatsSingleContainer
+            title={
+              <div
+                css={css`
+                  margin-top: 10px;
+                  display: flex;
+                  flex-flow: row;
+                  gap: 5px;
+                `}
+              >
+                <QueryStatsIcon />
+                <Typography variant="h3">Market data</Typography>
+              </div>
+            }
+            headerMetrics={[
+              {
+                title: '$1INCH',
+                value: format(marketData?.currentMarketData.usd, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }),
+                subValue: (
+                  <TrendLabelPercent
+                    value={marketData?.currentMarketData.usd24hChange / 100}
+                  />
+                ),
+              },
+              {
+                title: 'Market cap',
+                value: format(marketData?.currentMarketData?.usdMarketCap, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }),
+              },
+              {
+                title: '24H trading volatility',
+                value: format(marketData?.currentMarketData?.usd24hVol, {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }),
+              },
+            ]}
+            container={{
+              title: 'Historical price and market cap',
+              content: (
+                <ControlledLineChart
+                  timeseriesList={tokenPriceTimeseries}
+                  updateTimeWindow={updateMarketDataTimeWindow}
+                  formatter={(y) => format(y, { symbol: 'USD' })}
+                />
+              ),
+            }}
+          />
           <div
             css={(theme) => css`
               width: 100%;
