@@ -147,6 +147,16 @@ function parseFusionResolverResponses(
     resolversSet.add(entry.resolver);
   }
 
+  transactionsCountTimeseriesByResolver.forEach((timeseries) => {
+    timeseries.data = timeseries.data.sort((a, b) => a.x - b.x);
+  });
+  walletsCountTimeseriesByResolver.forEach((timeseries) => {
+    timeseries.data = timeseries.data.sort((a, b) => a.x - b.x);
+  });
+  volumeTimeseriesByResolver.forEach((timeseries) => {
+    timeseries.data = timeseries.data.sort((a, b) => a.x - b.x);
+  });
+
   return {
     resolvers: Array.from(resolversSet),
     transactionsCountTimeseriesByResolver,
