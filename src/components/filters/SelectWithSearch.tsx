@@ -372,7 +372,7 @@ export function SelectWithSearch<T>({
                                 color="textSecondary"
                                 textAlign="center"
                               >
-                                No asset found
+                                No search result
                               </Typography>
                             )}
                             {displayedAvailableOptions &&
