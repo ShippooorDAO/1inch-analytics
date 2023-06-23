@@ -4,7 +4,19 @@ import levenshtein from 'js-levenshtein';
 import { Asset } from '../Asset';
 import { Chain } from '../Chain';
 
-const DEFAULT_SEARCH_RANKING = ['weth', 'usdc', 'wbtc', 'dai', 'wsteth'];
+const DEFAULT_SEARCH_RANKING = [
+  'weth',
+  'usdc',
+  'wbtc',
+  'dai',
+  'steth',
+  'wsteth',
+  'usdt',
+  'lusd',
+  'reth',
+  'busd',
+  'usdp',
+];
 const DEFAULT_SEARCH_RANKING_SYMBOLS = new Set(DEFAULT_SEARCH_RANKING);
 
 export class AssetStore {
