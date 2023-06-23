@@ -32,6 +32,8 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
   const startOfYearToDate = new Date(startOfToday.getTime());
   startOfYearToDate.setUTCFullYear(startOfYearToDate.getUTCFullYear(), 0, 1);
 
+  const startOfAllTime = new Date(1000);
+
   switch (timeWindow) {
     case TimeWindow.ONE_DAY:
       return startOfToday;
@@ -45,6 +47,8 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
       return startOfYearAgo;
     case TimeWindow.YEAR_TO_DATE:
       return startOfYearToDate;
+    case TimeWindow.MAX:
+      return startOfAllTime;
     default:
       return startOfYearToDate;
   }

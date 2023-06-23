@@ -19,7 +19,7 @@ import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
-import { DonutChart } from '@/components/chart/DonutChart';
+import { BarChart } from '@/components/chart/BarChart';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { EtherscanButton } from '@/components/EtherscanButton';
@@ -49,7 +49,7 @@ import {
 } from '@/shared/Utils/Etherscan';
 import { format, getAddressShorthand } from '@/shared/Utils/Format';
 
-interface ControlledDonutChartProps {
+interface ControlledBarChartProps {
   seriesName: string;
   tooltipFormatter: (y?: number | null) => string;
   labelFormatter: (y?: number | null) => string;
@@ -70,14 +70,14 @@ interface ControlledDonutChartProps {
   }[];
 }
 
-function ControlledDonutChart({
+function ControlledBarChart({
   seriesName,
   tooltipFormatter,
   labelFormatter,
   volumeLastWeek,
   volumeLastMonth,
   volumeAllTime,
-}: ControlledDonutChartProps) {
+}: ControlledBarChartProps) {
   const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
 
   const handleTimeWindowChange = (e: any, value: any) => {
@@ -119,7 +119,7 @@ function ControlledDonutChart({
         onChange={handleTimeWindowChange}
         options={options}
       />
-      <DonutChart
+      <BarChart
         seriesName={seriesName}
         data={data}
         tooltipFormatter={tooltipFormatter}
@@ -1228,7 +1228,7 @@ export default function FusionPage() {
                   rightContainer={{
                     title: 'Current volume per resolver',
                     content: (
-                      <ControlledDonutChart
+                      <ControlledBarChart
                         seriesName="Volume (USD)"
                         volumeLastWeek={Array.from(
                           fusionResolversMetrics?.byResolver.values() ?? []
@@ -1282,7 +1282,7 @@ export default function FusionPage() {
                   rightContainer={{
                     title: 'Total transaction count per resolver',
                     content: (
-                      <ControlledDonutChart
+                      <ControlledBarChart
                         seriesName="Transactions"
                         volumeLastWeek={Array.from(
                           fusionResolversMetrics?.byResolver.values() ?? []
@@ -1334,7 +1334,7 @@ export default function FusionPage() {
                   rightContainer={{
                     title: 'Total users per resolver',
                     content: (
-                      <ControlledDonutChart
+                      <ControlledBarChart
                         seriesName="Users"
                         volumeLastWeek={Array.from(
                           fusionResolversMetrics?.byResolver.values() ?? []
