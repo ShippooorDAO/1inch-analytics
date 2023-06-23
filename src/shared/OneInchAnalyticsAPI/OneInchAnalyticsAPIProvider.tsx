@@ -54,8 +54,8 @@ export interface GlobalSystemQueryResponse {
     name: string;
     decimals: number;
     logoUrl: string;
-    priceUsd: number;
-    price: number;
+    priceUsd: number | null;
+    price: number | null;
   }[];
 }
 
@@ -97,7 +97,7 @@ export function processGlobalSystemResponse(
         imageUrl: entry.logoUrl,
         displayName: getAssetDisplayName(entry.name, chain),
         precision: BigInt(10 ** entry.decimals),
-        priceUsd: new UsdAmount(entry.priceUsd),
+        priceUsd: new UsdAmount(entry.priceUsd ?? 0),
       };
     });
 

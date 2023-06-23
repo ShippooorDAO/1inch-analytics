@@ -19,10 +19,12 @@ import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
+import { AutoSkeleton } from '@/components/AutoSkeleton';
 import { BarChart } from '@/components/chart/BarChart';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { EtherscanButton } from '@/components/EtherscanButton';
+import { AssetMultiSelect } from '@/components/filters/AssetMultiSelect';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { AssetIcon } from '@/components/icons/AssetIcon';
 import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
@@ -37,11 +39,14 @@ import {
 import { useFusionTopTraders } from '@/hooks/useFusionTopTraders';
 import { useFusionTrades } from '@/hooks/useFusionTrades';
 import Dashboard from '@/layouts/DashboardLayout';
+import { Asset } from '@/shared/Model/Asset';
+import { ChainId } from '@/shared/Model/Chain';
 import {
   FusionResolver,
   getDuneResolverNameFromResolverAddress,
 } from '@/shared/Model/FusionResolver';
 import { TimeInterval, TimeWindow } from '@/shared/Model/Timeseries';
+import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import {
   EtherscanLinkType,
   getEtherscanAddressLink,
@@ -804,6 +809,8 @@ function FusionTradersTable() {
 }
 
 function FusionTradesTable() {
+  const { assetService } = useOneInchAnalyticsAPIContext();
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [sortBy, setSortBy] = useState<
     'timestamp' | 'sourceUsdAmount' | 'destinationUsdAmount'
   >('timestamp');
@@ -813,8 +820,19 @@ function FusionTradesTable() {
     pageSize: pageSize * 100,
     pageNumber: 1,
     sortBy,
+    assetIds: selectedAssets.map((asset) => asset.id),
   });
   const rows = fusionTrades ?? undefined;
+
+  const assetOptions = useMemo(() => {
+    if (!assetService) {
+      return undefined;
+    }
+
+    return assetService.store
+      .getAll()
+      .filter((asset) => asset.chain.chainId === ChainId.ETHEREUM);
+  }, [assetService]);
 
   useEffect(() => {
     setPageNumber(0);
@@ -880,6 +898,13 @@ function FusionTradesTable() {
           `}
         >
           <Typography variant="h3">Fusion Trades</Typography>
+          <AutoSkeleton loading={!assetOptions}>
+            <AssetMultiSelect
+              assets={assetOptions ?? []}
+              values={selectedAssets}
+              onChange={setSelectedAssets}
+            />
+          </AutoSkeleton>
           <Button
             onClick={handleSortMenuClick}
             endIcon={<Sort />}
