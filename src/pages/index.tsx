@@ -20,7 +20,7 @@ import {
   TrendLabelPercent,
 } from '@/components/MetricsCard';
 import { format } from '@/shared/Utils/Format';
-import { DonutChart } from '@/components/chart/DonutChart';
+import { BarChart } from '@/components/chart/BarChart';
 import { Chain } from '@/shared/Model/Chain';
 import { useDexAggregatorOverview } from '@/hooks/useDexAggregatorOverview';
 import { useMemo, useState } from 'react';
@@ -105,7 +105,7 @@ function ControlledHistogramChart({
   );
 }
 
-interface ControlledDonutChartProps {
+interface ControlledBarChartProps {
   seriesName: string;
   tooltipFormatter: (y?: number | null) => string;
   labelFormatter: (y?: number | null) => string;
@@ -127,14 +127,14 @@ interface ControlledDonutChartProps {
   }[];
 }
 
-function ControlledDonutChart({
+function ControlledBarChart({
   seriesName,
   tooltipFormatter,
   labelFormatter,
   volumeLastWeek,
   volumeLastMonth,
   volumeAllTime,
-}: ControlledDonutChartProps) {
+}: ControlledBarChartProps) {
   const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
 
   const handleTimeWindowChange = (e: any, value: any) => {
@@ -166,7 +166,7 @@ function ControlledDonutChart({
           { value: TimeWindow.MAX, label: 'All Time' },
         ]}
       />
-      <DonutChart
+      <BarChart
         seriesName={seriesName}
         data={data}
         tooltipFormatter={tooltipFormatter}
@@ -382,7 +382,7 @@ export default function Home() {
           rightContainer={{
             title: 'Current volume per chain',
             content: (
-              <ControlledDonutChart
+              <ControlledBarChart
                 seriesName="Volume (USD)"
                 volumeLastWeek={displayedChains?.map((chain) => {
                   const volume =
@@ -488,7 +488,7 @@ export default function Home() {
           rightContainer={{
             title: 'Current transactions per chain',
             content: (
-              <ControlledDonutChart
+              <ControlledBarChart
                 seriesName="Transactions"
                 volumeLastWeek={displayedChains?.map((chain) => {
                   const volume =
@@ -657,7 +657,7 @@ export default function Home() {
           rightContainer={{
             title: 'Current users per chain',
             content: (
-              <ControlledDonutChart
+              <ControlledBarChart
                 seriesName="Wallets"
                 volumeLastWeek={displayedChains?.map((chain) => {
                   const volume =
