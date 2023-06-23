@@ -4,6 +4,10 @@ import numberAbbreviate from 'number-abbreviate';
 
 const bigNumberDecimalPlaces = 18;
 
+export function getTransactionHashShorthand(txHash: string) {
+  return `${txHash.substring(0, 14)}...`;
+}
+
 export function getAddressShorthand(account: string) {
   return `${account.substring(0, 6)}...${account.substring(38, 42)}`;
 }

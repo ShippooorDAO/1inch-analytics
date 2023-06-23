@@ -1,5 +1,11 @@
 import { css } from '@emotion/react';
-import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
+import {
+  ArrowBack,
+  ArrowForward,
+  KeyboardArrowRight,
+  Sort,
+} from '@mui/icons-material';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import {
   Button,
   Container,
@@ -8,6 +14,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
+import moment from 'moment';
 import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -17,6 +24,7 @@ import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
+import { AssetIcon } from '@/components/icons/AssetIcon';
 import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { MultiTabSection } from '@/components/SectionContainer';
 import { StatsContainer } from '@/components/StatsContainer';
@@ -27,12 +35,18 @@ import {
   useFusionResolversMetrics,
 } from '@/hooks/useFusionResolversMetrics';
 import { useFusionTopTraders } from '@/hooks/useFusionTopTraders';
+import { useFusionTrades } from '@/hooks/useFusionTrades';
 import Dashboard from '@/layouts/DashboardLayout';
 import {
   FusionResolver,
   getDuneResolverNameFromResolverAddress,
 } from '@/shared/Model/FusionResolver';
 import { TimeInterval, TimeWindow } from '@/shared/Model/Timeseries';
+import {
+  EtherscanLinkType,
+  getEtherscanAddressLink,
+  getEtherscanTransactionLink,
+} from '@/shared/Utils/Etherscan';
 import { format, getAddressShorthand } from '@/shared/Utils/Format';
 
 interface ControlledDonutChartProps {
@@ -312,7 +326,7 @@ function FusionResolversTable({
             width: 100%;
           `}
         >
-          <Typography variant="h3">Top Fusion Resolvers</Typography>
+          <Typography variant="h3">Fusion Resolvers</Typography>
           <TimeWindowToggleButtonGroup
             value={timeWindow}
             onChange={(e, value) => setTimeWindow(value)}
@@ -626,7 +640,7 @@ function FusionTradersTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h3">Top Fusion Traders</Typography>
+          <Typography variant="h3">Fusion Traders</Typography>
           <Button
             onClick={handleSortMenuClick}
             endIcon={<Sort />}
@@ -781,6 +795,376 @@ function FusionTradersTable() {
           {pageNumber + 1} / {Math.ceil((rows?.length ?? 0) / pageSize)}
         </Typography>
 
+        <IconButton onClick={nextPage} disabled={loading || isLastPage}>
+          <ArrowForward />
+        </IconButton>
+      </div>
+    </div>
+  );
+}
+
+function FusionTradesTable() {
+  const [sortBy, setSortBy] = useState<
+    'timestamp' | 'sourceUsdAmount' | 'destinationUsdAmount'
+  >('timestamp');
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(8);
+  const { fusionTrades } = useFusionTrades({
+    pageSize: pageSize * 100,
+    pageNumber: 1,
+    sortBy,
+  });
+  const rows = fusionTrades ?? undefined;
+
+  useEffect(() => {
+    setPageNumber(0);
+  }, [sortBy]);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const sortMenuOpen = Boolean(anchorEl);
+
+  const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleSortMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const loading = rows === undefined;
+  const isLastPage = pageSize * (pageNumber + 1) >= (rows?.length ?? 0);
+  const isFirstPage = pageNumber === 0;
+
+  const displayedRows = rows?.slice(
+    pageNumber * pageSize,
+    pageNumber * pageSize + pageSize
+  );
+
+  const nextPage = () => {
+    if (rows?.length && rows.length < pageSize * pageNumber) return;
+    setPageNumber(pageNumber + 1);
+  };
+
+  const previousPage = () => {
+    if (pageNumber === 0) return;
+    setPageNumber(pageNumber - 1);
+  };
+
+  return (
+    <div
+      css={css`
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+        height: 100%;
+      `}
+    >
+      <div
+        css={css`
+          display: flex;
+          flex-flow: column;
+          gap: 10px;
+          white-space: nowrap;
+          padding-left: 10px;
+          padding-right: 10px;
+        `}
+      >
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: space-between;
+            align-items: center;
+            white-space: nowrap;
+            padding: 10px 10px 0 10px;
+            width: 100%;
+          `}
+        >
+          <Typography variant="h3">Fusion Trades</Typography>
+          <Button
+            onClick={handleSortMenuClick}
+            endIcon={<Sort />}
+            css={(theme) =>
+              css`
+                color: ${theme.palette.text.secondary};
+              `
+            }
+          >
+            Sort by
+          </Button>
+          <Menu
+            anchorEl={anchorEl}
+            open={sortMenuOpen}
+            onClose={handleSortMenuClose}
+          >
+            <MenuItem
+              selected={sortBy === 'timestamp'}
+              onClick={() => {
+                setSortBy('timestamp');
+                handleSortMenuClose();
+              }}
+            >
+              Date
+            </MenuItem>
+            <MenuItem
+              selected={sortBy === 'destinationUsdAmount'}
+              onClick={() => {
+                setSortBy('destinationUsdAmount');
+                handleSortMenuClose();
+              }}
+            >
+              Transaction Amount
+            </MenuItem>
+          </Menu>
+        </div>
+        {displayedRows?.map((row) => (
+          <div
+            key={row.id}
+            css={(theme) => css`
+              display: flex;
+              flex-flow: row;
+              height: 82px;
+              gap: 10px;
+              align-items: center;
+              justify-content: space-between;
+              padding: 10px 20px;
+              border-radius: 24px;
+              background-color: ${lighten(
+                0.05,
+                theme.palette.background.paper
+              )};
+            `}
+          >
+            <div
+              css={css`
+                display: flex;
+                flex-flow: row;
+                gap: 10px;
+                align-items: center;
+                flex-grow: 1;
+              `}
+            >
+              <ReceiptIcon />
+              <div>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    align-items: center;
+                    gap: 10px;
+                  `}
+                >
+                  <a
+                    href={getEtherscanTransactionLink(
+                      row.transactionHash,
+                      row.chain.chainId
+                    )}
+                  >
+                    <Typography variant="body2">
+                      {moment.unix(row.timestamp).fromNow()}
+                    </Typography>
+                  </a>
+                  <EtherscanButton
+                    size="small"
+                    address={row.transactionHash}
+                    linkType={EtherscanLinkType.TRANSACTION}
+                  />
+                  <AddressCopyButton
+                    size="small"
+                    address={row.transactionHash}
+                    contentType="transaction"
+                  />
+                </div>
+                <Typography variant="body1" color="textSecondary">
+                  {moment.unix(row.timestamp).format('MMM D, YYYY')}
+                </Typography>
+              </div>
+            </div>
+            <div
+              css={(theme) => css`
+                display: flex;
+                flex-flow: row;
+                width: 250px;
+                gap: 10px;
+                ${theme.breakpoints.down('md')} {
+                  display: none;
+                }
+              `}
+            >
+              <AddressIcon address={row.executorAddress} />
+              <div>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    align-items: center;
+                    gap: 10px;
+                  `}
+                >
+                  <a
+                    href={getEtherscanAddressLink(
+                      row.executorAddress,
+                      row.chain.chainId
+                    )}
+                  >
+                    <Typography variant="body2">
+                      {getAddressShorthand(row.executorAddress)}
+                    </Typography>
+                  </a>
+                  <EtherscanButton size="small" address={row.executorAddress} />
+                  <AddressCopyButton
+                    size="small"
+                    address={row.executorAddress}
+                  />
+                </div>
+                <Typography variant="body1" color="textSecondary">
+                  Sender
+                </Typography>
+              </div>
+            </div>
+            <div
+              css={(theme) => css`
+                display: flex;
+                flex-flow: row;
+                width: 250px;
+                gap: 10px;
+                ${theme.breakpoints.down('lg')} {
+                  display: none;
+                }
+              `}
+            >
+              <AddressIcon address={row.receiverAddress} />
+              <div>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    align-items: center;
+                    gap: 10px;
+                  `}
+                >
+                  <a
+                    href={getEtherscanAddressLink(
+                      row.receiverAddress,
+                      row.chain.chainId
+                    )}
+                  >
+                    <Typography variant="body2">
+                      {getAddressShorthand(row.receiverAddress)}
+                    </Typography>
+                  </a>
+                  <EtherscanButton size="small" address={row.receiverAddress} />
+                  <AddressCopyButton
+                    size="small"
+                    address={row.receiverAddress}
+                  />
+                </div>
+                <Typography variant="body1" color="textSecondary">
+                  Receiver
+                </Typography>
+              </div>
+            </div>
+            <div
+              css={css`
+                display: flex;
+                flex-flow: row;
+                justify-content: flex-start;
+                align-items: center;
+                width: 200px;
+                gap: 10px;
+              `}
+            >
+              <div
+                css={css`
+                  display: flex;
+                  flex-flow: row;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 10px;
+                `}
+              >
+                <AssetIcon asset={row.sourceAsset} />
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: column;
+                    align-items: flex-start;
+                  `}
+                >
+                  <Typography variant="body2">
+                    {row.sourceAsset.symbol}
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {format(row.sourceUsdAmount, {
+                      symbol: 'USD',
+                      abbreviate: true,
+                    })}
+                  </Typography>
+                </div>
+              </div>
+              <KeyboardArrowRight />
+              <div
+                css={css`
+                  display: flex;
+                  flex-flow: row;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 10px;
+                `}
+              >
+                <AssetIcon asset={row.destinationAsset} />
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: column;
+                    align-items: flex-start;
+                  `}
+                >
+                  <Typography variant="body2">
+                    {row.destinationAsset.symbol}
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {format(row.destinationUsdAmount, {
+                      symbol: 'USD',
+                      abbreviate: true,
+                    })}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+            <div
+              css={css`
+                display: flex;
+                flex-flow: column;
+                justify-content: space-between;
+                width: 200px;
+                align-items: flex-end;
+              `}
+            >
+              <Typography variant="body2">
+                {format(row.destinationUsdAmount, { symbol: 'USD' })}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {format(row.slippage, { symbol: '%' })} slippage
+              </Typography>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+        `}
+      >
+        <IconButton onClick={previousPage} disabled={loading || isFirstPage}>
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="body1" fontWeight={500}>
+          {pageNumber + 1} / {Math.ceil((rows?.length ?? 0) / pageSize)}
+        </Typography>
         <IconButton onClick={nextPage} disabled={loading || isLastPage}>
           <ArrowForward />
         </IconButton>
@@ -1131,6 +1515,18 @@ export default function FusionPage() {
               fusionResolversMetrics={fusionResolversMetrics}
               getFusionResolverMetrics={getFusionResolverMetrics}
             />
+          </div>
+          <div
+            css={(theme) => css`
+              width: 100%;
+              background-color: ${theme.palette.background.paper};
+              border-radius: 24px;
+              ${theme.breakpoints.down('md')} {
+                width: 100%;
+              }
+            `}
+          >
+            <FusionTradesTable />
           </div>
         </div>
       </div>

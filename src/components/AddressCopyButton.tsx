@@ -6,11 +6,19 @@ import { useState } from 'react';
 export interface AddressCopyButtonProps {
   address: string;
   size?: 'small' | 'medium' | 'large';
+  contentType?: 'address' | 'transaction';
 }
 
-export function AddressCopyButton({ address, size }: AddressCopyButtonProps) {
+export function AddressCopyButton({
+  address,
+  size,
+  contentType,
+}: AddressCopyButtonProps) {
+  const contentTypeLabel =
+    contentType === 'address' ? 'address' : 'transaction hash';
+
   const [tooltipText, setTooltipText] = useState<string>(
-    'Click to copy address'
+    `Click to copy ${contentTypeLabel}`
   );
 
   const handleCopyButton = () => {
