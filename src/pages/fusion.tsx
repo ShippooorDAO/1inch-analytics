@@ -816,13 +816,17 @@ function FusionTradesTable() {
   >('timestamp');
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(8);
-  const { fusionTrades } = useFusionTrades({
+  const {
+    fusionTrades,
+    mock: mockFusionTrades,
+    loading,
+  } = useFusionTrades({
     pageSize: pageSize * 100,
     pageNumber: 1,
     sortBy,
     assetIds: selectedAssets.map((asset) => asset.id),
   });
-  const rows = fusionTrades ?? undefined;
+  const rows = !loading && fusionTrades ? fusionTrades : mockFusionTrades;
 
   const assetOptions = useMemo(() => {
     if (!assetService) {
@@ -848,7 +852,6 @@ function FusionTradesTable() {
     setAnchorEl(null);
   };
 
-  const loading = rows === undefined;
   const isLastPage = pageSize * (pageNumber + 1) >= (rows?.length ?? 0);
   const isFirstPage = pageNumber === 0;
 
@@ -897,9 +900,10 @@ function FusionTradesTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h3">Fusion Trades</Typography>
+          <Typography variant="h3">Top Fusion Trades</Typography>
           <AutoSkeleton loading={!assetOptions}>
             <AssetMultiSelect
+              placeholder="Filter by assets"
               assets={assetOptions ?? []}
               values={selectedAssets}
               onChange={setSelectedAssets}
@@ -968,40 +972,46 @@ function FusionTradesTable() {
                 flex-grow: 1;
               `}
             >
-              <ReceiptIcon />
+              <AutoSkeleton loading={loading}>
+                <ReceiptIcon />
+              </AutoSkeleton>
               <div>
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row;
-                    align-items: center;
-                    gap: 10px;
-                  `}
-                >
-                  <a
-                    href={getEtherscanTransactionLink(
-                      row.transactionHash,
-                      row.chain.chainId
-                    )}
+                <AutoSkeleton loading={loading}>
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-flow: row;
+                      align-items: center;
+                      gap: 10px;
+                    `}
                   >
-                    <Typography variant="body2">
-                      {moment.unix(row.timestamp).fromNow()}
-                    </Typography>
-                  </a>
-                  <EtherscanButton
-                    size="small"
-                    address={row.transactionHash}
-                    linkType={EtherscanLinkType.TRANSACTION}
-                  />
-                  <AddressCopyButton
-                    size="small"
-                    address={row.transactionHash}
-                    contentType="transaction"
-                  />
-                </div>
-                <Typography variant="body1" color="textSecondary">
-                  {moment.unix(row.timestamp).format('MMM D, YYYY')}
-                </Typography>
+                    <a
+                      href={getEtherscanTransactionLink(
+                        row.transactionHash,
+                        row.chain.chainId
+                      )}
+                    >
+                      <Typography variant="body2">
+                        {moment.unix(row.timestamp).format('MMM D, YYYY')}
+                      </Typography>
+                    </a>
+                    <EtherscanButton
+                      size="small"
+                      address={row.transactionHash}
+                      linkType={EtherscanLinkType.TRANSACTION}
+                    />
+                    <AddressCopyButton
+                      size="small"
+                      address={row.transactionHash}
+                      contentType="transaction"
+                    />
+                  </div>
+                </AutoSkeleton>
+                <AutoSkeleton loading={loading}>
+                  <Typography variant="body1" color="textSecondary">
+                    {moment.unix(row.timestamp).fromNow()}
+                  </Typography>
+                </AutoSkeleton>
               </div>
             </div>
             <div
@@ -1015,35 +1025,44 @@ function FusionTradesTable() {
                 }
               `}
             >
-              <AddressIcon address={row.executorAddress} />
+              <AutoSkeleton loading={loading}>
+                <AddressIcon address={row.executorAddress} />
+              </AutoSkeleton>
               <div>
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row;
-                    align-items: center;
-                    gap: 10px;
-                  `}
-                >
-                  <a
-                    href={getEtherscanAddressLink(
-                      row.executorAddress,
-                      row.chain.chainId
-                    )}
+                <AutoSkeleton loading={loading}>
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-flow: row;
+                      align-items: center;
+                      gap: 10px;
+                    `}
                   >
-                    <Typography variant="body2">
-                      {getAddressShorthand(row.executorAddress)}
-                    </Typography>
-                  </a>
-                  <EtherscanButton size="small" address={row.executorAddress} />
-                  <AddressCopyButton
-                    size="small"
-                    address={row.executorAddress}
-                  />
-                </div>
-                <Typography variant="body1" color="textSecondary">
-                  Sender
-                </Typography>
+                    <a
+                      href={getEtherscanAddressLink(
+                        row.executorAddress,
+                        row.chain.chainId
+                      )}
+                    >
+                      <Typography variant="body2">
+                        {getAddressShorthand(row.executorAddress)}
+                      </Typography>
+                    </a>
+                    <EtherscanButton
+                      size="small"
+                      address={row.executorAddress}
+                    />
+                    <AddressCopyButton
+                      size="small"
+                      address={row.executorAddress}
+                    />
+                  </div>
+                </AutoSkeleton>
+                <AutoSkeleton loading={loading}>
+                  <Typography variant="body1" color="textSecondary">
+                    Sender
+                  </Typography>
+                </AutoSkeleton>
               </div>
             </div>
             <div
@@ -1057,35 +1076,44 @@ function FusionTradesTable() {
                 }
               `}
             >
-              <AddressIcon address={row.receiverAddress} />
+              <AutoSkeleton loading={loading}>
+                <AddressIcon address={row.receiverAddress} />
+              </AutoSkeleton>
               <div>
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row;
-                    align-items: center;
-                    gap: 10px;
-                  `}
-                >
-                  <a
-                    href={getEtherscanAddressLink(
-                      row.receiverAddress,
-                      row.chain.chainId
-                    )}
+                <AutoSkeleton loading={loading}>
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-flow: row;
+                      align-items: center;
+                      gap: 10px;
+                    `}
                   >
-                    <Typography variant="body2">
-                      {getAddressShorthand(row.receiverAddress)}
-                    </Typography>
-                  </a>
-                  <EtherscanButton size="small" address={row.receiverAddress} />
-                  <AddressCopyButton
-                    size="small"
-                    address={row.receiverAddress}
-                  />
-                </div>
-                <Typography variant="body1" color="textSecondary">
-                  Receiver
-                </Typography>
+                    <a
+                      href={getEtherscanAddressLink(
+                        row.receiverAddress,
+                        row.chain.chainId
+                      )}
+                    >
+                      <Typography variant="body2">
+                        {getAddressShorthand(row.receiverAddress)}
+                      </Typography>
+                    </a>
+                    <EtherscanButton
+                      size="small"
+                      address={row.receiverAddress}
+                    />
+                    <AddressCopyButton
+                      size="small"
+                      address={row.receiverAddress}
+                    />
+                  </div>
+                </AutoSkeleton>
+                <AutoSkeleton loading={loading}>
+                  <Typography variant="body1" color="textSecondary">
+                    Receiver
+                  </Typography>
+                </AutoSkeleton>
               </div>
             </div>
             <div
@@ -1107,7 +1135,9 @@ function FusionTradesTable() {
                   gap: 10px;
                 `}
               >
-                <AssetIcon asset={row.sourceAsset} />
+                <AutoSkeleton loading={loading}>
+                  <AssetIcon asset={row.sourceAsset} />
+                </AutoSkeleton>
                 <div
                   css={css`
                     display: flex;
@@ -1115,18 +1145,24 @@ function FusionTradesTable() {
                     align-items: flex-start;
                   `}
                 >
-                  <Typography variant="body2">
-                    {row.sourceAsset.symbol}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    {format(row.sourceUsdAmount, {
-                      symbol: 'USD',
-                      abbreviate: true,
-                    })}
-                  </Typography>
+                  <AutoSkeleton loading={loading}>
+                    <Typography variant="body2">
+                      {row.sourceAsset.symbol}
+                    </Typography>
+                  </AutoSkeleton>
+                  <AutoSkeleton loading={loading}>
+                    <Typography variant="body1" color="textSecondary">
+                      {format(row.sourceUsdAmount, {
+                        symbol: 'USD',
+                        abbreviate: true,
+                      })}
+                    </Typography>
+                  </AutoSkeleton>
                 </div>
               </div>
-              <KeyboardArrowRight />
+              <AutoSkeleton loading={loading}>
+                <KeyboardArrowRight />
+              </AutoSkeleton>
               <div
                 css={css`
                   display: flex;
@@ -1136,7 +1172,9 @@ function FusionTradesTable() {
                   gap: 10px;
                 `}
               >
-                <AssetIcon asset={row.destinationAsset} />
+                <AutoSkeleton loading={loading}>
+                  <AssetIcon asset={row.destinationAsset} />
+                </AutoSkeleton>
                 <div
                   css={css`
                     display: flex;
@@ -1144,15 +1182,19 @@ function FusionTradesTable() {
                     align-items: flex-start;
                   `}
                 >
-                  <Typography variant="body2">
-                    {row.destinationAsset.symbol}
-                  </Typography>
-                  <Typography variant="body1" color="textSecondary">
-                    {format(row.destinationUsdAmount, {
-                      symbol: 'USD',
-                      abbreviate: true,
-                    })}
-                  </Typography>
+                  <AutoSkeleton loading={loading}>
+                    <Typography variant="body2">
+                      {row.destinationAsset.symbol}
+                    </Typography>
+                  </AutoSkeleton>
+                  <AutoSkeleton loading={loading}>
+                    <Typography variant="body1" color="textSecondary">
+                      {format(row.destinationUsdAmount, {
+                        symbol: 'USD',
+                        abbreviate: true,
+                      })}
+                    </Typography>
+                  </AutoSkeleton>
                 </div>
               </div>
             </div>
@@ -1165,12 +1207,16 @@ function FusionTradesTable() {
                 align-items: flex-end;
               `}
             >
-              <Typography variant="body2">
-                {format(row.destinationUsdAmount, { symbol: 'USD' })}
-              </Typography>
-              <Typography variant="body1" color="textSecondary">
-                {format(row.slippage, { symbol: '%' })} slippage
-              </Typography>
+              <AutoSkeleton loading={loading}>
+                <Typography variant="body2">
+                  {format(row.destinationUsdAmount, { symbol: 'USD' })}
+                </Typography>
+              </AutoSkeleton>
+              <AutoSkeleton loading={loading}>
+                <Typography variant="body1" color="textSecondary">
+                  {format(row.slippage, { symbol: '%' })} slippage
+                </Typography>
+              </AutoSkeleton>
             </div>
           </div>
         ))}

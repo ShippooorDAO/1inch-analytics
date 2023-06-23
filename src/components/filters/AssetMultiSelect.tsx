@@ -13,12 +13,14 @@ export interface AssetMultiSelectProps
   assets: Asset[];
   values: Asset[];
   onChange: (asset: Asset[]) => void;
+  placeholder?: string;
 }
 
 export function AssetMultiSelect({
   assets,
   values,
   onChange,
+  placeholder,
   ...props
 }: AssetMultiSelectProps) {
   const options = assets.map((asset) => {
@@ -59,11 +61,13 @@ export function AssetMultiSelect({
     props.label ??
     (() => {
       if (values.length === 0) {
-        return 'Select token';
+        return placeholder ?? 'Select tokens';
       }
       if (values.length === 1) {
         return (
-          options.find((o) => o.value === values[0])?.label ?? 'Select tokens'
+          options.find((o) => o.value === values[0])?.label ??
+          placeholder ??
+          'Select tokens'
         );
       }
       if (values.length > 1) {

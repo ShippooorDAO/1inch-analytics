@@ -7,6 +7,8 @@ import { AssetStore } from '@/shared/Model/Stores/AssetStore';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 
+import { mockFusionTradesResponse } from './mocks/FusionTrades';
+
 const QUERY = gql`
   query getFusionTrades(
     $assetIds: [String]
@@ -142,6 +144,17 @@ export function useFusionTrades({
     }
   );
 
+  const mock = useMemo(() => {
+    if (!assetService || !chainStore) {
+      return null;
+    }
+    return convertResponseToModel(
+      mockFusionTradesResponse,
+      assetService.store,
+      chainStore
+    );
+  }, [assetService, chainStore]);
+
   const fusionTrades = useMemo(() => {
     if (!assetService || !chainStore || !data) {
       return null;
@@ -151,7 +164,8 @@ export function useFusionTrades({
 
   return {
     fusionTrades,
+    mock,
     error,
-    loading,
+    loading: loading || !data,
   };
 }
