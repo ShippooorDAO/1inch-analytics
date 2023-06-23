@@ -10,6 +10,7 @@ import {
   Popper,
   PopperPlacementType,
   Radio,
+  Typography,
 } from '@mui/material';
 import { rgba } from 'polished';
 import React, { useEffect, useRef, useState } from 'react';
@@ -145,11 +146,7 @@ export function SelectWithSearch<T>({
     }
   }, [forceOpen]);
 
-  const onSearchChangeInternal = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const search = event.target.value.toLowerCase();
-
+  const onSearchChangeInternal = (search: string) => {
     if (onSearchChange) {
       onSearchChange(search);
       return;
@@ -193,6 +190,9 @@ export function SelectWithSearch<T>({
       return;
     }
     setPanelOpen(false);
+    setTimeout(() => {
+      onSearchChangeInternal('');
+    }, 200);
   };
 
   const openPopper = () => {
@@ -225,6 +225,12 @@ export function SelectWithSearch<T>({
         values.find((v) => valuesAreEqual(option.value, v))
       )
     : null;
+
+  const availableOptions = showSelectedOptionsOnly
+    ? matchingOptions
+    : selectedOptions;
+
+  const displayedAvailableOptions = availableOptions?.slice(0, 40);
 
   return (
     <div
@@ -320,7 +326,9 @@ export function SelectWithSearch<T>({
                       >
                         <SearchInput
                           tabIndex={-1}
-                          onChange={onSearchChangeInternal}
+                          onChange={(e) =>
+                            onSearchChangeInternal(e.target.value.toLowerCase())
+                          }
                           placeholder={searchPlaceholder}
                           onKeyDown={(e) => {
                             if (e.key === 'Escape') {
@@ -344,10 +352,7 @@ export function SelectWithSearch<T>({
                               gap: 10px;
                             `}
                           >
-                            {(showSelectedOptionsOnly
-                              ? matchingOptions
-                              : selectedOptions
-                            )?.map((option, i) => {
+                            {displayedAvailableOptions?.map((option, i) => {
                               return (
                                 <OptionRow
                                   multiple={!!multiple}
@@ -361,6 +366,30 @@ export function SelectWithSearch<T>({
                                 />
                               );
                             })}
+                            {displayedAvailableOptions?.length === 0 && (
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                textAlign="center"
+                              >
+                                No asset found
+                              </Typography>
+                            )}
+                            {displayedAvailableOptions &&
+                              availableOptions &&
+                              availableOptions?.length >
+                                displayedAvailableOptions?.length && (
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                  textAlign="center"
+                                >
+                                  +{' '}
+                                  {availableOptions.length -
+                                    displayedAvailableOptions.length}{' '}
+                                  more
+                                </Typography>
+                              )}
                           </div>
                         </div>
 
