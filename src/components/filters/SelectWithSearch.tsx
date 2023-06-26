@@ -274,9 +274,7 @@ export function SelectWithSearch<T>({
               }
               border: 1px solid ${theme.palette.divider};
               &:hover {
-                outline-style: solid;
-                outline-color: ${theme.palette.divider};
-                outline-width: 1px;
+                background-color: ${theme.palette.action.hover};
               }
             `,
             panelOpen &&
