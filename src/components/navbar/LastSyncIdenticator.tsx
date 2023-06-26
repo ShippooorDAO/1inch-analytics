@@ -64,7 +64,7 @@ export function LastSyncIdenticator() {
           `}
         >
           <Typography variant="body2" gutterBottom={false}>
-            {moment(lastSyncTimestamp).fromNow()}
+            {moment.unix(lastSyncTimestamp).fromNow()}
           </Typography>
         </div>
       </div>
