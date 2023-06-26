@@ -252,10 +252,6 @@ function FusionResolversTable({
                 walletsCount: metrics.walletsCountAllTime,
                 volume: metrics.volumeAllTime,
 
-                transactionsCountTrend: metrics.transactionsCountLastWeekTrend,
-                walletsCountTrend: metrics.walletsCountLastWeekTrend,
-                volumeTrend: metrics.volumeLastWeekTrend,
-
                 transactionsCountPercent:
                   metrics.transactionsCountAllTimePercent,
                 walletsCountPercent: metrics.walletsCountAllTimePercent,
@@ -395,6 +391,7 @@ function FusionResolversTable({
               justify-content: space-between;
               padding: 10px 20px;
               border-radius: 24px;
+              height: 85px;
               background-color: ${lighten(
                 0.05,
                 theme.palette.background.paper
@@ -476,10 +473,12 @@ function FusionResolversTable({
                   })}{' '}
                   volume
                 </Typography>
-                <TrendLabelPercent
-                  value={row?.metrics.volumeTrend}
-                  iconAlign="left"
-                />
+                {row?.metrics.volumeTrend && (
+                  <TrendLabelPercent
+                    value={row?.metrics.volumeTrend}
+                    iconAlign="left"
+                  />
+                )}
                 <Typography variant="body1" color="textSecondary">
                   {format(row?.metrics.transactionsCountPercent, {
                     symbol: '%',
@@ -505,10 +504,12 @@ function FusionResolversTable({
                 })}{' '}
                 transactions
               </Typography>
-              <TrendLabelPercent
-                value={row?.metrics.transactionsCountTrend}
-                iconAlign="left"
-              />
+              {row?.metrics.transactionsCountTrend && (
+                <TrendLabelPercent
+                  value={row?.metrics.transactionsCountTrend}
+                  iconAlign="left"
+                />
+              )}
               <Typography variant="body1" color="textSecondary">
                 {format(row?.metrics.transactionsCountPercent, { symbol: '%' })}{' '}
                 of total
@@ -531,10 +532,12 @@ function FusionResolversTable({
                 })}{' '}
                 wallets
               </Typography>
-              <TrendLabelPercent
-                value={row?.metrics.walletsCountTrend}
-                iconAlign="left"
-              />
+              {row?.metrics.walletsCountTrend && (
+                <TrendLabelPercent
+                  value={row?.metrics.walletsCountTrend}
+                  iconAlign="left"
+                />
+              )}
               <Typography variant="body1" color="textSecondary">
                 {format(row?.metrics.walletsCountPercent, { symbol: '%' })} of
                 total
