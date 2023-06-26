@@ -229,7 +229,11 @@ export function LineChart({
             )}
           </div>
         </div>
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <HighchartsReact
+          allowChartUpdate={true}
+          highcharts={Highcharts}
+          options={options}
+        />
       </div>
     </LoadingWrapper>
   );

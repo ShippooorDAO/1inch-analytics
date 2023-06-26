@@ -19,7 +19,6 @@ import { HistogramChart } from '@/components/chart/HistogramChart';
 import { LineChart } from '@/components/chart/LineChart';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
-import { RoundedImageIcon } from '@/components/icons/RoundedImageIcon';
 import { TrendLabelPercent } from '@/components/MetricsCard';
 import { StatsContainer } from '@/components/StatsContainer';
 import { StatsSingleContainer } from '@/components/StatsSingleContainer';
@@ -547,8 +546,7 @@ export default function TokenPage() {
           justify-content: flex-start;
         `}
       >
-        <RoundedImageIcon src="/vendors/1inch/1inch_logo.svg" size="medium" />
-        <Typography variant="h1">1INCH Token</Typography>
+        <Typography variant="h3">1INCH Token</Typography>
       </div>
       <div
         css={css`
@@ -575,7 +573,7 @@ export default function TokenPage() {
                 `}
               >
                 <QueryStatsIcon />
-                <Typography variant="h3">Market data</Typography>
+                <Typography variant="h3">1INCH Market data</Typography>
               </div>
             }
             headerMetrics={[
@@ -599,7 +597,7 @@ export default function TokenPage() {
                 }),
               },
               {
-                title: '24H trading volatility',
+                title: 'Volume (24H)',
                 value: format(marketData?.currentMarketData?.usd24hVol, {
                   symbol: 'USD',
                   abbreviate: true,
