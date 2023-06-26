@@ -186,7 +186,7 @@ function FusionResolversTable({
     'volume'
   );
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(7);
   const [timeWindow, setTimeWindow] = useState(TimeWindow.SEVEN_DAYS);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const sortMenuOpen = Boolean(anchorEl);
@@ -574,7 +574,7 @@ function FusionTradersTable() {
     'volumeUsd'
   );
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(7);
   const { fusionTopTraders } = useFusionTopTraders({
     pageSize: pageSize * 100,
     pageNumber: 1,
@@ -688,7 +688,7 @@ function FusionTradersTable() {
             css={(theme) => css`
               display: flex;
               flex-flow: row;
-              height: 82px;
+              height: 86px;
               gap: 10px;
               align-items: center;
               justify-content: space-between;
@@ -724,10 +724,6 @@ function FusionTradersTable() {
                       {getAddressShorthand(fusionTrader.address)}
                     </Typography>
                   </a>
-                  <EtherscanButton
-                    size="small"
-                    address={fusionTrader.address}
-                  />
                   <AddressCopyButton
                     size="small"
                     address={fusionTrader.address}
@@ -815,7 +811,7 @@ function FusionTradesTable() {
     'destinationUsdAmount'
   );
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(7);
   const {
     fusionTrades,
     mock: mockFusionTrades,
@@ -959,7 +955,7 @@ function FusionTradesTable() {
             css={(theme) => css`
               display: flex;
               flex-flow: row;
-              height: 82px;
+              height: 86px;
               gap: 10px;
               align-items: center;
               justify-content: space-between;
@@ -1281,7 +1277,7 @@ export default function FusionPage() {
           display: flex;
           flex-flow: column;
           gap: 20px;
-          margin-top: -40px;
+          margin-top: -20px;
         `}
       >
         <MultiTabSection

@@ -349,7 +349,7 @@ function StakingWalletsTable({
             css={(theme) => css`
               display: flex;
               flex-flow: row;
-              height: 82px;
+              height: 86px;
               gap: 10px;
               align-items: center;
               justify-content: space-between;
