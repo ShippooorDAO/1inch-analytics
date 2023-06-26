@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { Typography, useTheme } from '@mui/material';
+import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -213,24 +214,48 @@ export function GasMeter() {
             ))}
           </div>
         </div>
-        {displayGasTrend ? (
-          <>
-            <hr
-              css={css`
-                width: 100%;
-                height: 1px;
-                border: 1px solid rgba(255, 255, 225, 0.1);
-              `}
-            />
-            <div
-              css={css`
-                width: 100%;
-              `}
-            >
-              <GasPriceChart data={ethGasPrices} />
-            </div>
-          </>
-        ) : undefined}
+        <hr
+          css={css`
+            width: 100%;
+            height: 1px;
+            border: 1px solid rgba(255, 255, 225, 0.1);
+          `}
+        />
+        <div
+          css={css`
+            width: 100%;
+          `}
+        >
+          {displayGasTrend ? (
+            <GasPriceChart data={ethGasPrices} />
+          ) : (
+            <AutoSkeleton loading={loading}>
+              <div
+                css={css`
+                  display: flex;
+                  flex-flow: column;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 10px;
+                  padding: 10px;
+                  background-color: ${lighten(
+                    0.05,
+                    theme.palette.background.paper
+                  )};
+                  height: 140px;
+                `}
+              >
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  textAlign="center"
+                >
+                  Historical gas price trend unavailable for this chain
+                </Typography>
+              </div>
+            </AutoSkeleton>
+          )}
+        </div>
       </div>
     </>
   );
