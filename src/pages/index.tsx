@@ -315,7 +315,7 @@ export default function Home() {
               }),
             },
             {
-              title: '24h',
+              title: '24H',
               value: format(data?.allSelectedChains.volumeLastDay, {
                 symbol: 'USD',
                 abbreviate: true,
@@ -327,7 +327,7 @@ export default function Home() {
               ),
             },
             {
-              title: '7d',
+              title: '7D',
               value: format(data?.allSelectedChains.volumeLastWeek, {
                 symbol: 'USD',
                 abbreviate: true,
@@ -339,7 +339,7 @@ export default function Home() {
               ),
             },
             {
-              title: '30d',
+              title: '30D',
               value: format(data?.allSelectedChains.volumeLastMonth, {
                 symbol: 'USD',
                 abbreviate: true,

@@ -104,9 +104,9 @@ export function getTimeseriesTrend(timeseries: Timeseries) {
   }
 
   return (
-    1 -
     timeseries.data[timeseries.data.length - 1].y /
-      timeseries.data[timeseries.data.length - 2].y
+      timeseries.data[timeseries.data.length - 2].y -
+    1
   );
 }
 

@@ -177,6 +177,14 @@ function parseWalletsAndTransactionsTimeseriesResponse(
     }
   }
 
+  for (const timeseries of transactionsTimeseriesMap.values()) {
+    timeseries.data.sort((a, b) => a.x - b.x);
+  }
+
+  for (const timeseries of walletsTimeseriesMap.values()) {
+    timeseries.data.sort((a, b) => a.x - b.x);
+  }
+
   return {
     transactionsCount: transactionsTimeseriesMap,
     walletsCount: walletsTimeseriesMap,
@@ -219,6 +227,10 @@ function parseVolumeTimeseriesResponse(
         data: [],
       });
     }
+  }
+
+  for (const timeseries of volumeTimeseriesMap.values()) {
+    timeseries.data.sort((a, b) => a.x - b.x);
   }
 
   return volumeTimeseriesMap;
