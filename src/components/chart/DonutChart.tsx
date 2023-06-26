@@ -167,7 +167,11 @@ export function DonutChart({
 
   return (
     <LoadingWrapper width="100%" variant="rounded" loading={!data}>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <HighchartsReact
+        allowChartUpdate={true}
+        highcharts={Highcharts}
+        options={options}
+      />
     </LoadingWrapper>
   );
 }
