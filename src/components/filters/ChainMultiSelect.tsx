@@ -29,7 +29,7 @@ export function ChainMultiSelect({
       value: chain,
       label: (
         <SelectOptionLabel
-          name={chain.name}
+          name={chain.displayName}
           icon={
             chain.imageUrl ? (
               <RoundedImageIcon size="small" src={chain.imageUrl} />

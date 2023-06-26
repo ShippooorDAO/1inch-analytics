@@ -25,6 +25,7 @@ import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneI
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { StatsContainer } from '@/components/StatsContainer';
 import { scopeTimeseriesToTimeWindow } from '@/shared/Utils/Chart';
+import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 
 interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
@@ -177,6 +178,8 @@ export default function Home() {
   const { chainStore } = useOneInchAnalyticsAPIContext();
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
 
+  const chainOptions = useMemo(() => chainStore?.getAll() ?? [], [chainStore]);
+
   const displayedChains = useMemo(() => {
     if (!chainStore) {
       return undefined;
@@ -204,19 +207,27 @@ export default function Home() {
         css={css`
           display: flex;
           flex-flow: column;
-          gap: 40px;
+          gap: 20px;
         `}
       >
-        <Typography variant="h3">1inch Aggregation Protocol</Typography>
-        {/* <div
+        <div
           css={css`
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             gap: 20px;
           `}
         >
-          <div>
+          <Typography variant="h3">1inch Aggregation Protocol</Typography>
+
+          <div
+            css={css`
+              display: flex;
+              flex-flow: row;
+              align-items: center;
+              gap: 5px;
+            `}
+          >
             Filter by chain:
             <ChainMultiSelect
               values={selectedChains}
@@ -224,7 +235,7 @@ export default function Home() {
               chains={chainOptions ?? []}
             />
           </div>
-        </div> */}
+        </div>
         {/* <div
           css={css`
             display: flex;
