@@ -26,7 +26,6 @@ const Item = styled(ListItemButton)<ItemProps>`
   padding-bottom: 10px;
   border-radius: 10px;
   padding-right: 0
-  font-weight: ${(props) => props.theme.typography.fontWeightRegular};
   margin: 10px;
   margin-left: ${(props) => props.theme.spacing((props.depth + 1) * 3)};
   svg {
@@ -138,7 +137,6 @@ const SidebarNavListItem = (props: SidebarNavListItemProps) => {
             {Icon && <Icon />}
             <Title depth={depth}>
               <Typography variant="body2">{title}</Typography>
-              {badge && <Badge label={badge} />}
             </Title>
           </Item>
         </Link>
@@ -154,7 +152,6 @@ const SidebarNavListItem = (props: SidebarNavListItemProps) => {
           {Icon && <Icon />}
           <Title depth={depth}>
             <Typography variant="body2">{title}</Typography>
-            {badge && <Badge label={badge} />}
           </Title>
           {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </Item>

@@ -3,7 +3,6 @@ import { Menu as MenuIcon } from '@mui/icons-material';
 import { AppBar, IconButton, Link, Toolbar } from '@mui/material';
 import React from 'react';
 
-import { GlobalSearch } from '../search/GlobalSearch';
 import { LastSyncIdenticator } from './LastSyncIdenticator';
 
 interface NavbarProps {
@@ -18,7 +17,8 @@ function Navbar({ onDrawerToggle, drawerOpen }: NavbarProps) {
         position="sticky"
         elevation={0}
         css={(theme) => css`
-          background: ${theme.palette.background.default};
+          background: ${theme.sidebar.background};
+          border-radius: 0;
           color: ${theme.header.color};
         `}
       >
@@ -72,13 +72,6 @@ function Navbar({ onDrawerToggle, drawerOpen }: NavbarProps) {
                 </IconButton>
               </div>
             )}
-            <div
-              css={css`
-                width: 500px;
-              `}
-            >
-              <GlobalSearch />
-            </div>
             <div
               css={css`
                 flex-grow: 1;

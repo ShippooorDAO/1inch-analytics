@@ -1,3 +1,6 @@
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import StackedBarChartOutlinedIcon from '@mui/icons-material/StackedBarChartOutlined';
+
 import { FeatureFlags } from '@/shared/FeatureFlags/FeatureFlags.type';
 import { SidebarItemsType } from '@/types/sidebar';
 
@@ -18,9 +21,7 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.OVERVIEW,
       {
         href: '/',
-        icon: () => (
-          <RoundedImageIcon size="small" src="/warden/bar_chart.svg" />
-        ),
+        icon: () => <StackedBarChartOutlinedIcon />,
         title: 'Overview',
       },
     ],
@@ -37,7 +38,12 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       {
         href: '/fusion',
         icon: () => (
-          <RoundedImageIcon size="small" src="/vendors/1inch/fusion.webp" />
+          <img
+            height="20px"
+            width="20px"
+            src="/vendors/1inch/fusion.webp"
+            alt="fusion"
+          />
         ),
         title: 'Fusion Mode',
       },
@@ -47,7 +53,12 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       {
         href: '/token',
         icon: () => (
-          <RoundedImageIcon size="small" src="/vendors/1inch/1inch_logo.svg" />
+          <img
+            height="20px"
+            width="20px"
+            src="/vendors/1inch/1inch_logo.svg"
+            alt="1inch token"
+          />
         ),
         title: '1INCH Token',
       },
@@ -56,9 +67,7 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.TREASURY,
       {
         href: '/treasury',
-        icon: () => (
-          <RoundedImageIcon size="small" src="/warden/treasury.svg" />
-        ),
+        icon: () => <AccountBalanceOutlinedIcon />,
         title: 'Treasury',
       },
     ],
