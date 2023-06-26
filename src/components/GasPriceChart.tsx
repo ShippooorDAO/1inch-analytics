@@ -49,12 +49,12 @@ export function GasPriceChart({ data }: GasPriceChartProps) {
           `}
         >
           <AutoSkeleton loading={loading}>
-            <Typography variant="body2">
+            <Typography variant="body1">
               {position ? `${position.gasPrice.toFixed(0)} gwei` : ''}
             </Typography>
           </AutoSkeleton>
           <AutoSkeleton loading={loading}>
-            <Typography variant="body2">
+            <Typography variant="body1">
               {position
                 ? `${moment.unix(position.timestamp).format('HH:mm:ss')}`
                 : ''}
@@ -62,7 +62,7 @@ export function GasPriceChart({ data }: GasPriceChartProps) {
           </AutoSkeleton>
         </div>
         <AutoSkeleton loading={loading}>
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body1" color="textSecondary">
             Average
           </Typography>
         </AutoSkeleton>

@@ -10,72 +10,71 @@ export const SidebarFooter = ({ ...rest }) => {
         display: flex;
         flex-flow: column;
         justify-content: space-between;
-        gap: 10px;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        gap: 0px;
+        padding: 10px;
         background-color: ${theme.sidebar.background};
       `}
     >
-      <div>
-        <div>
-          <Typography variant="body2" color="textSecondary" align="center">
-            Any feedback or questions?
-          </Typography>
-        </div>
-        <div
-          css={(theme) => css`
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 10px;
-            padding: 20px;
-            padding-top: 0;
-            padding-bottom: 0;
-            background-color: ${theme.sidebar.background};
-          `}
+      <Typography variant="body1" color="textSecondary" align="center">
+        Any feedback or questions?
+      </Typography>
+      <div
+        css={(theme) => css`
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          gap: 10px;
+          padding: 20px;
+          padding-top: 0;
+          padding-bottom: 0;
+          background-color: ${theme.sidebar.background};
+        `}
+      >
+        <IconButton
+          size="medium"
+          onClick={() => window.open('https://twitter.com/warden_finance')}
         >
-          <IconButton
-            onClick={() => window.open('https://twitter.com/warden_finance')}
-          >
-            <Twitter
+          <Twitter
+            css={css`
+              opacity: 70%;
+            `}
+            size="20px"
+          />
+        </IconButton>
+        <IconButton
+          size="medium"
+          onClick={() => window.open('https://discord.com/invite/AfUqDrrjVT')}
+        >
+          <img
+            css={css`
+              opacity: 70%;
+            `}
+            src="/vendors/discord.svg"
+            height="16px"
+            alt="Discord"
+          />
+        </IconButton>
+        <IconButton
+          size="medium"
+          onClick={() => window.open('https://t.me/shippooor')}
+        >
+          <Telegram
+            css={css`
+              opacity: 70%;
+            `}
+            fontSize="small"
+          />
+        </IconButton>
+        <a href="mailto:contact@shippooor.xyz">
+          <IconButton size="medium">
+            <EmailOutlined
               css={css`
                 opacity: 70%;
               `}
-              size="25px"
+              fontSize="small"
             />
           </IconButton>
-          <IconButton
-            size="large"
-            onClick={() => window.open('https://discord.com/invite/AfUqDrrjVT')}
-          >
-            <img
-              css={css`
-                opacity: 70%;
-              `}
-              src="/vendors/discord.svg"
-              height="20px"
-              alt="Discord"
-            />
-          </IconButton>
-          <IconButton onClick={() => window.open('https://t.me/shippooor')}>
-            <Telegram
-              css={css`
-                opacity: 70%;
-              `}
-              fontSize="medium"
-            />
-          </IconButton>
-          <a href="mailto:contact@shippooor.xyz">
-            <IconButton>
-              <EmailOutlined
-                css={css`
-                  opacity: 70%;
-                `}
-                fontSize="medium"
-              />
-            </IconButton>
-          </a>
-        </div>
+        </a>
       </div>
     </div>
   );

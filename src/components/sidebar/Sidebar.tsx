@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { UniswapV3SubgraphProvider } from '@/shared/UniswapV3Subgraph/UniswapV3SubgraphProvider';
 
 import { GasMeter } from '../GasMeter';
-import { SidebarFooter } from './SidebarFooter';
 import SidebarNav, { SidebarNavProps } from './SidebarNav';
 
 export interface SidebarProps {
@@ -78,14 +77,13 @@ const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
           display: flex;
           justify-content: center;
           background-color: ${theme.sidebar.background};
+          padding-bottom: 20px;
         `}
       >
         <UniswapV3SubgraphProvider>
           <GasMeter />
         </UniswapV3SubgraphProvider>
       </div>
-
-      <SidebarFooter />
     </Drawer>
   );
 };
