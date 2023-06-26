@@ -123,7 +123,6 @@ export function StatsContainer({
             css={css`
               display: flex;
               flex-flow: column;
-              gap: 20px;
             `}
           >
             {Array.from({

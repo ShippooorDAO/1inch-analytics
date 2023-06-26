@@ -15,10 +15,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import PersonIcon from '@mui/icons-material/Person';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 
-import {
-  MetricsCardWithLink,
-  TrendLabelPercent,
-} from '@/components/MetricsCard';
+import { TrendLabelPercent } from '@/components/MetricsCard';
 import { format } from '@/shared/Utils/Format';
 import { BarChart } from '@/components/chart/BarChart';
 import { Chain } from '@/shared/Model/Chain';
@@ -228,7 +225,7 @@ export default function Home() {
             />
           </div>
         </div> */}
-        <div
+        {/* <div
           css={css`
             display: flex;
             flex-flow: row;
@@ -283,12 +280,11 @@ export default function Home() {
             }
             footer="Total Value Locked (24h)"
           />
-        </div>
+        </div> */}
         <StatsContainer
           title={
             <div
               css={css`
-                margin-top: 10px;
                 display: flex;
                 flex-flow: row;
                 gap: 5px;
@@ -423,7 +419,6 @@ export default function Home() {
           title={
             <div
               css={css`
-                margin-top: 10px;
                 display: flex;
                 flex-flow: row;
                 gap: 5px;
@@ -567,7 +562,6 @@ export default function Home() {
           title={
             <div
               css={css`
-                margin-top: 10px;
                 display: flex;
                 flex-flow: row;
                 gap: 5px;

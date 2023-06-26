@@ -569,7 +569,6 @@ export default function TokenPage() {
             title={
               <div
                 css={css`
-                  margin-top: 10px;
                   display: flex;
                   flex-flow: row;
                   gap: 5px;
@@ -640,7 +639,6 @@ export default function TokenPage() {
               title={
                 <div
                   css={css`
-                    margin-top: 10px;
                     display: flex;
                     flex-flow: row;
                     gap: 5px;
