@@ -9,15 +9,15 @@ import { format } from '@/shared/Utils/Format';
 
 import { useChartOptions } from './useChartOptions';
 
-interface UseDonutChartOptionsProps {
+interface UseDonutOptionsProps {
   tooltipFormatter?: (y?: number | null) => string;
   labelFormatter?: (y?: number | null) => string;
 }
 
-function useDonutChartOptions({
+function useDonutOptions({
   tooltipFormatter,
   labelFormatter,
-}: UseDonutChartOptionsProps) {
+}: UseDonutOptionsProps) {
   const innerTooltipFormatter =
     tooltipFormatter ?? ((y) => format(y, { symbol: 'USD' }));
   const innerLabelFormatter =
@@ -47,7 +47,7 @@ function useDonutChartOptions({
   const options: Highcharts.Options = {
     ...chartOptions,
     chart: {
-      type: 'bar',
+      type: 'pie',
       ...chartOptions.chart,
     },
     yAxis: {
@@ -94,10 +94,12 @@ function useDonutChartOptions({
       },
     },
     plotOptions: {
-      bar: {
+      pie: {
         colors: pieColors,
         borderColor: theme.palette.text.secondary,
         borderWidth: 1,
+        innerSize: '60%',
+        showInLegend: true,
         dataLabels: {
           crop: false,
           enabled: true,
@@ -117,7 +119,7 @@ function useDonutChartOptions({
   return { chartOptions: options };
 }
 
-export interface DonutChartProps {
+export interface DonutProps {
   seriesName: string;
   yAxisTitle?: string;
   data?: Array<{
@@ -135,8 +137,8 @@ export function DonutChart({
   seriesName,
   tooltipFormatter,
   labelFormatter,
-}: DonutChartProps) {
-  const { chartOptions } = useDonutChartOptions({
+}: DonutProps) {
+  const { chartOptions } = useDonutOptions({
     tooltipFormatter,
     labelFormatter,
   });
@@ -156,7 +158,7 @@ export function DonutChart({
     },
     series: [
       {
-        type: 'bar',
+        type: 'pie',
         name: seriesName,
         data: sortedData,
       },

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
+import PieChartIcon from '@mui/icons-material/PieChart';
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import {
   Button,
@@ -13,11 +14,14 @@ import { lighten } from 'polished';
 import { useEffect, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
+import { DonutChart } from '@/components/chart/DonutChart';
+import { HistogramChart } from '@/components/chart/HistogramChart';
 import { LineChart } from '@/components/chart/LineChart';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { RoundedImageIcon } from '@/components/icons/RoundedImageIcon';
 import { TrendLabelPercent } from '@/components/MetricsCard';
+import { StatsContainer } from '@/components/StatsContainer';
 import { StatsSingleContainer } from '@/components/StatsSingleContainer';
 import { StakingVersionToggleButtonGroup } from '@/components/table/StakingVersionToggleButtonGroup';
 import { useCoingeckoMarketData } from '@/hooks/useCoingeckoMarketData';
@@ -32,6 +36,7 @@ import {
 } from '@/shared/Model/StakingWallet';
 import {
   getTimeWindowLabel,
+  TimeInterval,
   Timeseries,
   TimeWindow,
 } from '@/shared/Model/Timeseries';
@@ -46,6 +51,132 @@ function useTokenPageData() {
     version: 'ALL',
   };
 
+  const tokenDistribution = [
+    {
+      name: 'Backers 2',
+      y: 12.2,
+      color: 'rgb(103,188,169)',
+    },
+    {
+      name: 'Backers 1',
+      y: 18.5,
+      color: 'rgb(200,115,95)',
+    },
+    {
+      name: 'Small Backers',
+      y: 2.3,
+      color: 'rgb(217,202,128)',
+    },
+    {
+      name: 'Core contributors',
+      y: 22.5,
+      color: 'rgb(81,86,116)',
+    },
+    {
+      name: 'Network Growth Fund',
+      y: 14.5,
+      color: 'rgb(94,86,205)',
+    },
+    {
+      name: 'Community Incentives',
+      y: 30.0,
+      color: 'rgb(190,73,81)',
+    },
+  ];
+
+  const tokenUnlockSchedule: Timeseries[] = [
+    {
+      name: 'Backers 2',
+      data: [
+        { x: 1606780800, y: 0 },
+        { x: 1622505600, y: 0 },
+        { x: 1638316800, y: 500000000 * 0.023 },
+        { x: 1654041600, y: 708333333 * 0.023 },
+        { x: 1669852800, y: 940972222 * 0.023 },
+        { x: 1685577600, y: 1166666666 * 0.023 },
+        { x: 1701388800, y: 1277777777 * 0.023 },
+        { x: 1717200000, y: 1388888888 * 0.122 },
+        { x: 1733011200, y: 183000000 },
+      ],
+      color: 'rgb(103,188,169)',
+    },
+    {
+      name: 'Backers 1',
+      data: [
+        { x: 1606780800, y: 0 },
+        { x: 1622505600, y: 0 },
+        { x: 1638316800, y: 500000000 * 0.023 },
+        { x: 1654041600, y: 708333333 * 0.023 },
+        { x: 1669852800, y: 940972222 * 0.023 },
+        { x: 1685577600, y: 1166666666 * 0.023 },
+        { x: 1701388800, y: 1277777777 * 0.023 },
+        { x: 1717200000, y: 1388888888 * 0.185 },
+        { x: 1733011200, y: 277500000 },
+      ],
+      color: 'rgb(200,115,95)',
+    },
+    {
+      name: 'Small Backers',
+      data: [
+        { x: 1606780800, y: 0 },
+        { x: 1622505600, y: 0 },
+        { x: 1638316800, y: 500000000 * 0.023 },
+        { x: 1654041600, y: 708333333 * 0.023 },
+        { x: 1669852800, y: 940972222 * 0.023 },
+        { x: 1685577600, y: 1166666666 * 0.023 },
+        { x: 1701388800, y: 1277777777 * 0.023 },
+        { x: 1717200000, y: 1388888888 * 0.023 },
+        { x: 1733011200, y: 34500000 },
+      ],
+      color: 'rgb(217,202,128)',
+    },
+    {
+      name: 'Core contributors',
+      data: [
+        { x: 1606780800, y: 0 },
+        { x: 1622505600, y: 0 },
+        { x: 1638316800, y: 500000000 * 0.225 },
+        { x: 1654041600, y: 708333333 * 0.225 },
+        { x: 1669852800, y: 940972222 * 0.225 },
+        { x: 1685577600, y: 1166666666 * 0.225 },
+        { x: 1701388800, y: 1277777777 * 0.225 },
+        { x: 1717200000, y: 1388888888 * 0.225 },
+        { x: 1733011200, y: 337500000 },
+      ],
+      color: 'rgb(81,86,116)',
+    },
+    {
+      name: 'Network Growth Fund',
+      data: [
+        { x: 1606780800, y: 59027777 },
+        { x: 1622505600, y: 69444444 },
+        { x: 1638316800, y: 500000000 * 0.145 },
+        { x: 1654041600, y: 708333333 * 0.145 },
+        { x: 1669852800, y: 940972222 * 0.145 },
+        { x: 1685577600, y: 1166666666 * 0.145 },
+        { x: 1701388800, y: 1277777777 * 0.145 },
+        { x: 1717200000, y: 1388888888 * 0.145 },
+        { x: 1733011200, y: 217500000 },
+      ],
+      color: 'rgb(94,86,205)',
+    },
+    {
+      name: 'Community Incentives',
+      data: [
+        { x: 1606780800, y: 145833333 },
+        { x: 1622505600, y: 173611111 },
+        { x: 1638316800, y: 500000000 * 0.3 },
+        { x: 1654041600, y: 708333333 * 0.3 },
+        { x: 1669852800, y: 940972222 * 0.3 },
+        { x: 1685577600, y: 1166666666 * 0.3 },
+        { x: 1701388800, y: 1277777777 * 0.3 },
+        { x: 1717200000, y: 1388888888 * 0.3 },
+        { x: 1733011200, y: 450000000 },
+      ],
+      color: 'rgb(190,73,81)',
+    },
+  ];
+
   const marketDataContext = useCoingeckoMarketData(TimeWindow.MAX, '1inch');
   const stakingWalletsContext = useStakingWallets(initialStakingWalletsParams);
 
@@ -55,6 +186,8 @@ function useTokenPageData() {
   return {
     marketData: marketDataContext.data,
     stakingWallets: stakingWalletsContext.stakingWallets,
+    tokenDistribution,
+    tokenUnlockSchedule,
     pagination: stakingWalletsContext.pagination,
     refetchStakingWallets: stakingWalletsContext.refetchStakingWallets,
     updateMarketDataTimeWindow: marketDataContext.updateTimeWindow,
@@ -376,6 +509,8 @@ export default function TokenPage() {
   const {
     marketData,
     stakingWallets,
+    tokenDistribution,
+    tokenUnlockSchedule,
     pagination,
     updateMarketDataTimeWindow,
     refetchStakingWallets,
@@ -494,6 +629,61 @@ export default function TokenPage() {
               stakingWallets={stakingWallets}
               pagination={pagination}
               refetchStakingWallets={refetchStakingWallets}
+            />
+          </div>
+          <div
+            css={css`
+              width: 100%;
+            `}
+          >
+            <StatsContainer
+              title={
+                <div
+                  css={css`
+                    margin-top: 10px;
+                    display: flex;
+                    flex-flow: row;
+                    gap: 5px;
+                  `}
+                >
+                  <PieChartIcon />
+                  <Typography variant="h3">
+                    Token general information
+                  </Typography>
+                </div>
+              }
+              headerMetrics={[
+                {
+                  title: 'Total supply',
+                  value: format(1500000000, { abbreviate: true }),
+                },
+              ]}
+              rightContainer={{
+                title: 'Token unlock schedule',
+                content: (
+                  <HistogramChart
+                    timeseriesList={tokenUnlockSchedule}
+                    timeWindow={TimeWindow.MAX}
+                    timeInterval={TimeInterval.MONTHLY}
+                    onTimeWindowChange={() => {}}
+                    onTimeIntervalChange={() => {}}
+                    formatter={(y?: number | null) =>
+                      format(y, { abbreviate: true })
+                    }
+                  />
+                ),
+              }}
+              leftContainer={{
+                title: 'Token distribution',
+                content: (
+                  <DonutChart
+                    data={tokenDistribution}
+                    seriesName="Token distribution (%)"
+                    labelFormatter={(y?: number | null) => `${y}%`}
+                    tooltipFormatter={(y?: number | null) => `${y}%`}
+                  />
+                ),
+              }}
             />
           </div>
         </div>

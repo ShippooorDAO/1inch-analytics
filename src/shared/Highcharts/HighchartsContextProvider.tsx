@@ -138,11 +138,13 @@ export const chartDateTooltipFormatter = new Intl.DateTimeFormat(undefined, {
   day: 'numeric',
   hour: 'numeric',
   minute: 'numeric',
+  year: 'numeric',
 });
 
 export const chartDateFormatter = new Intl.DateTimeFormat(undefined, {
   month: 'short',
   day: 'numeric',
+  year: '2-digit',
 });
 
 export const useHighchartsContext = () =>
