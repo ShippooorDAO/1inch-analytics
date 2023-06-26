@@ -162,9 +162,10 @@ export function HistogramChart({
         type: 'area',
         color: t.color,
         fillColor: t.color
-          ? createGradient(t.color, 0.3, 0.7, 'up')
+          ? createGradient(t.color, 0.2, 0.7, 'up')
           : undefined,
         name: t.name,
+        connectNulls: true,
         data: [...t.data],
         visible: !!timeseriesList?.find((t_) => t.name === t_.name),
         stack: 1,
@@ -285,7 +286,11 @@ export function HistogramChart({
           )}
         </div>
 
-        <HighchartsReact highcharts={Highcharts} options={options} />
+        <HighchartsReact
+          allowChartUpdate={true}
+          highcharts={Highcharts}
+          options={options}
+        />
       </div>
     </LoadingWrapper>
   );

@@ -48,7 +48,6 @@ import {
 import { TimeInterval, TimeWindow } from '@/shared/Model/Timeseries';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import {
-  EtherscanLinkType,
   getEtherscanAddressLink,
   getEtherscanTransactionLink,
 } from '@/shared/Utils/Etherscan';
@@ -999,11 +998,6 @@ function FusionTradesTable() {
                         {moment.unix(row.timestamp).format('MMM D, YYYY')}
                       </Typography>
                     </a>
-                    <EtherscanButton
-                      size="small"
-                      address={row.transactionHash}
-                      linkType={EtherscanLinkType.TRANSACTION}
-                    />
                     <AddressCopyButton
                       size="small"
                       address={row.transactionHash}
@@ -1052,10 +1046,6 @@ function FusionTradesTable() {
                         {getAddressShorthand(row.executorAddress)}
                       </Typography>
                     </a>
-                    <EtherscanButton
-                      size="small"
-                      address={row.executorAddress}
-                    />
                     <AddressCopyButton
                       size="small"
                       address={row.executorAddress}
@@ -1103,10 +1093,6 @@ function FusionTradesTable() {
                         {getAddressShorthand(row.receiverAddress)}
                       </Typography>
                     </a>
-                    <EtherscanButton
-                      size="small"
-                      address={row.receiverAddress}
-                    />
                     <AddressCopyButton
                       size="small"
                       address={row.receiverAddress}
@@ -1284,6 +1270,7 @@ export default function FusionPage() {
           tabs={[
             {
               label: 'Volume',
+              key: 'volume',
               content: (
                 <StatsContainer
                   leftContainer={{
@@ -1337,6 +1324,7 @@ export default function FusionPage() {
             },
             {
               label: 'Transactions',
+              key: 'transactions',
               content: (
                 <StatsContainer
                   leftContainer={{
@@ -1389,6 +1377,7 @@ export default function FusionPage() {
             },
             {
               label: 'Users',
+              key: 'users',
               content: (
                 <StatsContainer
                   leftContainer={{

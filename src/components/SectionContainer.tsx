@@ -56,6 +56,7 @@ export function SectionContainer({
 
 interface MultiTabSectionContainerProps {
   tabs: {
+    key: string;
     label: string;
     content: React.ReactNode;
   }[];
@@ -66,7 +67,7 @@ export function MultiTabSection({
   tabs,
   loading,
 }: MultiTabSectionContainerProps) {
-  const [selectedTab, setSelectedTab] = useState(tabs[0].label);
+  const [selectedTab, setSelectedTab] = useState(tabs[0].key);
 
   return (
     <div
@@ -92,7 +93,7 @@ export function MultiTabSection({
         }}
       >
         {tabs.map((tab) => (
-          <ToggleButton key={tab.label} value={tab.label}>
+          <ToggleButton key={tab.key} value={tab.key}>
             {loading ? <Skeleton variant="text" width="80px" /> : tab.label}
           </ToggleButton>
         ))}
@@ -102,7 +103,7 @@ export function MultiTabSection({
           width: 100%;
         `}
       >
-        {tabs.find((tab) => tab.label === selectedTab)?.content}
+        {tabs.find((tab) => tab.key === selectedTab)?.content}
       </div>
     </div>
   );
