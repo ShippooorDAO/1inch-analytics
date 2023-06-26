@@ -868,6 +868,11 @@ function FusionTradesTable() {
     setPageNumber(pageNumber - 1);
   };
 
+  const resetFilters = () => {
+    setSelectedAssets([]);
+    setSortBy('timestamp');
+  };
+
   return (
     <div
       css={css`
@@ -885,6 +890,7 @@ function FusionTradesTable() {
           white-space: nowrap;
           padding-left: 10px;
           padding-right: 10px;
+          height: 100%;
         `}
       >
         <div
@@ -951,6 +957,23 @@ function FusionTradesTable() {
             </MenuItem>
           </Menu>
         </div>
+        {displayedRows?.length === 0 && (
+          <div
+            css={css`
+              display: flex;
+              flex-flow: column;
+              justify-content: center;
+              align-items: center;
+              gap: 10px;
+              height: 100%;
+            `}
+          >
+            <Typography variant="h3">No trades found</Typography>
+            <Button variant="outlined" onClick={() => resetFilters()}>
+              Reset Filters
+            </Button>
+          </div>
+        )}
         {displayedRows?.map((row) => (
           <div
             key={row.id}
@@ -1591,6 +1614,7 @@ export default function FusionPage() {
               ${theme.breakpoints.down('md')} {
                 width: 100%;
               }
+              height: 768px;
             `}
           >
             <FusionTradesTable />
