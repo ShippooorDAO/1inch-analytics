@@ -1,5 +1,5 @@
 import { css, Theme, useTheme } from '@emotion/react';
-import Highcharts from 'highcharts';
+import Highcharts, { YAxisOptions } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { useEffect, useRef, useState } from 'react';
 
@@ -116,6 +116,7 @@ export interface HistogramChartProps {
   onTimeWindowChange: (timeWindow: TimeWindow) => void;
   onTimeIntervalChange: (timeInterval: TimeInterval) => void;
   formatter?: (y?: number) => string;
+  yAxisFormatter?: (y?: number) => string;
 }
 
 export function HistogramChart({
@@ -127,6 +128,7 @@ export function HistogramChart({
   onTimeWindowChange,
   onTimeIntervalChange,
   formatter,
+  yAxisFormatter = (y) => format(y, { symbol: 'USD', abbreviate: true }),
 }: HistogramChartProps) {
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
@@ -190,12 +192,39 @@ export function HistogramChart({
     }
   };
 
+  let yAxis;
+
+  if (Array.isArray(chartOptions.yAxis)) {
+    yAxis = chartOptions.yAxis.map((y: YAxisOptions) => {
+      return {
+        ...y,
+        labels: {
+          ...y.labels,
+          // @ts-ignore
+          formatter() {
+            // @ts-ignore
+            return yAxisFormatter(this.value);
+          },
+        },
+      };
+    });
+  } else {
+    yAxis = {
+      ...chartOptions.yAxis,
+      labels: {
+        ...chartOptions.yAxis?.labels,
+        // @ts-ignore
+        formatter() {
+          // @ts-ignore
+          return yAxisFormatter(this.value);
+        },
+      },
+    };
+  }
+
   const options: Highcharts.Options = {
     ...chartOptions,
-    chart: {
-      ...chartOptions.chart,
-      marginRight: 0,
-    },
+    yAxis,
     tooltip: {
       ...chartOptions.tooltip,
       formatter() {

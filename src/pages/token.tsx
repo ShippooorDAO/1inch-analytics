@@ -670,6 +670,9 @@ export default function TokenPage() {
                     formatter={(y?: number | null) =>
                       format(y, { abbreviate: true })
                     }
+                    yAxisFormatter={(y?: number | null) =>
+                      format(y, { abbreviate: true })
+                    }
                   />
                 ),
               }}
