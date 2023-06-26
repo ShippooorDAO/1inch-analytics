@@ -811,9 +811,9 @@ function FusionTradersTable() {
 function FusionTradesTable() {
   const { assetService } = useOneInchAnalyticsAPIContext();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
-  const [sortBy, setSortBy] = useState<
-    'timestamp' | 'sourceUsdAmount' | 'destinationUsdAmount'
-  >('timestamp');
+  const [sortBy, setSortBy] = useState<'timestamp' | 'destinationUsdAmount'>(
+    'destinationUsdAmount'
+  );
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(8);
   const {
@@ -909,17 +909,25 @@ function FusionTradesTable() {
               onChange={setSelectedAssets}
             />
           </AutoSkeleton>
-          <Button
-            onClick={handleSortMenuClick}
-            endIcon={<Sort />}
-            css={(theme) =>
-              css`
-                color: ${theme.palette.text.secondary};
-              `
-            }
+          <div
+            css={css`
+              display: flex;
+              flex-flow: row;
+              justify-content: space-between;
+            `}
           >
-            Sort by
-          </Button>
+            <Button
+              onClick={handleSortMenuClick}
+              endIcon={<Sort />}
+              css={(theme) =>
+                css`
+                  color: ${theme.palette.text.secondary};
+                `
+              }
+            >
+              Sort by
+            </Button>
+          </div>
           <Menu
             anchorEl={anchorEl}
             open={sortMenuOpen}

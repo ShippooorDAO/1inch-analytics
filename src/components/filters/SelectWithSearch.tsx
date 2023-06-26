@@ -261,7 +261,7 @@ export function SelectWithSearch<T>({
         <Chip
           variant="outlined"
           disabled={disabled}
-          css={[
+          css={(theme) => [
             css`
               cursor: pointer;
               border-radius: 10px;
@@ -272,21 +272,47 @@ export function SelectWithSearch<T>({
                 padding-right: 10px;
                 width: 100%;
               }
+              border: 1px solid ${theme.palette.divider};
+              &:hover {
+                outline-style: solid;
+                outline-color: ${theme.palette.divider};
+                outline-width: 1px;
+              }
             `,
+            panelOpen &&
+              css`
+                outline-style: solid;
+                outline-color: ${theme.palette.divider};
+                outline-width: 1px;
+                background-color: ${theme.palette.action.hover};
+              `,
             cssProp,
           ]}
           label={
             <div
-              css={css`
+              css={(theme) => css`
                 align-items: center;
                 display: flex;
                 justify-content: space-between;
                 flex-flow: row;
                 gap: 10px;
+                color: ${theme.palette.text.primary};
               `}
             >
               {label_}
-              {panelOpen ? <ExpandLess /> : <ExpandMore />}
+              {panelOpen ? (
+                <ExpandLess
+                  css={(theme) => css`
+                    color: ${theme.palette.text.secondary};
+                  `}
+                />
+              ) : (
+                <ExpandMore
+                  css={(theme) => css`
+                    color: ${theme.palette.text.secondary};
+                  `}
+                />
+              )}
             </div>
           }
         />
