@@ -26,6 +26,7 @@ export function TimeWindowToggleButtonGroup({
           css={css`
             padding-left: 10px;
             padding-right: 10px;
+            white-space: nowrap;
           `}
         >
           {label}

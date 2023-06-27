@@ -66,7 +66,13 @@ export function StatsSingleContainer({
             align-items: flex-start;
           `}
         >
-          {title || <div></div>}
+          <div
+            css={css`
+              margin-top: 10px;
+            `}
+          >
+            {title || <div></div>}
+          </div>
           <div
             css={css`
               display: flex;
@@ -99,7 +105,16 @@ export function StatsSingleContainer({
               </div>
             ))}
           </div>
-          <div></div>
+          <div
+            css={(theme) => css`
+              visibility: hidden;
+              ${theme.breakpoints.down('md')} {
+                display: none;
+              }
+            `}
+          >
+            {title}
+          </div>
         </div>
       )}
       <div
