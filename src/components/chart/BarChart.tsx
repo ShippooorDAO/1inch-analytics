@@ -97,7 +97,8 @@ function useBarChartOptions({
       bar: {
         colors: pieColors,
         borderColor: theme.palette.text.secondary,
-        borderWidth: 1,
+        borderWidth: 0,
+        borderRadius: 4,
         dataLabels: {
           crop: false,
           enabled: true,
