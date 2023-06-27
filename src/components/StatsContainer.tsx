@@ -110,8 +110,8 @@ export function StatsContainer({
             ${theme.breakpoints.down('md')} {
               flex-flow: column;
             }
-            padding: 20px 20px 0 20px;
-            gap: 20px;
+            padding: 10px 20px 0 20px;
+            gap: 10px;
             justify-content: space-between;
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
@@ -144,7 +144,7 @@ export function StatsContainer({
                   align-items: center;
                   justify-content: center;
                   flex-wrap: wrap;
-                  gap: 20px;
+                  gap: 10px;
                   width: 100%;
                 `}
               >
@@ -174,9 +174,9 @@ export function StatsContainer({
           display: flex;
           flex-flow: row;
           justify-content: flex-start;
-          gap: 20px;
+          gap: 10px;
           flex-wrap: wrap;
-          padding: 20px 20px 20px 20px;
+          padding: 10px 0 10px 10px;
         `}
       >
         {!reversed ? (
