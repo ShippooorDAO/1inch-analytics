@@ -1,4 +1,5 @@
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import StackedBarChartOutlinedIcon from '@mui/icons-material/StackedBarChartOutlined';
 
 import { FeatureFlags } from '@/shared/FeatureFlags/FeatureFlags.type';
@@ -66,9 +67,21 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
     [
       PageSection.TREASURY,
       {
-        href: '/treasury',
+        href: '/',
         icon: () => <AccountBalanceOutlinedIcon />,
         title: 'Treasury',
+        badge: 'Soon',
+        disabled: true,
+      },
+    ],
+    [
+      PageSection.TRANSACTIONS,
+      {
+        href: '/',
+        icon: () => <ReceiptLongOutlinedIcon />,
+        title: 'Transactions',
+        badge: 'Soon',
+        disabled: true,
       },
     ],
   ]
@@ -79,12 +92,14 @@ export function getNavItems(featureFlags: FeatureFlags): SidebarNavProps {
   const tokenSection = pageSections.get(PageSection.TOKEN)!;
   const fusionSection = pageSections.get(PageSection.FUSION)!;
   const treasurySection = pageSections.get(PageSection.TREASURY)!;
+  const transactionsSection = pageSections.get(PageSection.TRANSACTIONS)!;
 
   const items: SidebarItemsType[] = [
     overviewSection,
     tokenSection,
     fusionSection,
     treasurySection,
+    transactionsSection,
   ];
 
   if (featureFlags.enableTransactionsPage) {
