@@ -212,36 +212,37 @@ export default function Home() {
       <div
         css={css`
           display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 20px;
+          margin-bottom: 5px;
+        `}
+      >
+        <PageTitle>1inch Aggregation Protocol Overview</PageTitle>
+
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            align-items: center;
+            gap: 5px;
+          `}
+        >
+          Filter by chain:
+          <ChainMultiSelect
+            values={selectedChains}
+            onChange={setSelectedChains}
+            chains={chainOptions ?? []}
+          />
+        </div>
+      </div>
+      <div
+        css={css`
+          display: flex;
           flex-flow: column;
           gap: 20px;
         `}
       >
-        <div
-          css={css`
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 20px;
-          `}
-        >
-          <PageTitle>1inch Aggregation Protocol Overview</PageTitle>
-
-          <div
-            css={css`
-              display: flex;
-              flex-flow: row;
-              align-items: center;
-              gap: 5px;
-            `}
-          >
-            Filter by chain:
-            <ChainMultiSelect
-              values={selectedChains}
-              onChange={setSelectedChains}
-              chains={chainOptions ?? []}
-            />
-          </div>
-        </div>
         <StatsContainer
           title={
             <div

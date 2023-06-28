@@ -166,7 +166,11 @@ export function BarChart({
 
   return (
     <LoadingWrapper width="100%" variant="rounded" loading={!data}>
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        allowChartUpdate={true}
+      />
     </LoadingWrapper>
   );
 }
