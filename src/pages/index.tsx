@@ -29,6 +29,7 @@ import {
 } from '@/components/StatsContainer';
 import { scopeTimeseriesToTimeWindow } from '@/shared/Utils/Chart';
 import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
+import { PageTitle } from '@/components/PageTitle';
 
 interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
@@ -217,11 +218,11 @@ export default function Home() {
           css={css`
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             gap: 20px;
           `}
         >
-          <Typography variant="h3">1inch Aggregation Protocol</Typography>
+          <PageTitle>1inch Aggregation Protocol</PageTitle>
 
           <div
             css={css`
@@ -301,6 +302,7 @@ export default function Home() {
               css={css`
                 display: flex;
                 flex-flow: row;
+                align-items: center;
                 gap: 5px;
               `}
             >
@@ -355,7 +357,6 @@ export default function Home() {
             },
           ]}
           leftContainer={{
-            title: 'Historical volume per chain',
             content: (
               <ControlledHistogramChart
                 dailyTimeseriesList={
@@ -390,7 +391,6 @@ export default function Home() {
             ),
           }}
           rightContainer={{
-            title: 'Current volume per chain',
             content: (
               <ControlledBarChart
                 seriesName="Volume (USD)"
@@ -435,6 +435,7 @@ export default function Home() {
               css={css`
                 display: flex;
                 flex-flow: row;
+                align-items: center;
                 gap: 5px;
               `}
             >
@@ -442,7 +443,7 @@ export default function Home() {
               <Typography variant="h3">Transactions</Typography>
             </div>
           }
-          layout={StatsContainerLayout.ONE_THIRD_TWO_THIRDS}
+          layout={StatsContainerLayout.TWO_THIRDS_ONE_THIRD}
           headerMetrics={[
             {
               title: 'All time',
@@ -493,8 +494,7 @@ export default function Home() {
               ),
             },
           ]}
-          leftContainer={{
-            title: 'Current transactions per chain',
+          rightContainer={{
             content: (
               <ControlledBarChart
                 seriesName="Transactions"
@@ -535,8 +535,7 @@ export default function Home() {
               />
             ),
           }}
-          rightContainer={{
-            title: 'Historical transactions per chain',
+          leftContainer={{
             content: (
               <ControlledHistogramChart
                 dailyTimeseriesList={
@@ -577,6 +576,7 @@ export default function Home() {
               css={css`
                 display: flex;
                 flex-flow: row;
+                align-items: center;
                 gap: 5px;
               `}
             >
@@ -627,7 +627,6 @@ export default function Home() {
             },
           ]}
           leftContainer={{
-            title: 'Historical users per chain',
             content: (
               <ControlledHistogramChart
                 dailyTimeseriesList={
@@ -662,7 +661,6 @@ export default function Home() {
             ),
           }}
           rightContainer={{
-            title: 'Current users per chain',
             content: (
               <ControlledBarChart
                 seriesName="Wallets"

@@ -1,7 +1,9 @@
 import { css } from '@emotion/react';
-import { Container, Typography } from '@mui/material';
+import { Container } from '@mui/material';
 
 import { HistogramChart } from '@/components/chart/HistogramChart';
+import { MetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
+import { PageTitle } from '@/components/PageTitle';
 import {
   StatsContainer,
   StatsContainerLayout,
@@ -164,7 +166,22 @@ export default function TreasuryPage() {
           gap: 20px;
         `}
       >
-        <Typography variant="h3">Treasury</Typography>
+        <PageTitle>Treasury</PageTitle>
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            gap: 20px;
+          `}
+        >
+          <MetricsCard
+            title="Net Worth (7D)"
+            value="$1.26M"
+            subValue={<TrendLabelPercent value={-0.09} />}
+          />
+          <MetricsCard title="Total Revenue (7D)" value="$1.26M" />
+        </div>
         <StatsContainer
           layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
           leftContainer={{

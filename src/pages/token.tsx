@@ -20,6 +20,7 @@ import { LineChart } from '@/components/chart/LineChart';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { TrendLabelPercent } from '@/components/MetricsCard';
+import { PageTitle } from '@/components/PageTitle';
 import {
   StatsContainer,
   StatsContainerLayout,
@@ -540,23 +541,11 @@ export default function TokenPage() {
       <div
         css={css`
           display: flex;
-          flex-flow: row;
-          gap: 10px;
-          margin-bottom: 10px;
-          align-content: center;
-          align-items: center;
-          justify-content: flex-start;
-        `}
-      >
-        <Typography variant="h3">1INCH Token</Typography>
-      </div>
-      <div
-        css={css`
-          display: flex;
           flex-flow: column;
           gap: 20px;
         `}
       >
+        <PageTitle>1INCH Token</PageTitle>
         <div
           css={css`
             display: flex;

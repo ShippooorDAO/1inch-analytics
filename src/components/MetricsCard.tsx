@@ -30,6 +30,7 @@ export function SlimMetricsCard({
         display: flex;
         flex-flow: row;
         gap: 10px;
+        border-radius: 16px;
         align-items: center;
         justify-content: flex-end;
         padding-right: 10px;
@@ -117,7 +118,6 @@ export function MetricsCardWithLink({
     >
       <Card
         css={(theme) => css`
-          border-radius: 24px;
           padding: 20px;
           display: flex;
           flex-flow: column;

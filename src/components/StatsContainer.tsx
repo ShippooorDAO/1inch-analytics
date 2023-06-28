@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Typography } from '@mui/material';
-import { lighten, rgba } from 'polished';
+import { rgba } from 'polished';
 
 import { SlimMetricsCard, SlimMetricsCardProps } from './MetricsCard';
 
@@ -15,13 +15,12 @@ export interface StatsContainerProps {
   title?: React.ReactNode;
   headerMetrics?: SlimMetricsCardProps[];
   headerMetricsPerRow?: number;
-  backgroundImageUrl?: string;
   leftContainer?: {
-    title: React.ReactNode;
+    title?: React.ReactNode;
     content: React.ReactNode;
   };
   rightContainer?: {
-    title: React.ReactNode;
+    title?: React.ReactNode;
     content: React.ReactNode;
   };
   layout?: StatsContainerLayout;
@@ -29,7 +28,6 @@ export interface StatsContainerProps {
 
 export function StatsContainer({
   title,
-  backgroundImageUrl,
   headerMetrics,
   headerMetricsPerRow: headerMetricsPerRow_,
   leftContainer,
@@ -46,7 +44,6 @@ export function StatsContainer({
           flex-flow: column;
           gap: 20px;
           border-radius: 24px;
-          // background-color: ${lighten(0.05, theme.palette.background.paper)};
           background-color: ${rgba(theme.palette.background.paper, 1)};
           padding: 16px;
           width: calc(100% - 420px);
@@ -68,7 +65,9 @@ export function StatsContainer({
           `,
       ]}
     >
-      <Typography variant="h3">{leftContainer.title}</Typography>
+      {leftContainer.title && (
+        <Typography variant="h3">{leftContainer.title}</Typography>
+      )}
       <div
         css={css`
           width: 100%;
@@ -88,7 +87,6 @@ export function StatsContainer({
           display: flex;
           flex-flow: column;
           gap: 20px;
-          // background-color: ${lighten(0.05, theme.palette.background.paper)};
           background-color: ${rgba(theme.palette.background.paper, 1)};
           border-radius: 24px;
           justify-content: space-between;
@@ -115,7 +113,9 @@ export function StatsContainer({
           `,
       ]}
     >
-      <Typography variant="h3">{rightContainer.title}</Typography>
+      {rightContainer.title && (
+        <Typography variant="h3">{rightContainer.title}</Typography>
+      )}
       {rightContainer.content}
     </div>
   ) : (
@@ -124,28 +124,12 @@ export function StatsContainer({
 
   return (
     <div
-      css={(theme) => css`
-        position: relative;
-        border-radius: 24px;
-        // background-color: ${rgba(theme.palette.background.paper, 1)};
-        z-index: 2;
+      css={css`
+        display: flex;
+        flex-flow: column;
+        gap: 16px;
       `}
     >
-      {backgroundImageUrl && (
-        <img
-          alt="none"
-          src={backgroundImageUrl}
-          css={css`
-            position: absolute;
-            border-radius: 24px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            z-index: -1;
-            opacity: 0.5;
-          `}
-        />
-      )}
       {headerMetrics && title && (
         <div
           css={(theme) => css`
@@ -188,7 +172,7 @@ export function StatsContainer({
                   align-items: center;
                   justify-content: center;
                   flex-wrap: wrap;
-                  gap: 10px;
+                  gap: 16px;
                   width: 100%;
                 `}
               >
@@ -218,9 +202,8 @@ export function StatsContainer({
           display: flex;
           flex-flow: row;
           justify-content: flex-start;
-          gap: 10px;
+          gap: 16px;
           flex-wrap: wrap;
-          padding: 10px 0 10px 10px;
         `}
       >
         {leftContainerNode}
