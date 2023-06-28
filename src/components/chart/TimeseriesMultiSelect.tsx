@@ -35,6 +35,15 @@ export function TimeseriesMultiSelect({
           icon={
             option.imageUrl ? (
               <RoundedImageIcon size="small" src={option.imageUrl} />
+            ) : option.color ? (
+              <span
+                css={css`
+                  background-color: ${option.color};
+                  height: 16px;
+                  width: 16px;
+                  border-radius: 24px;
+                `}
+              />
             ) : undefined
           }
         />
@@ -71,7 +80,7 @@ export function TimeseriesMultiSelect({
       }
       if (values.length === 1) {
         return (
-          options.find((o) => o.name === values[0].name)?.name ??
+          optionsInternal.find((o) => o.key === values[0].name)?.label ??
           'Select timeseries'
         );
       }
@@ -86,6 +95,7 @@ export function TimeseriesMultiSelect({
   return (
     <SelectWithSearch
       {...props}
+      disableSearch
       label={label}
       value={values}
       getKey={(option: Timeseries) => option.name}

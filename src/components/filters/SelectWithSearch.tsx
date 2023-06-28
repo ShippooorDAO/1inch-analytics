@@ -76,6 +76,7 @@ export interface SelectWithSearchOption<T> {
 
 export interface SelectWithSearchProps<T> {
   disabled?: boolean;
+  disableSearch?: boolean;
   multiple?: boolean;
   label?: React.ReactNode;
   forceOpen?: boolean;
@@ -93,6 +94,7 @@ export interface SelectWithSearchProps<T> {
 
 export function SelectWithSearch<T>({
   disabled,
+  disableSearch,
   multiple,
   label,
   forceOpen,
@@ -348,19 +350,23 @@ export function SelectWithSearch<T>({
                           padding: 10px;
                         `}
                       >
-                        <SearchInput
-                          tabIndex={-1}
-                          onChange={(e) =>
-                            onSearchChangeInternal(e.target.value.toLowerCase())
-                          }
-                          placeholder={searchPlaceholder}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Escape') {
-                              // ESC
-                              closePopper();
+                        {!disableSearch && (
+                          <SearchInput
+                            tabIndex={-1}
+                            onChange={(e) =>
+                              onSearchChangeInternal(
+                                e.target.value.toLowerCase()
+                              )
                             }
-                          }}
-                        />
+                            placeholder={searchPlaceholder}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Escape') {
+                                // ESC
+                                closePopper();
+                              }
+                            }}
+                          />
+                        )}
                         <div
                           css={css`
                             overflow-x: auto;

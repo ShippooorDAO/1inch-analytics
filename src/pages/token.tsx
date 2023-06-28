@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { lighten } from 'polished';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
 import { DonutChart } from '@/components/chart/DonutChart';
@@ -470,44 +470,78 @@ function StakingWalletsTable({
 interface ControllerLineChartProps {
   timeseriesList?: Timeseries[];
   formatter?: (y?: number | null) => string;
-  updateTimeWindow: (TimeWindow: TimeWindow) => void;
+  updateTimeWindow?: (TimeWindow: TimeWindow) => void;
 }
 
 function ControlledLineChart({
   timeseriesList,
-  formatter,
   updateTimeWindow,
 }: ControllerLineChartProps) {
+  const [selectedTimeseriesList, setSelectedTimeseriesList] =
+    useState<Timeseries[]>();
+  const selectedTimeseriesListRef = useRef<Timeseries[]>();
+  const isInitialized = useRef<boolean>(false);
   const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
 
   useEffect(() => {
     if (timeWindow) {
-      updateTimeWindow(timeWindow);
+      updateTimeWindow?.(timeWindow);
     }
   }, [timeWindow]);
 
+  useEffect(() => {
+    if (
+      timeseriesList &&
+      timeseriesList.length > 0 &&
+      isInitialized.current === false
+    ) {
+      isInitialized.current = true;
+      setSelectedTimeseriesList([timeseriesList[0]]);
+      selectedTimeseriesListRef.current = [timeseriesList[0]];
+    }
+  }, [timeseriesList]);
+
+  useEffect(() => {
+    if (timeseriesList && isInitialized.current) {
+      const selectedTimeseriesListIds = selectedTimeseriesListRef.current?.map(
+        (timeseries) => timeseries.name
+      );
+      const newSelectedTimeseriesList = timeseriesList.filter((timeseries) =>
+        selectedTimeseriesListIds?.includes(timeseries.name)
+      );
+      setSelectedTimeseriesList(newSelectedTimeseriesList);
+    }
+  }, [timeseriesList]);
+
   return (
     <LineChart
+      loading={!timeseriesList}
       timeseriesList={timeseriesList}
+      selectedTimeseriesList={selectedTimeseriesList}
+      onSelectedTimeseriesChange={setSelectedTimeseriesList}
       timeWindow={timeWindow}
-      timeWindowOptions={[
-        TimeWindow.ONE_DAY,
-        TimeWindow.SEVEN_DAYS,
-        TimeWindow.ONE_MONTH,
-        TimeWindow.ONE_YEAR,
-        TimeWindow.YEAR_TO_DATE,
-        TimeWindow.MAX,
-      ].map((timeWindow) => ({
-        value: timeWindow,
-        label: getTimeWindowLabel(timeWindow),
-      }))}
+      timeWindowOptions={
+        updateTimeWindow
+          ? [
+              TimeWindow.ONE_DAY,
+              TimeWindow.SEVEN_DAYS,
+              TimeWindow.ONE_MONTH,
+              TimeWindow.ONE_YEAR,
+              TimeWindow.YEAR_TO_DATE,
+              TimeWindow.MAX,
+            ].map((timeWindow) => ({
+              value: timeWindow,
+              label: getTimeWindowLabel(timeWindow),
+            }))
+          : undefined
+      }
       onTimeWindowChange={setTimeWindow}
-      formatter={formatter}
     />
   );
 }
 
 export default function TokenPage() {
+  const theme = useTheme();
   const {
     marketData,
     stakingWallets,
@@ -518,18 +552,29 @@ export default function TokenPage() {
     refetchStakingWallets,
   } = useTokenPageData();
 
-  const tokenPriceTimeseries: Timeseries[] = [
-    {
-      name: 'Token price',
-      data: marketData?.historicalMarketData?.prices || [],
-      yAxis: 0,
-    },
-    {
-      name: 'Market cap',
-      data: marketData?.historicalMarketData?.marketCaps || [],
-      yAxis: 1,
-    },
-  ];
+  const tokenPriceTimeseries: Timeseries[] = useMemo(
+    () => [
+      {
+        name: 'Token price',
+        data: marketData?.historicalMarketData?.prices || [],
+        yAxis: 0,
+        color: theme.palette.chart[0],
+      },
+      {
+        name: 'Market cap',
+        data: marketData?.historicalMarketData?.marketCaps || [],
+        yAxis: 1,
+        color: theme.palette.chart[1],
+      },
+      {
+        name: 'Volume',
+        data: marketData?.historicalMarketData?.volumes || [],
+        yAxis: 1,
+        color: theme.palette.chart[2],
+      },
+    ],
+    [marketData]
+  );
 
   return (
     <Container
@@ -561,7 +606,7 @@ export default function TokenPage() {
             `}
           >
             <StatsContainer
-              layout={StatsContainerLayout.SINGLE}
+              layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
               title={
                 <div
                   css={css`
@@ -576,7 +621,7 @@ export default function TokenPage() {
               }
               headerMetrics={[
                 {
-                  title: '$1INCH',
+                  title: 'Price (24H)',
                   value: format(marketData?.currentMarketData.usd, {
                     symbol: 'USD',
                     abbreviate: true,
@@ -602,16 +647,28 @@ export default function TokenPage() {
                   }),
                 },
               ]}
-              leftContainer={{
-                title: 'Historical price and market cap',
-                content: (
-                  <ControlledLineChart
-                    timeseriesList={tokenPriceTimeseries}
-                    updateTimeWindow={updateMarketDataTimeWindow}
-                    formatter={(y) => format(y, { symbol: 'USD' })}
-                  />
-                ),
-              }}
+              containers={[
+                {
+                  content: (
+                    <ControlledLineChart
+                      timeseriesList={[tokenPriceTimeseries[0]]}
+                      updateTimeWindow={updateMarketDataTimeWindow}
+                      formatter={(y) => format(y, { symbol: 'USD' })}
+                    />
+                  ),
+                },
+                {
+                  content: (
+                    <ControlledLineChart
+                      timeseriesList={[
+                        tokenPriceTimeseries[1],
+                        tokenPriceTimeseries[2],
+                      ]}
+                      formatter={(y) => format(y, { symbol: 'USD' })}
+                    />
+                  ),
+                },
+              ]}
             />
           </div>
           <div
@@ -654,35 +711,37 @@ export default function TokenPage() {
                   value: format(1500000000, { abbreviate: true }),
                 },
               ]}
-              rightContainer={{
-                title: 'Token unlock schedule',
-                content: (
-                  <HistogramChart
-                    timeseriesList={tokenUnlockSchedule}
-                    timeWindow={TimeWindow.MAX}
-                    timeInterval={TimeInterval.MONTHLY}
-                    onTimeWindowChange={() => {}}
-                    onTimeIntervalChange={() => {}}
-                    formatter={(y?: number | null) =>
-                      format(y, { abbreviate: true })
-                    }
-                    yAxisFormatter={(y?: number | null) =>
-                      format(y, { abbreviate: true })
-                    }
-                  />
-                ),
-              }}
-              leftContainer={{
-                title: 'Token distribution',
-                content: (
-                  <DonutChart
-                    data={tokenDistribution}
-                    seriesName="Token distribution (%)"
-                    labelFormatter={(y?: number | null) => `${y}%`}
-                    tooltipFormatter={(y?: number | null) => `${y}%`}
-                  />
-                ),
-              }}
+              containers={[
+                {
+                  title: 'Token unlock schedule',
+                  content: (
+                    <HistogramChart
+                      timeseriesList={tokenUnlockSchedule}
+                      timeWindow={TimeWindow.MAX}
+                      timeInterval={TimeInterval.MONTHLY}
+                      onTimeWindowChange={() => {}}
+                      onTimeIntervalChange={() => {}}
+                      formatter={(y?: number | null) =>
+                        format(y, { abbreviate: true })
+                      }
+                      yAxisFormatter={(y?: number | null) =>
+                        format(y, { abbreviate: true })
+                      }
+                    />
+                  ),
+                },
+                {
+                  title: 'Token distribution',
+                  content: (
+                    <DonutChart
+                      data={tokenDistribution}
+                      seriesName="Token distribution (%)"
+                      labelFormatter={(y?: number | null) => `${y}%`}
+                      tooltipFormatter={(y?: number | null) => `${y}%`}
+                    />
+                  ),
+                },
+              ]}
             />
           </div>
         </div>

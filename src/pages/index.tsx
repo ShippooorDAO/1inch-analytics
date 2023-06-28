@@ -356,78 +356,80 @@ export default function Home() {
               ),
             },
           ]}
-          leftContainer={{
-            content: (
-              <ControlledHistogramChart
-                dailyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .volumeDailyTimeseries
-                      )
-                    : undefined
-                }
-                weeklyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .volumeWeeklyTimeseries
-                      )
-                    : undefined
-                }
-                monthlyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .volumeMonthlyTimeseries
-                      )
-                    : undefined
-                }
-                formatter={(y) => format(y, { symbol: 'USD' })}
-              />
-            ),
-          }}
-          rightContainer={{
-            content: (
-              <ControlledBarChart
-                seriesName="Volume (USD)"
-                volumeLastWeek={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)?.volumeLastWeek ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                volumeLastMonth={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)?.volumeLastMonth ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                volumeAllTime={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)?.volumeAllTime ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                tooltipFormatter={(y) => format(y, { symbol: 'USD' })}
-                labelFormatter={(y) =>
-                  format(y, { abbreviate: true, symbol: 'USD' })
-                }
-              />
-            ),
-          }}
+          containers={[
+            {
+              content: (
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .volumeDailyTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .volumeWeeklyTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .volumeMonthlyTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { symbol: 'USD' })}
+                />
+              ),
+            },
+            {
+              content: (
+                <ControlledBarChart
+                  seriesName="Volume (USD)"
+                  volumeLastWeek={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)?.volumeLastWeek ?? 0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  volumeLastMonth={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)?.volumeLastMonth ?? 0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  volumeAllTime={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)?.volumeAllTime ?? 0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  tooltipFormatter={(y) => format(y, { symbol: 'USD' })}
+                  labelFormatter={(y) =>
+                    format(y, { abbreviate: true, symbol: 'USD' })
+                  }
+                />
+              ),
+            },
+          ]}
         />
         <StatsContainer
           title={
@@ -494,81 +496,83 @@ export default function Home() {
               ),
             },
           ]}
-          rightContainer={{
-            content: (
-              <ControlledBarChart
-                seriesName="Transactions"
-                volumeLastWeek={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)
-                      ?.transactionsCountLastWeek ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                volumeLastMonth={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)
-                      ?.transactionsCountLastMonth ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                volumeAllTime={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)
-                      ?.transactionsCountAllTime ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                labelFormatter={(y) =>
-                  format(y, { decimals: 0, abbreviate: true })
-                }
-                tooltipFormatter={(y) => format(y, { decimals: 0 })}
-              />
-            ),
-          }}
-          leftContainer={{
-            content: (
-              <ControlledHistogramChart
-                dailyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .transactionsCountDailyTimeseries
-                      )
-                    : undefined
-                }
-                weeklyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .transactionsCountWeeklyTimeseries
-                      )
-                    : undefined
-                }
-                monthlyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .transactionsCountMonthlyTimeseries
-                      )
-                    : undefined
-                }
-                formatter={(y) => format(y, { decimals: 0 })}
-              />
-            ),
-          }}
+          containers={[
+            {
+              content: (
+                <ControlledBarChart
+                  seriesName="Transactions"
+                  volumeLastWeek={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)
+                        ?.transactionsCountLastWeek ?? 0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  volumeLastMonth={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)
+                        ?.transactionsCountLastMonth ?? 0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  volumeAllTime={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)
+                        ?.transactionsCountAllTime ?? 0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  labelFormatter={(y) =>
+                    format(y, { decimals: 0, abbreviate: true })
+                  }
+                  tooltipFormatter={(y) => format(y, { decimals: 0 })}
+                />
+              ),
+            },
+            {
+              content: (
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .transactionsCountDailyTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .transactionsCountWeeklyTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .transactionsCountMonthlyTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { decimals: 0 })}
+                />
+              ),
+            },
+          ]}
         />
         <StatsContainer
           title={
@@ -626,79 +630,83 @@ export default function Home() {
               ),
             },
           ]}
-          leftContainer={{
-            content: (
-              <ControlledHistogramChart
-                dailyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .walletsCountDailyTimeseries
-                      )
-                    : undefined
-                }
-                weeklyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .walletsCountWeeklyTimeseries
-                      )
-                    : undefined
-                }
-                monthlyTimeseriesList={
-                  data
-                    ? displayedChains?.map(
-                        (chain) =>
-                          data!.byChain.get(chain.chainId)!
-                            .walletsCountMonthlyTimeseries
-                      )
-                    : undefined
-                }
-                formatter={(y) => format(y, { decimals: 0 })}
-              />
-            ),
-          }}
-          rightContainer={{
-            content: (
-              <ControlledBarChart
-                seriesName="Wallets"
-                volumeLastWeek={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)?.walletsCountLastWeek ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                volumeLastMonth={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)?.walletsCountLastMonth ??
-                    0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                volumeAllTime={displayedChains?.map((chain) => {
-                  const volume =
-                    data?.byChain.get(chain.chainId)?.walletsCountAllTime ?? 0;
-                  return {
-                    name: chain.displayName,
-                    y: volume,
-                    color: chain.color,
-                  };
-                })}
-                labelFormatter={(y) =>
-                  format(y, { decimals: 0, abbreviate: true })
-                }
-                tooltipFormatter={(y) => format(y, { decimals: 0 })}
-              />
-            ),
-          }}
+          containers={[
+            {
+              content: (
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .walletsCountDailyTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .walletsCountWeeklyTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .walletsCountMonthlyTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { decimals: 0 })}
+                />
+              ),
+            },
+            {
+              content: (
+                <ControlledBarChart
+                  seriesName="Wallets"
+                  volumeLastWeek={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)?.walletsCountLastWeek ??
+                      0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  volumeLastMonth={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)?.walletsCountLastMonth ??
+                      0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  volumeAllTime={displayedChains?.map((chain) => {
+                    const volume =
+                      data?.byChain.get(chain.chainId)?.walletsCountAllTime ??
+                      0;
+                    return {
+                      name: chain.displayName,
+                      y: volume,
+                      color: chain.color,
+                    };
+                  })}
+                  labelFormatter={(y) =>
+                    format(y, { decimals: 0, abbreviate: true })
+                  }
+                  tooltipFormatter={(y) => format(y, { decimals: 0 })}
+                />
+              ),
+            },
+          ]}
         />
       </div>
     </Container>

@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { Typography } from '@mui/material';
+import { chunk } from 'lodash';
 import { rgba } from 'polished';
 
 import { SlimMetricsCard, SlimMetricsCardProps } from './MetricsCard';
@@ -15,14 +16,10 @@ export interface StatsContainerProps {
   title?: React.ReactNode;
   headerMetrics?: SlimMetricsCardProps[];
   headerMetricsPerRow?: number;
-  leftContainer?: {
+  containers?: {
     title?: React.ReactNode;
     content: React.ReactNode;
-  };
-  rightContainer?: {
-    title?: React.ReactNode;
-    content: React.ReactNode;
-  };
+  }[];
   layout?: StatsContainerLayout;
 }
 
@@ -30,96 +27,104 @@ export function StatsContainer({
   title,
   headerMetrics,
   headerMetricsPerRow: headerMetricsPerRow_,
-  leftContainer,
-  rightContainer,
+  containers,
   layout = StatsContainerLayout.TWO_THIRDS_ONE_THIRD,
 }: StatsContainerProps) {
   const headerMetricsPerRow =
     headerMetricsPerRow_ ?? headerMetrics?.length ?? 0;
-  const leftContainerNode = leftContainer ? (
-    <div
-      css={(theme) => [
-        css`
-          display: flex;
-          flex-flow: column;
-          gap: 20px;
-          border-radius: 24px;
-          background-color: ${rgba(theme.palette.background.paper, 1)};
-          padding: 16px;
-          width: calc(100% - 420px);
-          ${theme.breakpoints.down('md')} {
-            width: 100%;
-          }
-        `,
-        layout === StatsContainerLayout.SINGLE &&
-          css`
-            width: 100%;
-          `,
-        layout === StatsContainerLayout.ONE_THIRD_TWO_THIRDS &&
-          css`
-            width: 400px;
-          `,
-        layout === StatsContainerLayout.ONE_HALF_ONE_HALF &&
-          css`
-            width: calc(50% - 10px);
-          `,
-      ]}
-    >
-      {leftContainer.title && (
-        <Typography variant="h3">{leftContainer.title}</Typography>
-      )}
-      <div
-        css={css`
-          width: 100%;
-        `}
-      >
-        {leftContainer.content}
-      </div>
-    </div>
-  ) : (
-    <> </>
-  );
 
-  const rightContainerNode = rightContainer ? (
-    <div
-      css={(theme) => [
-        css`
-          display: flex;
-          flex-flow: column;
-          gap: 20px;
-          background-color: ${rgba(theme.palette.background.paper, 1)};
-          border-radius: 24px;
-          justify-content: space-between;
-          padding: 16px;
-          ${theme.breakpoints.down('md')} {
-            width: 100%;
-          }
-        `,
-        layout === StatsContainerLayout.SINGLE &&
-          css`
-            width: 100%;
-          `,
-        layout === StatsContainerLayout.TWO_THIRDS_ONE_THIRD &&
-          css`
-            width: 400px;
-          `,
-        layout === StatsContainerLayout.ONE_THIRD_TWO_THIRDS &&
-          css`
-            width: calc(100% - 420px);
-          `,
-        layout === StatsContainerLayout.ONE_HALF_ONE_HALF &&
-          css`
-            width: calc(50% - 10px);
-          `,
-      ]}
-    >
-      {rightContainer.title && (
-        <Typography variant="h3">{rightContainer.title}</Typography>
-      )}
-      {rightContainer.content}
-    </div>
-  ) : (
-    <> </>
+  const rows = chunk(containers ?? [], 2).map(
+    ([leftContainer, rightContainer]) => {
+      const leftContainerNode = leftContainer ? (
+        <div
+          css={(theme) => [
+            css`
+              display: flex;
+              flex-flow: column;
+              gap: 20px;
+              border-radius: 24px;
+              background-color: ${rgba(theme.palette.background.paper, 1)};
+              padding: 16px;
+              width: calc(100% - 420px);
+              ${theme.breakpoints.down('md')} {
+                width: 100%;
+              }
+            `,
+            layout === StatsContainerLayout.SINGLE &&
+              css`
+                width: 100%;
+              `,
+            layout === StatsContainerLayout.ONE_THIRD_TWO_THIRDS &&
+              css`
+                width: 400px;
+              `,
+            layout === StatsContainerLayout.ONE_HALF_ONE_HALF &&
+              css`
+                width: calc(50% - 10px);
+              `,
+          ]}
+        >
+          {leftContainer.title && (
+            <Typography variant="h3">{leftContainer.title}</Typography>
+          )}
+          <div
+            css={css`
+              width: 100%;
+            `}
+          >
+            {leftContainer.content}
+          </div>
+        </div>
+      ) : (
+        <> </>
+      );
+
+      const rightContainerNode = rightContainer ? (
+        <div
+          css={(theme) => [
+            css`
+              display: flex;
+              flex-flow: column;
+              gap: 20px;
+              background-color: ${rgba(theme.palette.background.paper, 1)};
+              border-radius: 24px;
+              justify-content: space-between;
+              padding: 16px;
+              ${theme.breakpoints.down('md')} {
+                width: 100%;
+              }
+            `,
+            layout === StatsContainerLayout.SINGLE &&
+              css`
+                width: 100%;
+              `,
+            layout === StatsContainerLayout.TWO_THIRDS_ONE_THIRD &&
+              css`
+                width: 400px;
+              `,
+            layout === StatsContainerLayout.ONE_THIRD_TWO_THIRDS &&
+              css`
+                width: calc(100% - 420px);
+              `,
+            layout === StatsContainerLayout.ONE_HALF_ONE_HALF &&
+              css`
+                width: calc(50% - 10px);
+              `,
+          ]}
+        >
+          {rightContainer.title && (
+            <Typography variant="h3">{rightContainer.title}</Typography>
+          )}
+          {rightContainer.content}
+        </div>
+      ) : (
+        <> </>
+      );
+      return {
+        leftContainerNode,
+        rightContainerNode,
+      };
+    }
   );
 
   return (
@@ -199,15 +204,24 @@ export function StatsContainer({
       )}
       <div
         css={css`
-          display: flex;
-          flex-flow: row;
-          justify-content: flex-start;
-          gap: 16px;
-          flex-wrap: wrap;
+          width: 100%;
         `}
       >
-        {leftContainerNode}
-        {rightContainerNode}
+        {rows.map(({ leftContainerNode, rightContainerNode }, i) => (
+          <div
+            key={i}
+            css={css`
+              display: flex;
+              flex-flow: row;
+              justify-content: flex-start;
+              gap: 16px;
+              flex-wrap: wrap;
+            `}
+          >
+            {leftContainerNode}
+            {rightContainerNode}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -88,7 +88,9 @@ const triadicSecondary = {
 };
 
 export const chartColors = [
+  rgba(primary[300], 1),
   rgba(analogousSecondary[300], 1),
+  rgba(analogousPrimary[300], 1),
   rgba('#7a5195', 1),
   rgba('#bc5090', 1),
   rgba('#ef5675', 1),
@@ -228,6 +230,7 @@ export type VariantType = {
   palette: {
     primary: MainContrastTextType;
     secondary: MainContrastTextType;
+    chart: Array<string>;
   };
   header: ColorBgType & {
     search: {

@@ -184,26 +184,28 @@ export default function TreasuryPage() {
         </div>
         <StatsContainer
           layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
-          leftContainer={{
-            title: 'Net Worth',
-            content: (
-              <HistogramChart
-                timeseriesList={[revenueTimeseries]}
-                timeWindow={TimeWindow.YEAR_TO_DATE}
-                timeInterval={TimeInterval.WEEKLY}
-              />
-            ),
-          }}
-          rightContainer={{
-            title: 'Total Revenue',
-            content: (
-              <HistogramChart
-                timeseriesList={[revenueTimeseries]}
-                timeWindow={TimeWindow.YEAR_TO_DATE}
-                timeInterval={TimeInterval.WEEKLY}
-              />
-            ),
-          }}
+          containers={[
+            {
+              title: 'Net Worth',
+              content: (
+                <HistogramChart
+                  timeseriesList={[revenueTimeseries]}
+                  timeWindow={TimeWindow.YEAR_TO_DATE}
+                  timeInterval={TimeInterval.WEEKLY}
+                />
+              ),
+            },
+            {
+              title: 'Total Revenue',
+              content: (
+                <HistogramChart
+                  timeseriesList={[revenueTimeseries]}
+                  timeWindow={TimeWindow.YEAR_TO_DATE}
+                  timeInterval={TimeInterval.WEEKLY}
+                />
+              ),
+            },
+          ]}
         />
       </div>
     </Container>

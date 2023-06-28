@@ -22,6 +22,7 @@ type GetTokenCurrentMarketDataResponse = {
 type HistoricalMarketData = {
   prices: DataPoint[];
   marketCaps: DataPoint[];
+  volumes: DataPoint[];
 };
 
 type CurrentMarketData = {
@@ -56,6 +57,7 @@ function parseCoingeckoMarketDataResponses(
       historicalMarketData: {
         prices: [],
         marketCaps: [],
+        volumes: [],
       },
       currentMarketData: {
         usd: 0,
@@ -82,6 +84,13 @@ function parseCoingeckoMarketDataResponses(
     }
   );
 
+  const volumes = historicalMarketDataResponse.total_volumes.map((p) => {
+    return {
+      x: Math.floor(p[0] / 1000),
+      y: p[1],
+    };
+  });
+
   const usd24hChange = currentMarketDataResponse['1inch'].usd_24h_change
     ? currentMarketDataResponse['1inch'].usd_24h_change / 100
     : 0;
@@ -90,6 +99,7 @@ function parseCoingeckoMarketDataResponses(
     historicalMarketData: {
       prices,
       marketCaps,
+      volumes,
     },
     currentMarketData: {
       usd: currentMarketDataResponse['1inch'].usd,
