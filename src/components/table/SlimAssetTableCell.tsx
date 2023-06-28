@@ -63,7 +63,7 @@ export interface SlimAssetTableCellProps {
   asset: Asset;
 }
 export function SlimAssetTableCell({ asset }: SlimAssetTableCellProps) {
-  const assetImageUrl = asset.imageUrl ?? '/warden/unknown_token_dark.png';
+  const assetImageUrl = asset.imageUrl ?? '/unknown_token_dark.png';
 
   return (
     <SlimTokenTableCell

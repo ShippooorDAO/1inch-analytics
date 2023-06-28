@@ -30,7 +30,7 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.TRANSACTIONS,
       {
         href: '/transactions',
-        icon: () => <RoundedImageIcon size="small" src="/warden/swap.svg" />,
+        icon: () => <RoundedImageIcon size="small" src="/swap.svg" />,
         title: 'Transactions',
       },
     ],

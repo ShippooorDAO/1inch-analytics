@@ -7,7 +7,7 @@ function getLastSyncTimestamp() {
   return moment.utc().startOf('day').unix();
 }
 
-export function LastSyncIdenticator() {
+export function LastSyncWidget() {
   const lastSyncTimestamp = getLastSyncTimestamp();
 
   return (

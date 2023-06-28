@@ -224,7 +224,7 @@ export default function Home() {
             gap: 20px;
           `}
         >
-          <PageTitle>1inch Aggregation Protocol</PageTitle>
+          <PageTitle>1inch Aggregation Protocol Overview</PageTitle>
 
           <div
             css={css`
@@ -242,62 +242,6 @@ export default function Home() {
             />
           </div>
         </div>
-        {/* <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: center;
-            gap: 20px;
-          `}
-        >
-          <MetricsCardWithLink
-            linkUrl="/treasury"
-            title={'DAO Treasury'}
-            backgroundImageUrl="dao.svg"
-            backgroundImageAlt="dao"
-            value={`${format(18013934.31, {
-              symbol: 'USD',
-              abbreviate: true,
-            })}`}
-            subValue={
-              <TrendLabelPercent
-                value={data?.allSelectedChains.volumeLastWeekTrend}
-              />
-            }
-            footer="Net Worth (24h)"
-          />
-
-          <MetricsCardWithLink
-            linkUrl="/treasury"
-            title={'1inch Fusion'}
-            backgroundImageUrl="/vendors/1inch/fusion.webp"
-            backgroundImageAlt="dao"
-            value={format(23476937, { symbol: 'USD', abbreviate: true })}
-            subValue={
-              <TrendLabelPercent
-                value={data?.allSelectedChains.volumeLastWeekTrend}
-              />
-            }
-            footer="Volume (24h)"
-          />
-
-          <MetricsCardWithLink
-            linkUrl="/treasury"
-            title={'Staked 1INCH'}
-            backgroundImageUrl="staked-1inch.webp"
-            backgroundImageAlt="staked 1inch"
-            value={format(14.1424252 * 1e6, {
-              symbol: 'USD',
-              abbreviate: true,
-            })}
-            subValue={
-              <TrendLabelPercent
-                value={data?.allSelectedChains.volumeLastWeekTrend}
-              />
-            }
-            footer="Total Value Locked (24h)"
-          />
-        </div> */}
         <StatsContainer
           title={
             <div

@@ -1,9 +1,16 @@
 import { css } from '@emotion/react';
 import { Menu as MenuIcon } from '@mui/icons-material';
-import { AppBar, IconButton, Link, Toolbar } from '@mui/material';
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Link,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import React from 'react';
 
-import { LastSyncIdenticator } from './LastSyncIdenticator';
+import { LastSyncWidget } from './LastSyncWidget';
 
 interface NavbarProps {
   drawerOpen: boolean;
@@ -28,6 +35,7 @@ function Navbar({ onDrawerToggle, drawerOpen }: NavbarProps) {
               display: flex;
               flex-flow: row;
               justify-content: space-between;
+              align-items: center;
               gap: 20px;
               width: 100%;
               padding: 10px 5px;
@@ -77,7 +85,13 @@ function Navbar({ onDrawerToggle, drawerOpen }: NavbarProps) {
                 flex-grow: 1;
               `}
             />
-            <LastSyncIdenticator />
+            <Button href="https://dune.com/1inch/" target="_blank">
+              <Typography variant="body2">Dune Analytics</Typography>
+            </Button>
+            <Button href="https://app.1inch.io/" target="_blank">
+              <Typography variant="body2">1inch App</Typography>
+            </Button>
+            <LastSyncWidget />
           </div>
         </Toolbar>
       </AppBar>

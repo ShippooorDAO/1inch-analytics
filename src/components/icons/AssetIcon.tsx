@@ -8,7 +8,7 @@ export interface AssetIconProps
 }
 
 export function AssetIcon({ asset, ...props }: AssetIconProps) {
-  const src = asset?.imageUrl ?? '/warden/unknown_token_dark.png';
+  const src = asset?.imageUrl ?? '/unknown_token_dark.png';
   const subIconSrc = asset?.chain?.imageUrl ?? '';
 
   return (
