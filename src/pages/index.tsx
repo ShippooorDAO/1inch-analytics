@@ -196,9 +196,11 @@ export default function Home() {
     return selectedChains;
   }, [selectedChains, chainStore]);
 
-  const { data } = useDexAggregatorOverview({
+  const { data, loading } = useDexAggregatorOverview({
     chainIds: displayedChains?.map((chain) => chain.id),
   });
+
+  const loadingStubValue = 12.34;
 
   return (
     <Container
@@ -314,46 +316,71 @@ export default function Home() {
           headerMetrics={[
             {
               title: 'All time',
-              value: format(data?.allSelectedChains.volumeAllTime, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.volumeAllTime ?? loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
+              loading,
             },
             {
               title: '24H',
-              value: format(data?.allSelectedChains.volumeLastDay, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.volumeLastDay ?? loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
               subValue: (
                 <TrendLabelPercent
-                  value={data?.allSelectedChains.volumeLastDayTrend}
+                  value={
+                    data?.allSelectedChains.volumeLastDayTrend ??
+                    loadingStubValue
+                  }
                 />
               ),
+              loading,
             },
             {
               title: '7D',
-              value: format(data?.allSelectedChains.volumeLastWeek, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.volumeLastWeek ?? loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
               subValue: (
                 <TrendLabelPercent
-                  value={data?.allSelectedChains.volumeLastWeekTrend}
+                  value={
+                    data?.allSelectedChains.volumeLastWeekTrend ??
+                    loadingStubValue
+                  }
                 />
               ),
+              loading,
             },
             {
               title: '30D',
-              value: format(data?.allSelectedChains.volumeLastMonth, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.volumeLastMonth ?? loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
               subValue: (
                 <TrendLabelPercent
-                  value={data?.allSelectedChains.volumeLastMonthTrend}
+                  value={
+                    data?.allSelectedChains.volumeLastMonthTrend ??
+                    loadingStubValue
+                  }
                 />
               ),
+              loading,
             },
           ]}
           containers={[
@@ -449,39 +476,21 @@ export default function Home() {
           headerMetrics={[
             {
               title: 'All time',
-              value: format(data?.allSelectedChains.transactionsCountAllTime, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.transactionsCountAllTime ??
+                  loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
+              loading,
             },
             {
               title: '24H',
-              value: format(data?.allSelectedChains.transactionsCountLastDay, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
-              subValue: (
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.transactionsCountLastDayTrend}
-                />
-              ),
-            },
-            {
-              title: '7D',
-              value: format(data?.allSelectedChains.transactionsCountLastWeek, {
-                symbol: 'USD',
-                abbreviate: true,
-              }),
-              subValue: (
-                <TrendLabelPercent
-                  value={data?.allSelectedChains.transactionsCountLastWeekTrend}
-                />
-              ),
-            },
-            {
-              title: '30D',
               value: format(
-                data?.allSelectedChains.transactionsCountLastMonth,
+                data?.allSelectedChains.transactionsCountLastDay ??
+                  loadingStubValue,
                 {
                   symbol: 'USD',
                   abbreviate: true,
@@ -490,13 +499,89 @@ export default function Home() {
               subValue: (
                 <TrendLabelPercent
                   value={
-                    data?.allSelectedChains.transactionsCountLastMonthTrend
+                    data?.allSelectedChains.transactionsCountLastDayTrend ??
+                    loadingStubValue
                   }
                 />
               ),
+              loading,
+            },
+            {
+              title: '7D',
+              value: format(
+                data?.allSelectedChains.transactionsCountLastWeek ??
+                  loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
+              subValue: (
+                <TrendLabelPercent
+                  value={
+                    data?.allSelectedChains.transactionsCountLastWeekTrend ??
+                    loadingStubValue
+                  }
+                />
+              ),
+              loading,
+            },
+            {
+              title: '30D',
+              value: format(
+                data?.allSelectedChains.transactionsCountLastMonth ??
+                  loadingStubValue,
+                {
+                  symbol: 'USD',
+                  abbreviate: true,
+                }
+              ),
+              subValue: (
+                <TrendLabelPercent
+                  value={
+                    data?.allSelectedChains.transactionsCountLastMonthTrend ??
+                    loadingStubValue
+                  }
+                />
+              ),
+              loading,
             },
           ]}
           containers={[
+            {
+              content: (
+                <ControlledHistogramChart
+                  dailyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .transactionsCountDailyTimeseries
+                        )
+                      : undefined
+                  }
+                  weeklyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .transactionsCountWeeklyTimeseries
+                        )
+                      : undefined
+                  }
+                  monthlyTimeseriesList={
+                    data
+                      ? displayedChains?.map(
+                          (chain) =>
+                            data!.byChain.get(chain.chainId)!
+                              .transactionsCountMonthlyTimeseries
+                        )
+                      : undefined
+                  }
+                  formatter={(y) => format(y, { decimals: 0 })}
+                />
+              ),
+            },
             {
               content: (
                 <ControlledBarChart
@@ -538,40 +623,6 @@ export default function Home() {
                 />
               ),
             },
-            {
-              content: (
-                <ControlledHistogramChart
-                  dailyTimeseriesList={
-                    data
-                      ? displayedChains?.map(
-                          (chain) =>
-                            data!.byChain.get(chain.chainId)!
-                              .transactionsCountDailyTimeseries
-                        )
-                      : undefined
-                  }
-                  weeklyTimeseriesList={
-                    data
-                      ? displayedChains?.map(
-                          (chain) =>
-                            data!.byChain.get(chain.chainId)!
-                              .transactionsCountWeeklyTimeseries
-                        )
-                      : undefined
-                  }
-                  monthlyTimeseriesList={
-                    data
-                      ? displayedChains?.map(
-                          (chain) =>
-                            data!.byChain.get(chain.chainId)!
-                              .transactionsCountMonthlyTimeseries
-                        )
-                      : undefined
-                  }
-                  formatter={(y) => format(y, { decimals: 0 })}
-                />
-              ),
-            },
           ]}
         />
         <StatsContainer
@@ -592,42 +643,69 @@ export default function Home() {
           headerMetrics={[
             {
               title: 'All time',
-              value: format(data?.allSelectedChains.walletsCountAllTime, {
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.walletsCountAllTime ?? loadingStubValue,
+                {
+                  abbreviate: true,
+                }
+              ),
+              loading,
             },
             {
               title: '24H',
-              value: format(data?.allSelectedChains.walletsCountLastDay, {
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.walletsCountLastDay ?? loadingStubValue,
+                {
+                  abbreviate: true,
+                }
+              ),
               subValue: (
                 <TrendLabelPercent
-                  value={data?.allSelectedChains.walletsCountLastDayTrend}
+                  value={
+                    data?.allSelectedChains.walletsCountLastDayTrend ??
+                    loadingStubValue
+                  }
                 />
               ),
+              loading,
             },
             {
               title: '7D',
-              value: format(data?.allSelectedChains.walletsCountLastWeek, {
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.walletsCountLastWeek ??
+                  loadingStubValue,
+                {
+                  abbreviate: true,
+                }
+              ),
               subValue: (
                 <TrendLabelPercent
-                  value={data?.allSelectedChains.walletsCountLastWeekTrend}
+                  value={
+                    data?.allSelectedChains.walletsCountLastWeekTrend ??
+                    loadingStubValue
+                  }
                 />
               ),
+              loading,
             },
             {
               title: '30D',
-              value: format(data?.allSelectedChains.walletsCountLastMonth, {
-                abbreviate: true,
-              }),
+              value: format(
+                data?.allSelectedChains.walletsCountLastMonth ??
+                  loadingStubValue,
+                {
+                  abbreviate: true,
+                }
+              ),
               subValue: (
                 <TrendLabelPercent
-                  value={data?.allSelectedChains.walletsCountLastMonthTrend}
+                  value={
+                    data?.allSelectedChains.walletsCountLastMonthTrend ??
+                    loadingStubValue
+                  }
                 />
               ),
+              loading,
             },
           ]}
           containers={[

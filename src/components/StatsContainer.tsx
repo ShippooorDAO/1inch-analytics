@@ -190,7 +190,7 @@ export function StatsContainer({
                       <SlimMetricsCard
                         key={i}
                         {...metricsProps}
-                        loading={loading}
+                        loading={metricsProps.loading || loading}
                       />
                     ))}
               </div>
