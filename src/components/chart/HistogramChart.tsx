@@ -109,12 +109,12 @@ function getTooltipRowForTimeseries(
 
 export interface HistogramChartProps {
   timeseriesList?: Timeseries[];
-  timeWindow: TimeWindow;
+  timeWindow?: TimeWindow;
   timeWindowOptions?: { value: TimeWindow; label: string }[];
-  timeInterval: TimeInterval;
+  timeInterval?: TimeInterval;
   timeIntervalOptions?: { value: TimeInterval; label: string }[];
-  onTimeWindowChange: (timeWindow: TimeWindow) => void;
-  onTimeIntervalChange: (timeInterval: TimeInterval) => void;
+  onTimeWindowChange?: (timeWindow: TimeWindow) => void;
+  onTimeIntervalChange?: (timeInterval: TimeInterval) => void;
   formatter?: (y?: number) => string;
   yAxisFormatter?: (y?: number) => string;
 }
@@ -183,13 +183,13 @@ export function HistogramChart({
 
   const handleTimeIntervalChange = (e: any, value: any) => {
     if (value) {
-      onTimeIntervalChange(value);
+      onTimeIntervalChange?.(value);
     }
   };
 
   const handleTimeWindowChange = (e: any, value: any) => {
     if (value) {
-      onTimeWindowChange(value);
+      onTimeWindowChange?.(value);
     }
   };
 
@@ -265,19 +265,21 @@ export function HistogramChart({
             gap: 20px;
           `}
         >
-          <TimeseriesMultiSelect
-            options={timeseriesList ?? []}
-            values={selectedTimeseries}
-            onChange={setSelectedTimeseries}
-          />
-          {timeIntervalOptions && (
+          {timeseriesList && timeseriesList?.length > 1 && (
+            <TimeseriesMultiSelect
+              options={timeseriesList ?? []}
+              values={selectedTimeseries}
+              onChange={setSelectedTimeseries}
+            />
+          )}
+          {timeIntervalOptions && onTimeIntervalChange && (
             <TimeIntervalToggleButtonGroup
               value={timeInterval}
               onChange={handleTimeIntervalChange}
               options={timeIntervalOptions}
             />
           )}
-          {timeWindowOptions && (
+          {timeWindowOptions && onTimeWindowChange && (
             <TimeWindowToggleButtonGroup
               value={timeWindow}
               options={timeWindowOptions}

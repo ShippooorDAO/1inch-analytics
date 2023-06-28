@@ -23,7 +23,10 @@ import { useDexAggregatorOverview } from '@/hooks/useDexAggregatorOverview';
 import { useMemo, useState } from 'react';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
-import { StatsContainer } from '@/components/StatsContainer';
+import {
+  StatsContainer,
+  StatsContainerLayout,
+} from '@/components/StatsContainer';
 import { scopeTimeseriesToTimeWindow } from '@/shared/Utils/Chart';
 import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 
@@ -439,8 +442,7 @@ export default function Home() {
               <Typography variant="h3">Transactions</Typography>
             </div>
           }
-          reversed={true}
-          // backgroundImageUrl="card-bg-4.svg"
+          layout={StatsContainerLayout.ONE_THIRD_TWO_THIRDS}
           headerMetrics={[
             {
               title: 'All time',
@@ -491,7 +493,7 @@ export default function Home() {
               ),
             },
           ]}
-          rightContainer={{
+          leftContainer={{
             title: 'Current transactions per chain',
             content: (
               <ControlledBarChart
@@ -533,7 +535,7 @@ export default function Home() {
               />
             ),
           }}
-          leftContainer={{
+          rightContainer={{
             title: 'Historical transactions per chain',
             content: (
               <ControlledHistogramChart

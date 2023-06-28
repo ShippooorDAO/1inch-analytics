@@ -4,20 +4,27 @@ import { lighten, rgba } from 'polished';
 
 import { SlimMetricsCard, SlimMetricsCardProps } from './MetricsCard';
 
+export enum StatsContainerLayout {
+  SINGLE,
+  ONE_HALF_ONE_HALF,
+  ONE_THIRD_TWO_THIRDS,
+  TWO_THIRDS_ONE_THIRD,
+}
+
 export interface StatsContainerProps {
   title?: React.ReactNode;
   headerMetrics?: SlimMetricsCardProps[];
   headerMetricsPerRow?: number;
   backgroundImageUrl?: string;
-  leftContainer: {
+  leftContainer?: {
     title: React.ReactNode;
     content: React.ReactNode;
   };
-  rightContainer: {
+  rightContainer?: {
     title: React.ReactNode;
     content: React.ReactNode;
   };
-  reversed?: boolean;
+  layout?: StatsContainerLayout;
 }
 
 export function StatsContainer({
@@ -27,24 +34,39 @@ export function StatsContainer({
   headerMetricsPerRow: headerMetricsPerRow_,
   leftContainer,
   rightContainer,
-  reversed,
+  layout = StatsContainerLayout.TWO_THIRDS_ONE_THIRD,
 }: StatsContainerProps) {
   const headerMetricsPerRow =
     headerMetricsPerRow_ ?? headerMetrics?.length ?? 0;
-  const leftContainerNode = (
+  const leftContainerNode = leftContainer ? (
     <div
-      css={(theme) => css`
-        display: flex;
-        flex-flow: column;
-        gap: 20px;
-        border-radius: 24px;
-        background-color: ${lighten(0.05, theme.palette.background.paper)};
-        padding: 16px;
-        width: calc(100% - 420px);
-        ${theme.breakpoints.down('md')} {
-          width: 100%;
-        }
-      `}
+      css={(theme) => [
+        css`
+          display: flex;
+          flex-flow: column;
+          gap: 20px;
+          border-radius: 24px;
+          // background-color: ${lighten(0.05, theme.palette.background.paper)};
+          background-color: ${rgba(theme.palette.background.paper, 1)};
+          padding: 16px;
+          width: calc(100% - 420px);
+          ${theme.breakpoints.down('md')} {
+            width: 100%;
+          }
+        `,
+        layout === StatsContainerLayout.SINGLE &&
+          css`
+            width: 100%;
+          `,
+        layout === StatsContainerLayout.ONE_THIRD_TWO_THIRDS &&
+          css`
+            width: 400px;
+          `,
+        layout === StatsContainerLayout.ONE_HALF_ONE_HALF &&
+          css`
+            width: calc(50% - 10px);
+          `,
+      ]}
     >
       <Typography variant="h3">{leftContainer.title}</Typography>
       <div
@@ -55,27 +77,49 @@ export function StatsContainer({
         {leftContainer.content}
       </div>
     </div>
+  ) : (
+    <> </>
   );
 
-  const rightContainerNode = (
+  const rightContainerNode = rightContainer ? (
     <div
-      css={(theme) => css`
-        display: flex;
-        flex-flow: column;
-        gap: 20px;
-        background-color: ${lighten(0.05, theme.palette.background.paper)};
-        border-radius: 24px;
-        justify-content: space-between;
-        padding: 16px;
-        width: 400px;
-        ${theme.breakpoints.down('md')} {
-          width: 100%;
-        }
-      `}
+      css={(theme) => [
+        css`
+          display: flex;
+          flex-flow: column;
+          gap: 20px;
+          // background-color: ${lighten(0.05, theme.palette.background.paper)};
+          background-color: ${rgba(theme.palette.background.paper, 1)};
+          border-radius: 24px;
+          justify-content: space-between;
+          padding: 16px;
+          ${theme.breakpoints.down('md')} {
+            width: 100%;
+          }
+        `,
+        layout === StatsContainerLayout.SINGLE &&
+          css`
+            width: 100%;
+          `,
+        layout === StatsContainerLayout.TWO_THIRDS_ONE_THIRD &&
+          css`
+            width: 400px;
+          `,
+        layout === StatsContainerLayout.ONE_THIRD_TWO_THIRDS &&
+          css`
+            width: calc(100% - 420px);
+          `,
+        layout === StatsContainerLayout.ONE_HALF_ONE_HALF &&
+          css`
+            width: calc(50% - 10px);
+          `,
+      ]}
     >
       <Typography variant="h3">{rightContainer.title}</Typography>
       {rightContainer.content}
     </div>
+  ) : (
+    <> </>
   );
 
   return (
@@ -83,7 +127,7 @@ export function StatsContainer({
       css={(theme) => css`
         position: relative;
         border-radius: 24px;
-        background-color: ${rgba(theme.palette.background.paper, 1)};
+        // background-color: ${rgba(theme.palette.background.paper, 1)};
         z-index: 2;
       `}
     >
@@ -179,17 +223,8 @@ export function StatsContainer({
           padding: 10px 0 10px 10px;
         `}
       >
-        {!reversed ? (
-          <>
-            {leftContainerNode}
-            {rightContainerNode}
-          </>
-        ) : (
-          <>
-            {rightContainerNode}
-            {leftContainerNode}
-          </>
-        )}
+        {leftContainerNode}
+        {rightContainerNode}
       </div>
     </div>
   );

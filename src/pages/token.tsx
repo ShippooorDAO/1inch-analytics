@@ -20,8 +20,10 @@ import { LineChart } from '@/components/chart/LineChart';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { TrendLabelPercent } from '@/components/MetricsCard';
-import { StatsContainer } from '@/components/StatsContainer';
-import { StatsSingleContainer } from '@/components/StatsSingleContainer';
+import {
+  StatsContainer,
+  StatsContainerLayout,
+} from '@/components/StatsContainer';
 import { StakingVersionToggleButtonGroup } from '@/components/table/StakingVersionToggleButtonGroup';
 import { useCoingeckoMarketData } from '@/hooks/useCoingeckoMarketData';
 import {
@@ -560,61 +562,69 @@ export default function TokenPage() {
             display: flex;
             flex-flow: row;
             flex-wrap: wrap;
+            justify-content: space-between;
             gap: 20px;
           `}
         >
-          <StatsSingleContainer
-            title={
-              <div
-                css={css`
-                  display: flex;
-                  flex-flow: row;
-                  gap: 5px;
-                `}
-              >
-                <QueryStatsIcon />
-                <Typography variant="h3">1INCH Market data</Typography>
-              </div>
-            }
-            headerMetrics={[
-              {
-                title: '$1INCH',
-                value: format(marketData?.currentMarketData.usd, {
-                  symbol: 'USD',
-                  abbreviate: true,
-                }),
-                subValue: (
-                  <TrendLabelPercent
-                    value={marketData?.currentMarketData.usd24hChange}
+          <div
+            css={css`
+              width: 100%;
+            `}
+          >
+            <StatsContainer
+              layout={StatsContainerLayout.SINGLE}
+              title={
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    gap: 5px;
+                  `}
+                >
+                  <QueryStatsIcon />
+                  <Typography variant="h3">1INCH Market data</Typography>
+                </div>
+              }
+              headerMetrics={[
+                {
+                  title: '$1INCH',
+                  value: format(marketData?.currentMarketData.usd, {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }),
+                  subValue: (
+                    <TrendLabelPercent
+                      value={marketData?.currentMarketData.usd24hChange}
+                    />
+                  ),
+                },
+                {
+                  title: 'Market cap',
+                  value: format(marketData?.currentMarketData?.usdMarketCap, {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }),
+                },
+                {
+                  title: 'Volume (24H)',
+                  value: format(marketData?.currentMarketData?.usd24hVol, {
+                    symbol: 'USD',
+                    abbreviate: true,
+                  }),
+                },
+              ]}
+              leftContainer={{
+                title: 'Historical price and market cap',
+                content: (
+                  <ControlledLineChart
+                    timeseriesList={tokenPriceTimeseries}
+                    updateTimeWindow={updateMarketDataTimeWindow}
+                    formatter={(y) => format(y, { symbol: 'USD' })}
                   />
                 ),
-              },
-              {
-                title: 'Market cap',
-                value: format(marketData?.currentMarketData?.usdMarketCap, {
-                  symbol: 'USD',
-                  abbreviate: true,
-                }),
-              },
-              {
-                title: 'Volume (24H)',
-                value: format(marketData?.currentMarketData?.usd24hVol, {
-                  symbol: 'USD',
-                  abbreviate: true,
-                }),
-              },
-            ]}
-            container={{
-              title: 'Historical price and market cap',
-              content: (
-                <ControlledLineChart
-                  timeseriesList={tokenPriceTimeseries}
-                  updateTimeWindow={updateMarketDataTimeWindow}
-                  formatter={(y) => format(y, { symbol: 'USD' })}
-                />
-              ),
-            }}
-          />
+              }}
+            />
+          </div>
           <div
             css={(theme) => css`
               width: 100%;
@@ -648,6 +658,7 @@ export default function TokenPage() {
                   </Typography>
                 </div>
               }
+              layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
               headerMetrics={[
                 {
                   title: 'Total supply',
