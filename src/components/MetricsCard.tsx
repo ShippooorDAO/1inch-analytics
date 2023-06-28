@@ -36,33 +36,33 @@ export function SlimMetricsCard({
         padding-right: 10px;
       `}
     >
-      <AutoSkeleton loading={loading_}>
-        <div
-          css={(theme) =>
-            css`
-              border-radius-left: 10px;
-              background-color: ${theme.palette.action.hover};
-              padding: 10px;
-              white-space: nowrap;
-            `
-          }
-        >
-          <Typography variant="body2">{title}</Typography>
-        </div>
-      </AutoSkeleton>
-      <AutoSkeleton loading={loading_}>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            gap: 10px;
-            align-items: center;
+      <div
+        css={(theme) =>
+          css`
+            border-radius-left: 10px;
+            background-color: ${theme.palette.action.hover};
+            padding: 10px;
             white-space: nowrap;
-          `}
-        >
+          `
+        }
+      >
+        <AutoSkeleton loading={loading_}>
+          <Typography variant="body2">{title}</Typography>
+        </AutoSkeleton>
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-flow: row;
+          gap: 10px;
+          align-items: center;
+          white-space: nowrap;
+        `}
+      >
+        <AutoSkeleton loading={loading_}>
           <Typography variant="body2">{value}</Typography>
-        </div>
-      </AutoSkeleton>
+        </AutoSkeleton>
+      </div>
       {subValue !== undefined && (
         <div
           css={(theme) => css`
@@ -70,12 +70,14 @@ export function SlimMetricsCard({
             padding-left: 10px;
           `}
         >
-          {subValue !== undefined && typeof subValue === 'string' && (
-            <Typography variant="body2" color="textSecondary">
-              {subValue}
-            </Typography>
-          )}
-          {subValue !== undefined && typeof subValue !== 'string' && subValue}
+          <AutoSkeleton loading={loading_}>
+            {subValue !== undefined && typeof subValue === 'string' && (
+              <Typography variant="body2" color="textSecondary">
+                {subValue}
+              </Typography>
+            )}
+            {subValue !== undefined && typeof subValue !== 'string' && subValue}
+          </AutoSkeleton>
         </div>
       )}
     </Card>

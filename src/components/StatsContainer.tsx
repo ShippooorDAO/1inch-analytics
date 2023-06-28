@@ -20,6 +20,7 @@ export interface StatsContainerProps {
     title?: React.ReactNode;
     content: React.ReactNode;
   }[];
+  loading?: boolean;
   layout?: StatsContainerLayout;
 }
 
@@ -28,6 +29,7 @@ export function StatsContainer({
   headerMetrics,
   headerMetricsPerRow: headerMetricsPerRow_,
   containers,
+  loading,
   layout = StatsContainerLayout.TWO_THIRDS_ONE_THIRD,
 }: StatsContainerProps) {
   const headerMetricsPerRow =
@@ -185,7 +187,11 @@ export function StatsContainer({
                   headerMetrics
                     .slice(headerMetricsPerRow * i, headerMetricsPerRow)
                     .map((metricsProps, i) => (
-                      <SlimMetricsCard key={i} {...metricsProps} />
+                      <SlimMetricsCard
+                        key={i}
+                        {...metricsProps}
+                        loading={loading}
+                      />
                     ))}
               </div>
             ))}

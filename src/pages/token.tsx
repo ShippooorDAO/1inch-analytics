@@ -576,6 +576,7 @@ export default function TokenPage() {
     [marketData]
   );
 
+  const loadingStubValue = 1234;
   return (
     <Container
       css={css`
@@ -607,6 +608,7 @@ export default function TokenPage() {
           >
             <StatsContainer
               layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
+              loading={!marketData}
               title={
                 <div
                   css={css`
@@ -622,29 +624,43 @@ export default function TokenPage() {
               headerMetrics={[
                 {
                   title: 'Price (24H)',
-                  value: format(marketData?.currentMarketData.usd, {
-                    symbol: 'USD',
-                    abbreviate: true,
-                  }),
+                  value: format(
+                    marketData?.currentMarketData.usd ?? loadingStubValue,
+                    {
+                      symbol: 'USD',
+                      abbreviate: true,
+                    }
+                  ),
                   subValue: (
                     <TrendLabelPercent
-                      value={marketData?.currentMarketData.usd24hChange}
+                      value={
+                        marketData?.currentMarketData.usd24hChange ??
+                        loadingStubValue
+                      }
                     />
                   ),
                 },
                 {
                   title: 'Market cap',
-                  value: format(marketData?.currentMarketData?.usdMarketCap, {
-                    symbol: 'USD',
-                    abbreviate: true,
-                  }),
+                  value: format(
+                    marketData?.currentMarketData?.usdMarketCap ??
+                      loadingStubValue,
+                    {
+                      symbol: 'USD',
+                      abbreviate: true,
+                    }
+                  ),
                 },
                 {
                   title: 'Volume (24H)',
-                  value: format(marketData?.currentMarketData?.usd24hVol, {
-                    symbol: 'USD',
-                    abbreviate: true,
-                  }),
+                  value: format(
+                    marketData?.currentMarketData?.usd24hVol ??
+                      loadingStubValue,
+                    {
+                      symbol: 'USD',
+                      abbreviate: true,
+                    }
+                  ),
                 },
               ]}
               containers={[
