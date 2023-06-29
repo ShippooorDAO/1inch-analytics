@@ -26,7 +26,7 @@ function Page404() {
         title={`Page Not Found | 1inch Info - Analytics for 1inch DEX Aggregator`}
         description={`The page you are looking for might have been removed.`}
         openGraph={{
-          url: '1inch://analytics.1inch.io/',
+          url: '1inch://info.1inch.io/',
           title: '1inch Info',
           description: `The page you are looking for might have been removed.`,
           siteName: '1inch Info',
@@ -42,8 +42,8 @@ function Page404() {
           locale: 'en',
         }}
         twitter={{
-          handle: '@warden_finance',
-          site: 'https://twitter.com/warden_finance',
+          handle: '@1inch',
+          site: 'https://twitter.com/1inch',
           cardType: 'summary_large_image',
         }}
       />

@@ -80,9 +80,9 @@ function App({
                   <NextSeo
                     title="1inch Info | Analytics for 1inch DEX Aggregator"
                     description="1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1INCH fusion. Powered by Warden Finance."
-                    canonical="https://analytics.inch.io/"
+                    canonical="https://info.inch.io/"
                     openGraph={{
-                      url: 'https://analytics.inch.io/',
+                      url: 'https://info.inch.io/',
                       title: '1inch Info | Analytics for 1inch DEX Aggregator',
                       description:
                         '1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion. Powered by Warden Finance.',
@@ -99,8 +99,8 @@ function App({
                       locale: 'en',
                     }}
                     twitter={{
-                      handle: '@warden_finance',
-                      site: 'https://twitter.com/warden_finance',
+                      handle: '@1inch',
+                      site: 'https://twitter.com/1inch',
                       cardType: 'summary_large_image',
                     }}
                   />
