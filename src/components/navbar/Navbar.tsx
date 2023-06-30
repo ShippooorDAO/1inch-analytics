@@ -38,7 +38,7 @@ function Navbar({ onDrawerToggle, drawerOpen }: NavbarProps) {
               align-items: center;
               gap: 20px;
               width: 100%;
-              padding: 10px 5px;
+              padding: 10px 12px;
               white-space: nowrap;
             `}
           >

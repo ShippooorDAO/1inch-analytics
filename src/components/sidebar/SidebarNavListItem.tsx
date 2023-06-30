@@ -22,12 +22,9 @@ interface ItemProps {
 }
 
 const Item = styled(ListItemButton)<ItemProps>`
-  padding-top: 10px;
-  padding-bottom: 10px;
+  width: 100%;
   border-radius: 10px;
-  padding-right: 0
-  margin: 10px;
-  margin-left: ${(props) => props.theme.spacing((props.depth + 1) * 3)};
+  padding: 12px;
   svg {
     color: ${(props) => props.theme.sidebar.color};
     font-size: 20px;
@@ -130,7 +127,7 @@ const SidebarNavListItem = (props: SidebarNavListItemProps) => {
         <Link href={href} passHref>
           <Item
             depth={depth}
-            css={pathname === href ? 'active' : ''}
+            className={pathname === href ? 'active' : ''}
             activeclassname="active"
             disabled={disabled}
           >
@@ -164,7 +161,7 @@ const SidebarNavListItem = (props: SidebarNavListItemProps) => {
     <Link href={href ?? ''} passHref>
       <Item
         depth={depth}
-        css={pathname === href ? 'active' : ''}
+        className={pathname === href ? 'active' : ''}
         activeclassname="active"
         disabled={disabled}
       >

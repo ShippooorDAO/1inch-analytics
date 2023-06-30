@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
@@ -20,7 +21,22 @@ const SidebarNavList = (props: SidebarNavListProps) => {
     [] as JSX.Element[]
   );
 
-  return <React.Fragment>{childRoutes}</React.Fragment>;
+  return (
+    <React.Fragment>
+      <div
+        css={css`
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          padding: 0 12px;
+          align-items: flex-start;
+        `}
+      >
+        {childRoutes}
+      </div>
+    </React.Fragment>
+  );
 };
 
 export default SidebarNavList;
