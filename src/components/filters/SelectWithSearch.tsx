@@ -30,40 +30,35 @@ function OptionRow<T>({
   onClick,
   multiple,
   checked,
-  index,
 }: OptionRowProps<T>) {
   return (
     <div
       key={option.key}
       css={(theme) => [
         css`
+          height: 48px;
+          padding: 0 8px;
           display: flex;
           flex-flow: row;
+          justify-content: space-between;
           align-items: center;
           cursor: pointer;
-          border-radius: 10px;
-          gap: 5px;
-          justify-content: flex-start;
-          background-color: ${rgba(theme.palette.material.primary[500], 0.2)};
+          border-radius: 12px;
           &:hover {
             background-color: ${rgba(theme.palette.material.primary[500], 0.3)};
           }
         `,
-        index % 2 === 0 &&
-          css`
-            background-color: ${rgba(theme.palette.material.primary[500], 0.1)};
-          `,
       ]}
       onClick={() => {
         onClick(option);
       }}
     >
+      {option.label}
       {!multiple ? (
         <Radio key={option.key} checked={checked} />
       ) : (
         <Checkbox key={option.key} checked={checked} />
       )}
-      {option.label}
     </div>
   );
 }
@@ -345,9 +340,9 @@ export function SelectWithSearch<T>({
                           max-height: 400px;
                           display: flex;
                           flex-flow: column;
-                          gap: 10px;
+                          gap: 12px;
                           min-width: 400px;
-                          padding: 10px;
+                          padding: 8px;
                         `}
                       >
                         {!disableSearch && (
@@ -372,14 +367,13 @@ export function SelectWithSearch<T>({
                             overflow-x: auto;
                             display: flex;
                             flex-flow: column;
-                            gap: 10px;
                           `}
                         >
                           <div
                             css={css`
                               display: flex;
                               flex-flow: column;
-                              gap: 10px;
+                              gap: 2px;
                             `}
                           >
                             {displayedAvailableOptions?.map((option, i) => {
@@ -422,40 +416,35 @@ export function SelectWithSearch<T>({
                               )}
                           </div>
                         </div>
-
-                        {multiple && values.length > 0 && options.length > 3 && (
-                          <div
-                            css={css`
-                              display: flex;
-                              flex-flow: row;
-                              justify-content: flex-end;
-                              align-items: center;
-                              gap: 10px;
-                            `}
-                          >
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              onClick={() => {
-                                setShowSelectedOptionsOnly(
-                                  !showSelectedOptionsOnly
-                                );
-                              }}
-                            >
-                              {showSelectedOptionsOnly
-                                ? 'Show Selected Options Only'
-                                : 'Show All Options'}
-                            </Button>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={clear}
-                            >
-                              Clear All
-                            </Button>
-                          </div>
-                        )}
                       </div>
+                      {multiple && values.length > 0 && options.length > 3 && (
+                        <div
+                          css={(theme) => css`
+                            display: flex;
+                            flex-flow: row;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 16px 8px 16px;
+                            border-top: 1px solid ${theme.palette.divider};
+                          `}
+                        >
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setShowSelectedOptionsOnly(
+                                !showSelectedOptionsOnly
+                              );
+                            }}
+                          >
+                            {showSelectedOptionsOnly
+                              ? 'Show Selected Options Only'
+                              : 'Show All Options'}
+                          </Button>
+                          <Button size="small" onClick={clear}>
+                            Clear All
+                          </Button>
+                        </div>
+                      )}
                     </Card>
                   </div>
                 </Fade>

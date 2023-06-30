@@ -90,7 +90,7 @@ export function AssetMultiSelect({
       onChange={onChangeInternal}
       searchPredicate={searchPredicate}
       css={css`
-        width: 500px;
+        width: 400px;
       `}
     />
   );
