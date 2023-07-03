@@ -235,6 +235,7 @@ export function SelectWithSearch<T>({
         display: flex;
         flex-flow: column;
         gap: 10px;
+        width: 100%;
       `}
     >
       <div
@@ -263,7 +264,7 @@ export function SelectWithSearch<T>({
               cursor: pointer;
               border-radius: 10px;
               height: 40px;
-              min-width: 200px;
+              width: 100%;
               & .MuiChip-label {
                 padding-left: 10px;
                 padding-right: 10px;

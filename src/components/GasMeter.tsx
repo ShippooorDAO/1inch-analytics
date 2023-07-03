@@ -113,10 +113,10 @@ export function GasMeter() {
           justify-content: space-between;
           align-items: center;
           background-color: ${theme.palette.background.paper};
-          border-radius: 10px;
+          border-radius: 16px;
           width: 270px;
-          padding: 10px 20px;
-          gap: 5px;
+          padding: 16px;
+          gap: 12px;
         `}
       >
         <AutoSkeleton loading={loading}>
@@ -133,7 +133,6 @@ export function GasMeter() {
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-between;
-            padding-top: 5px;
           `}
         >
           <AutoSkeleton loading={loading}>
@@ -149,6 +148,7 @@ export function GasMeter() {
           css={css`
             width: 100%;
             height: 1px;
+            margin: 0;
             border: 1px solid rgba(255, 255, 225, 0.1);
           `}
         />
@@ -218,6 +218,7 @@ export function GasMeter() {
           css={css`
             width: 100%;
             height: 1px;
+            margin: 0;
             border: 1px solid rgba(255, 255, 225, 0.1);
           `}
         />
