@@ -614,6 +614,7 @@ export default function TokenPage() {
                   css={css`
                     display: flex;
                     flex-flow: row;
+                    flex: 1 0 auto;
                     gap: 5px;
                   `}
                 >
@@ -712,6 +713,7 @@ export default function TokenPage() {
                     display: flex;
                     flex-flow: row;
                     gap: 5px;
+                    flex: 1 0 auto;
                   `}
                 >
                   <PieChartIcon />

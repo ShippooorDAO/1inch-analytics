@@ -205,8 +205,7 @@ export default function Home() {
   return (
     <Container
       css={css`
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding: 20px;
       `}
     >
       <div
@@ -226,6 +225,7 @@ export default function Home() {
             flex-flow: row;
             align-items: center;
             gap: 5px;
+            text-wrap: nowrap;
           `}
         >
           Filter by chain:

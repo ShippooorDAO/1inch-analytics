@@ -114,7 +114,7 @@ export function GasMeter() {
           align-items: center;
           background-color: ${theme.palette.background.paper};
           border-radius: 16px;
-          width: 270px;
+          width: 100%;
           padding: 16px;
           gap: 12px;
         `}

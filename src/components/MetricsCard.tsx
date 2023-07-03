@@ -30,7 +30,7 @@ export function SlimMetricsCard({
         display: flex;
         flex-flow: row;
         gap: 10px;
-        border-radius: 16px;
+        border-radius: 12px;
         align-items: center;
         justify-content: flex-end;
         padding-right: 10px;
