@@ -1,11 +1,6 @@
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
-import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
-import StackedBarChartOutlinedIcon from '@mui/icons-material/StackedBarChartOutlined';
-
 import { FeatureFlags } from '@/shared/FeatureFlags/FeatureFlags.type';
 import { SidebarItemsType } from '@/types/sidebar';
 
-import { RoundedImageIcon } from '../icons/RoundedImageIcon';
 import { SidebarNavProps } from './SidebarNav';
 
 export enum PageSection {
@@ -22,7 +17,9 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.OVERVIEW,
       {
         href: '/',
-        icon: () => <StackedBarChartOutlinedIcon />,
+        icon: () => (
+          <img height="24px" width="24px" src="/chart.svg" alt="overview" />
+        ),
         title: 'Overview',
       },
     ],
@@ -30,7 +27,9 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.TRANSACTIONS,
       {
         href: '/transactions',
-        icon: () => <RoundedImageIcon size="small" src="/swap.svg" />,
+        icon: () => (
+          <img height="24px" width="24px" src="/swap.svg" alt="transactions" />
+        ),
         title: 'Transactions',
       },
     ],
@@ -40,8 +39,8 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
         href: '/fusion',
         icon: () => (
           <img
-            height="20px"
-            width="20px"
+            height="24px"
+            width="24px"
             src="/vendors/1inch/fusion.webp"
             alt="fusion"
           />
@@ -55,8 +54,8 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
         href: '/token',
         icon: () => (
           <img
-            height="20px"
-            width="20px"
+            height="24px"
+            width="24px"
             src="/vendors/1inch/1inch_logo.svg"
             alt="1inch token"
           />
@@ -68,7 +67,9 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.TREASURY,
       {
         href: '/',
-        icon: () => <AccountBalanceOutlinedIcon />,
+        icon: () => (
+          <img height="24px" width="24px" src="/bank.svg" alt="treasury" />
+        ),
         title: 'Treasury',
         badge: 'Soon',
         disabled: true,
@@ -78,7 +79,9 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
       PageSection.TRANSACTIONS,
       {
         href: '/',
-        icon: () => <ReceiptLongOutlinedIcon />,
+        icon: () => (
+          <img height="24px" width="24px" src="/swap.svg" alt="transactions" />
+        ),
         title: 'Transactions',
         badge: 'Soon',
         disabled: true,

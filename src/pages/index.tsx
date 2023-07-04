@@ -11,9 +11,6 @@ import {
 } from '@/shared/Model/Timeseries';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { css } from '@emotion/react';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import PersonIcon from '@mui/icons-material/Person';
-import ReceiptIcon from '@mui/icons-material/Receipt';
 
 import { TrendLabelPercent } from '@/components/MetricsCard';
 import { format } from '@/shared/Utils/Format';
@@ -253,7 +250,7 @@ export default function Home() {
                 gap: 5px;
               `}
             >
-              <BarChartIcon />
+              <img height="24px" width="24px" src="/chart.svg" alt="volume" />
               <Typography variant="h3">Volume</Typography>
             </div>
           }
@@ -413,7 +410,12 @@ export default function Home() {
                 gap: 5px;
               `}
             >
-              <ReceiptIcon />
+              <img
+                height="24px"
+                width="24px"
+                src="/swap.svg"
+                alt="transactions"
+              />
               <Typography variant="h3">Transactions</Typography>
             </div>
           }
@@ -580,7 +582,7 @@ export default function Home() {
                 gap: 5px;
               `}
             >
-              <PersonIcon />
+              <img height="24px" width="24px" src="/profile.svg" alt="users" />
               <Typography variant="h3">Users</Typography>
             </div>
           }
