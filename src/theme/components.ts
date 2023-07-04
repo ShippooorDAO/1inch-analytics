@@ -65,7 +65,6 @@ const components = {
   MuiPaper: {
     styleOverrides: {
       root: {
-        borderRadius: '10px',
         backgroundImage: 'none',
       },
     },
@@ -160,7 +159,18 @@ const components = {
   MuiToggleButton: {
     styleOverrides: {
       root: {
+        borderColor: '#2F3B4D',
+        borderSize: '1px',
         borderRadius: '10px',
+        '&.Mui-selected': {
+          backgroundColor: '#263042',
+        },
+        '&:hover': {
+          backgroundColor: '#1E2633',
+        },
+        '&.Mui-selected:hover': {
+          backgroundColor: '#1E2633',
+        },
       },
     },
   },

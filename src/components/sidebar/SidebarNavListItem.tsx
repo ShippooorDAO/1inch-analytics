@@ -34,13 +34,11 @@ const Item = styled(ListItemButton)<ItemProps>`
   }
   &:hover {
     background-color: ${(props) =>
-      lighten(0.08, props.theme.palette.background.default)};
+      lighten(0.08, props.theme.sidebar.background)};
     color: ${(props) => props.theme.sidebar.color};
   }
   &.${(props) => props.activeclassname} {
-    background-color: ${(props) =>
-      lighten(0.25, props.theme.palette.background.default)};
-    background: rgba(255, 255, 255, 0.08);
+    background-color: ${(props) => props.theme.customBackgrounds.secondary};
     span {
       color: ${(props) => props.theme.sidebar.color};
     }

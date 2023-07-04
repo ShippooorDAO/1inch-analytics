@@ -24,7 +24,7 @@ function Navbar({ onDrawerToggle, drawerOpen }: NavbarProps) {
         position="sticky"
         elevation={0}
         css={(theme) => css`
-          background: ${theme.sidebar.background};
+          background: ${theme.navbar.background};
           border-radius: 0;
           color: ${theme.header.color};
         `}

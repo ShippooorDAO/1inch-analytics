@@ -5,14 +5,13 @@ import { Search as SearchIcon } from 'react-feather';
 
 const Search = styled.div`
   border-radius: 12px;
-  background-color: ${(props) =>
-    rgba(props.theme.palette.material.primary[500], 0.2)};
+  background-color: ${(props) => props.theme.customBackgrounds.dark};
   display: block;
   position: relative;
   width: 100%;
   &:hover {
     background-color: ${(props) =>
-      rgba(props.theme.palette.material.primary[500], 0.3)};
+      rgba(props.theme.customBackgrounds.dark, 0.7)};
   }
 `;
 

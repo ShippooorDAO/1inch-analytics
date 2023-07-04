@@ -12,7 +12,6 @@ import {
   Radio,
   Typography,
 } from '@mui/material';
-import { rgba } from 'polished';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { SearchInput } from '@/components/filters/SearchInput';
@@ -45,7 +44,7 @@ function OptionRow<T>({
           cursor: pointer;
           border-radius: 12px;
           &:hover {
-            background-color: ${rgba(theme.palette.material.primary[500], 0.3)};
+            background-color: ${theme.customBackgrounds.secondary};
           }
         `,
       ]}
@@ -179,7 +178,7 @@ export function SelectWithSearch<T>({
       return selectedValueLabel?.label ?? label;
     }
 
-    return `${values.length} values selected`;
+    return `${values.length} values`;
   })();
 
   const closePopper = () => {
@@ -273,17 +272,15 @@ export function SelectWithSearch<T>({
                 padding-right: 10px;
                 width: 100%;
               }
-              border: 1px solid ${theme.palette.divider};
-              &:hover {
-                background-color: ${theme.palette.action.hover};
+              border: 1px solid ${theme.borders.primary};
+              &:hover,
+              &:active {
+                background-color: ${theme.customBackgrounds.secondary};
               }
             `,
             panelOpen &&
               css`
-                outline-style: solid;
-                outline-color: ${theme.palette.divider};
-                outline-width: 1px;
-                background-color: ${theme.palette.action.hover};
+                background-color: ${theme.customBackgrounds.secondary};
               `,
             cssProp,
           ]}
@@ -335,8 +332,9 @@ export function SelectWithSearch<T>({
                 <Fade {...TransitionProps} timeout={350}>
                   <div>
                     <Card
-                      css={css`
+                      css={(theme) => css`
                         z-index: 9999999;
+                        background-color: ${theme.customBackgrounds.light};
                       `}
                     >
                       <div

@@ -203,6 +203,14 @@ export default function Home() {
     <Container
       css={css`
         padding: 20px;
+        background-repeat: no-repeat;
+        background-size: 1600px 778px;
+        background-position: -1150px -525px;
+        background-image: radial-gradient(
+          50% 50% at 50% 50%,
+          rgba(40, 94, 176, 0.41) 0%,
+          rgba(6, 19, 31, 0) 100%
+        );
       `}
     >
       <div
@@ -221,11 +229,13 @@ export default function Home() {
             display: flex;
             flex-flow: row;
             align-items: center;
-            gap: 5px;
+            gap: 12px;
             text-wrap: nowrap;
           `}
         >
-          Filter by chain:
+          <Typography variant="body2" color="textSecondary">
+            Filter by chain:
+          </Typography>
           <ChainMultiSelect
             values={selectedChains}
             onChange={setSelectedChains}

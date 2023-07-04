@@ -66,7 +66,7 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
     [
       PageSection.TREASURY,
       {
-        href: '/',
+        href: '/treasury',
         icon: () => (
           <img height="24px" width="24px" src="/bank.svg" alt="treasury" />
         ),
@@ -78,7 +78,7 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
     [
       PageSection.TRANSACTIONS,
       {
-        href: '/',
+        href: '/transactions',
         icon: () => (
           <img height="24px" width="24px" src="/swap.svg" alt="transactions" />
         ),

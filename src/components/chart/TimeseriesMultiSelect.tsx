@@ -85,10 +85,10 @@ export function TimeseriesMultiSelect({
         );
       }
       if (values.length > 1) {
-        return `${values.length} timeseries selected`;
+        return `${values.length} timeseries`;
       }
       if (values.length === options.length) {
-        return 'All timeseries selected';
+        return 'All timeseries';
       }
     })();
 

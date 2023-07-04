@@ -77,10 +77,10 @@ export function ChainMultiSelect({
         );
       }
       if (values.length === chains.length) {
-        return 'All chains selected';
+        return 'All chains';
       }
       if (values.length > 1) {
-        return `${values.length} chains selected`;
+        return `${values.length} chains`;
       }
     })();
 
