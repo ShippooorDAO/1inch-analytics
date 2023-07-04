@@ -12,6 +12,7 @@ import {
   Radio,
   Typography,
 } from '@mui/material';
+import { lighten } from 'polished';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { SearchInput } from '@/components/filters/SearchInput';
@@ -275,7 +276,10 @@ export function SelectWithSearch<T>({
               border: 1px solid ${theme.borders.primary};
               &:hover,
               &:active {
-                background-color: ${theme.customBackgrounds.secondary};
+                background-color: ${lighten(
+                  0.1,
+                  theme.customBackgrounds.secondary
+                )};
               }
             `,
             panelOpen &&
