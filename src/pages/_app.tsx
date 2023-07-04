@@ -89,9 +89,9 @@ function App({
                       siteName: '1inch Info',
                       images: [
                         {
-                          url: 'https://1inch.io/assets/social-image/main-cover-2.png',
-                          width: 1278,
-                          height: 720,
+                          url: 'https://i.imgur.com/ZaLvku1.png',
+                          width: 1008,
+                          height: 560,
                           type: 'image/jpeg',
                           alt: '1inch Info Banner',
                         },
