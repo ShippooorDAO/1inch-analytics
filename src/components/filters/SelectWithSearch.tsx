@@ -12,7 +12,7 @@ import {
   Radio,
   Typography,
 } from '@mui/material';
-import { rgba } from 'polished';
+import { lighten } from 'polished';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { SearchInput } from '@/components/filters/SearchInput';
@@ -30,40 +30,35 @@ function OptionRow<T>({
   onClick,
   multiple,
   checked,
-  index,
 }: OptionRowProps<T>) {
   return (
     <div
       key={option.key}
       css={(theme) => [
         css`
+          height: 48px;
+          padding: 0 8px;
           display: flex;
           flex-flow: row;
+          justify-content: space-between;
           align-items: center;
           cursor: pointer;
-          border-radius: 10px;
-          gap: 5px;
-          justify-content: flex-start;
-          background-color: ${rgba(theme.palette.material.primary[500], 0.2)};
+          border-radius: 12px;
           &:hover {
-            background-color: ${rgba(theme.palette.material.primary[500], 0.3)};
+            background-color: ${theme.customBackgrounds.secondary};
           }
         `,
-        index % 2 === 0 &&
-          css`
-            background-color: ${rgba(theme.palette.material.primary[500], 0.1)};
-          `,
       ]}
       onClick={() => {
         onClick(option);
       }}
     >
+      {option.label}
       {!multiple ? (
         <Radio key={option.key} checked={checked} />
       ) : (
         <Checkbox key={option.key} checked={checked} />
       )}
-      {option.label}
     </div>
   );
 }
@@ -184,7 +179,7 @@ export function SelectWithSearch<T>({
       return selectedValueLabel?.label ?? label;
     }
 
-    return `${values.length} values selected`;
+    return `${values.length} values`;
   })();
 
   const closePopper = () => {
@@ -240,6 +235,8 @@ export function SelectWithSearch<T>({
         display: flex;
         flex-flow: column;
         gap: 10px;
+        width: 100%;
+        max-width: 300px;
       `}
     >
       <div
@@ -268,23 +265,26 @@ export function SelectWithSearch<T>({
               cursor: pointer;
               border-radius: 10px;
               height: 40px;
+              width: 100%;
               min-width: 200px;
+              max-width: 260px;
               & .MuiChip-label {
                 padding-left: 10px;
                 padding-right: 10px;
                 width: 100%;
               }
-              border: 1px solid ${theme.palette.divider};
-              &:hover {
-                background-color: ${theme.palette.action.hover};
+              border: 1px solid ${theme.borders.primary};
+              &:hover,
+              &:active {
+                background-color: ${lighten(
+                  0.1,
+                  theme.customBackgrounds.secondary
+                )};
               }
             `,
             panelOpen &&
               css`
-                outline-style: solid;
-                outline-color: ${theme.palette.divider};
-                outline-width: 1px;
-                background-color: ${theme.palette.action.hover};
+                background-color: ${theme.customBackgrounds.secondary};
               `,
             cssProp,
           ]}
@@ -336,8 +336,9 @@ export function SelectWithSearch<T>({
                 <Fade {...TransitionProps} timeout={350}>
                   <div>
                     <Card
-                      css={css`
+                      css={(theme) => css`
                         z-index: 9999999;
+                        background-color: ${theme.customBackgrounds.light};
                       `}
                     >
                       <div
@@ -345,9 +346,9 @@ export function SelectWithSearch<T>({
                           max-height: 400px;
                           display: flex;
                           flex-flow: column;
-                          gap: 10px;
+                          gap: 12px;
                           min-width: 400px;
-                          padding: 10px;
+                          padding: 8px;
                         `}
                       >
                         {!disableSearch && (
@@ -372,14 +373,13 @@ export function SelectWithSearch<T>({
                             overflow-x: auto;
                             display: flex;
                             flex-flow: column;
-                            gap: 10px;
                           `}
                         >
                           <div
                             css={css`
                               display: flex;
                               flex-flow: column;
-                              gap: 10px;
+                              gap: 2px;
                             `}
                           >
                             {displayedAvailableOptions?.map((option, i) => {
@@ -422,40 +422,35 @@ export function SelectWithSearch<T>({
                               )}
                           </div>
                         </div>
-
-                        {multiple && values.length > 0 && options.length > 3 && (
-                          <div
-                            css={css`
-                              display: flex;
-                              flex-flow: row;
-                              justify-content: flex-end;
-                              align-items: center;
-                              gap: 10px;
-                            `}
-                          >
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              onClick={() => {
-                                setShowSelectedOptionsOnly(
-                                  !showSelectedOptionsOnly
-                                );
-                              }}
-                            >
-                              {showSelectedOptionsOnly
-                                ? 'Show Selected Options Only'
-                                : 'Show All Options'}
-                            </Button>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={clear}
-                            >
-                              Clear All
-                            </Button>
-                          </div>
-                        )}
                       </div>
+                      {multiple && values.length > 0 && options.length > 3 && (
+                        <div
+                          css={(theme) => css`
+                            display: flex;
+                            flex-flow: row;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 16px 8px 16px;
+                            border-top: 1px solid ${theme.palette.divider};
+                          `}
+                        >
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              setShowSelectedOptionsOnly(
+                                !showSelectedOptionsOnly
+                              );
+                            }}
+                          >
+                            {showSelectedOptionsOnly
+                              ? 'Show Selected Options Only'
+                              : 'Show All Options'}
+                          </Button>
+                          <Button size="small" onClick={clear}>
+                            Clear All
+                          </Button>
+                        </div>
+                      )}
                     </Card>
                   </div>
                 </Fade>

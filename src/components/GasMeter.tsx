@@ -107,16 +107,16 @@ export function GasMeter() {
   return (
     <>
       <div
-        css={css`
+        css={(theme) => css`
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           align-items: center;
-          background-color: ${theme.palette.background.paper};
-          border-radius: 10px;
-          width: 270px;
-          padding: 10px 20px;
-          gap: 5px;
+          background-color: ${theme.customBackgrounds.secondary};
+          border-radius: 16px;
+          width: 100%;
+          padding: 16px;
+          gap: 12px;
         `}
       >
         <AutoSkeleton loading={loading}>
@@ -133,7 +133,6 @@ export function GasMeter() {
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-between;
-            padding-top: 5px;
           `}
         >
           <AutoSkeleton loading={loading}>
@@ -146,10 +145,12 @@ export function GasMeter() {
           </AutoSkeleton>
         </div>
         <hr
-          css={css`
+          css={(theme) => css`
             width: 100%;
             height: 1px;
-            border: 1px solid rgba(255, 255, 225, 0.1);
+            margin: 0;
+            border: 0;
+            background-color: ${theme.borders.secondary};
           `}
         />
         <div
@@ -215,10 +216,12 @@ export function GasMeter() {
           </div>
         </div>
         <hr
-          css={css`
+          css={(theme) => css`
             width: 100%;
             height: 1px;
-            border: 1px solid rgba(255, 255, 225, 0.1);
+            margin: 0;
+            border: 0;
+            background-color: ${theme.borders.secondary};
           `}
         />
         <div

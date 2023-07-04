@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import { ContentCopy } from '@mui/icons-material';
 import { IconButton, Tooltip } from '@mui/material';
 import { useState } from 'react';
 
@@ -42,7 +41,7 @@ export function AddressCopyButton({
           setTimeout(() => setTooltipText('Click to copy'), 5000)
         }
       >
-        <ContentCopy fontSize={size} />
+        <img height="24px" width="24px" src="/copy.svg" alt="copy" />
       </IconButton>
     </Tooltip>
   );

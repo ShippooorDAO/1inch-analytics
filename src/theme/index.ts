@@ -27,6 +27,9 @@ const createTheme = (name: string) => {
       header: themeConfig.header,
       footer: themeConfig.footer,
       sidebar: themeConfig.sidebar,
+      navbar: themeConfig.navbar,
+      customBackgrounds: themeConfig.customBackgrounds,
+      borders: themeConfig.borders,
     }
   );
 };

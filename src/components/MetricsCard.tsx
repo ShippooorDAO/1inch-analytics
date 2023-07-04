@@ -25,29 +25,32 @@ export function SlimMetricsCard({
 
   return (
     <Card
-      css={css`
+      css={(theme) => css`
         height: 100%;
         display: flex;
         flex-flow: row;
         gap: 10px;
-        border-radius: 16px;
+        border-radius: 12px;
         align-items: center;
         justify-content: flex-end;
         padding-right: 10px;
+        background-color: ${theme.customBackgrounds.primary};
       `}
     >
       <div
         css={(theme) =>
           css`
             border-radius-left: 10px;
-            background-color: ${theme.palette.action.hover};
+            background-color: ${theme.customBackgrounds.secondary};
             padding: 10px;
             white-space: nowrap;
           `
         }
       >
         <AutoSkeleton loading={loading_}>
-          <Typography variant="body2">{title}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {title}
+          </Typography>
         </AutoSkeleton>
       </div>
       <div

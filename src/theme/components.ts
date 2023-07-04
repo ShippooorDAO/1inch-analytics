@@ -56,10 +56,8 @@ const components = {
   MuiCard: {
     styleOverrides: {
       root: {
-        border: '1px solid rgba(255,255,255, 0.1)',
-        borderRadius: '24px',
-        boxShadow:
-          'rgba(50, 50, 93, 0.025) 0px 2px 5px -1px, rgba(0, 0, 0, 0.05) 0px 1px 3px -1px',
+        borderRadius: '16px',
+        boxShadow: 'rgba(0, 0, 0, 0.5) 0px 9px 42px 0px',
         backgroundOpacity: 100,
       },
     },
@@ -67,7 +65,6 @@ const components = {
   MuiPaper: {
     styleOverrides: {
       root: {
-        borderRadius: '10px',
         backgroundImage: 'none',
       },
     },
@@ -162,7 +159,18 @@ const components = {
   MuiToggleButton: {
     styleOverrides: {
       root: {
+        borderColor: '#2F3B4D',
+        borderSize: '1px',
         borderRadius: '10px',
+        '&.Mui-selected': {
+          backgroundColor: '#263042',
+        },
+        '&:hover': {
+          backgroundColor: '#1E2633',
+        },
+        '&.Mui-selected:hover': {
+          backgroundColor: '#1E2633',
+        },
       },
     },
   },

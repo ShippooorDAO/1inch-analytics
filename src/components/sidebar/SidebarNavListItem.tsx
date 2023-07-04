@@ -22,12 +22,9 @@ interface ItemProps {
 }
 
 const Item = styled(ListItemButton)<ItemProps>`
-  padding-top: 10px;
-  padding-bottom: 10px;
+  width: 100%;
   border-radius: 10px;
-  padding-right: 0
-  margin: 10px;
-  margin-left: ${(props) => props.theme.spacing((props.depth + 1) * 3)};
+  padding: 12px;
   svg {
     color: ${(props) => props.theme.sidebar.color};
     font-size: 20px;
@@ -37,13 +34,11 @@ const Item = styled(ListItemButton)<ItemProps>`
   }
   &:hover {
     background-color: ${(props) =>
-      lighten(0.08, props.theme.palette.background.default)};
+      lighten(0.08, props.theme.sidebar.background)};
     color: ${(props) => props.theme.sidebar.color};
   }
   &.${(props) => props.activeclassname} {
-    background-color: ${(props) =>
-      lighten(0.25, props.theme.palette.background.default)};
-    background: rgba(255, 255, 255, 0.08);
+    background-color: ${(props) => props.theme.customBackgrounds.secondary};
     span {
       color: ${(props) => props.theme.sidebar.color};
     }
@@ -130,7 +125,7 @@ const SidebarNavListItem = (props: SidebarNavListItemProps) => {
         <Link href={href} passHref>
           <Item
             depth={depth}
-            css={pathname === href ? 'active' : ''}
+            className={pathname === href ? 'active' : ''}
             activeclassname="active"
             disabled={disabled}
           >
@@ -164,7 +159,7 @@ const SidebarNavListItem = (props: SidebarNavListItemProps) => {
     <Link href={href ?? ''} passHref>
       <Item
         depth={depth}
-        css={pathname === href ? 'active' : ''}
+        className={pathname === href ? 'active' : ''}
         activeclassname="active"
         disabled={disabled}
       >

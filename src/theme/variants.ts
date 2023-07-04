@@ -5,10 +5,6 @@ import { lighten, rgba } from 'polished';
 
 import { THEMES } from '../constants';
 
-/**
- * Generated using Google Material UI color palette generator using #2F8AF5 as primary color
- * https://m2.material.io/design/color/the-color-system.html#tools-for-picking-colors
- */
 const primary = {
   50: '#e4f3ff',
   100: '#bde0ff',
@@ -113,6 +109,18 @@ export const chartColors = [
   lighten(0.6, '#ffa600'),
 ];
 
+const backgrounds = {
+  bgMain: '#141924',
+  bg2ry: '#10141C',
+  bg3ry: '#1E2633',
+  bgBody: '#06070A',
+};
+
+const borders = {
+  borderMain: '#2F3B4D',
+  border2ry: '#232C3D',
+};
+
 const defaultVariant = {
   name: THEMES.DEFAULT,
   palette: {
@@ -140,6 +148,16 @@ const defaultVariant = {
     },
     chart: chartColors,
   },
+  customBackgrounds: {
+    primary: backgrounds.bgMain,
+    secondary: backgrounds.bg2ry,
+    light: backgrounds.bg3ry,
+    dark: backgrounds.bgBody,
+  },
+  borders: {
+    primary: borders.borderMain,
+    secondary: borders.border2ry,
+  },
   header: {
     color: muiColors.grey[500],
     background: '#FFF',
@@ -154,21 +172,18 @@ const defaultVariant = {
     color: muiColors.grey[500],
     background: '#FFF',
   },
+  navbar: {
+    color: muiColors.grey[200],
+    background: backgrounds.bg2ry,
+  },
   sidebar: {
     color: muiColors.grey[200],
-    background: analogousPrimary[500],
+    background: backgrounds.bgMain,
     header: {
       color: muiColors.grey[200],
-      background: analogousPrimary[500],
+      background: backgrounds.bgMain,
       brand: {
-        color: analogousPrimary[500],
-      },
-    },
-    footer: {
-      color: muiColors.grey[200],
-      background: '#1E2A38',
-      online: {
-        background: muiColors.green[500],
+        color: backgrounds.bgMain,
       },
     },
     badge: {
@@ -180,9 +195,23 @@ const defaultVariant = {
 
 const darkVariant = merge(defaultVariant, {
   name: THEMES.DARK,
+  navbar: {
+    color: muiColors.grey[200],
+    background: backgrounds.bg2ry,
+  },
   sidebar: {
     color: muiColors.grey[200],
-    background: lighten(0.03, '#06070A'),
+    background: backgrounds.bgMain,
+  },
+  customBackgrounds: {
+    primary: backgrounds.bgMain,
+    secondary: backgrounds.bg2ry,
+    light: backgrounds.bg3ry,
+    dark: backgrounds.bgBody,
+  },
+  borders: {
+    primary: borders.borderMain,
+    secondary: borders.border2ry,
   },
   palette: {
     mode: 'dark',
@@ -192,7 +221,7 @@ const darkVariant = merge(defaultVariant, {
     },
     background: {
       default: '#06070A',
-      paper: '#131823',
+      paper: backgrounds.bgMain,
     },
     text: {
       primary: '#FBFBFB',
@@ -202,7 +231,7 @@ const darkVariant = merge(defaultVariant, {
       main: '#21C187',
     },
     error: {
-      main: '#FF8078',
+      main: '#F04832',
     },
     warning: {
       main: '#FFC700',
@@ -232,6 +261,15 @@ export type VariantType = {
     secondary: MainContrastTextType;
     chart: Array<string>;
   };
+  customBackgrounds: {
+    primary: string;
+    secondary: string;
+    light: string;
+    dark: string;
+  };
+  borders: {
+    secondary: string;
+  };
   header: ColorBgType & {
     search: {
       color: string;
@@ -241,15 +279,11 @@ export type VariantType = {
     };
   };
   footer: ColorBgType;
+  navbar: ColorBgType;
   sidebar: ColorBgType & {
     header: ColorBgType & {
       brand: {
         color: string;
-      };
-    };
-    footer: ColorBgType & {
-      online: {
-        background: string;
       };
     };
     badge: ColorBgType;

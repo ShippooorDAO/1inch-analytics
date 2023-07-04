@@ -1,7 +1,5 @@
 import { css, useTheme } from '@emotion/react';
 import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
-import PieChartIcon from '@mui/icons-material/PieChart';
-import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import {
   Button,
   Container,
@@ -580,8 +578,15 @@ export default function TokenPage() {
   return (
     <Container
       css={css`
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding: 20px;
+        background-repeat: no-repeat;
+        background-size: 1600px 778px;
+        background-position: -1150px -525px;
+        background-image: radial-gradient(
+          50% 50% at 50% 50%,
+          rgba(40, 94, 176, 0.41) 0%,
+          rgba(6, 19, 31, 0) 100%
+        );
       `}
     >
       <div
@@ -614,10 +619,16 @@ export default function TokenPage() {
                   css={css`
                     display: flex;
                     flex-flow: row;
+                    flex: 1 0 auto;
                     gap: 5px;
                   `}
                 >
-                  <QueryStatsIcon />
+                  <img
+                    height="24px"
+                    width="24px"
+                    src="/market.svg"
+                    alt="market data"
+                  />
                   <Typography variant="h3">1INCH Market data</Typography>
                 </div>
               }
@@ -712,9 +723,15 @@ export default function TokenPage() {
                     display: flex;
                     flex-flow: row;
                     gap: 5px;
+                    flex: 1 0 auto;
                   `}
                 >
-                  <PieChartIcon />
+                  <img
+                    height="24px"
+                    width="24px"
+                    src="/pools.svg"
+                    alt="general info"
+                  />
                   <Typography variant="h3">
                     Token general information
                   </Typography>

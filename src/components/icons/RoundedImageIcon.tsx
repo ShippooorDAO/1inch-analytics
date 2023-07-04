@@ -17,10 +17,10 @@ export function RoundedImageIcon({
 }: RoundedImageIconProps) {
   size = size ?? 'medium';
   const sizeMap = {
-    small: 30,
-    medium: 40,
-    large: 60,
-    xl: 80,
+    small: 34,
+    medium: 44,
+    large: 64,
+    xl: 85,
   };
   const paddingMap = {
     small: 2,

@@ -49,7 +49,12 @@ export function LastSyncWidget() {
           >
             &nbsp;
           </span>
-          <Typography variant="body1" gutterBottom={false} fontWeight={300}>
+          <Typography
+            variant="body1"
+            color="textSecondary"
+            gutterBottom={false}
+            fontWeight={300}
+          >
             Last sync
           </Typography>
         </div>

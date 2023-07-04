@@ -77,7 +77,7 @@ const Sidebar = ({ sidebarNavProps, ...rest }: SidebarProps) => {
           display: flex;
           justify-content: center;
           background-color: ${theme.sidebar.background};
-          padding-bottom: 20px;
+          padding: 0 12px 20px;
         `}
       >
         <UniswapV3SubgraphProvider>
