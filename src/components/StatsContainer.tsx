@@ -140,12 +140,13 @@ export function StatsContainer({
       {headerMetrics && title && (
         <div
           css={(theme) => css`
+            width: 100%;
             display: flex;
             flex-flow: row;
             ${theme.breakpoints.down('md')} {
               flex-flow: column;
             }
-            padding: 10px 20px 0 20px;
+            padding: 10px 0 0;
             gap: 10px;
             justify-content: space-between;
             border-top-left-radius: 24px;
@@ -155,6 +156,7 @@ export function StatsContainer({
         >
           <div
             css={css`
+              display: flex;
               margin-top: 10px;
             `}
           >
@@ -162,6 +164,7 @@ export function StatsContainer({
           </div>
           <div
             css={css`
+              width: 100%;
               display: flex;
               flex-flow: column;
             `}
@@ -173,14 +176,17 @@ export function StatsContainer({
             }).map((_, i) => (
               <div
                 key={i}
-                css={css`
+                css={(theme) => css`
                   display: flex;
                   flex-flow: row;
                   align-items: center;
-                  justify-content: center;
+                  justify-content: flex-end;
                   flex-wrap: wrap;
                   gap: 16px;
                   width: 100%;
+                  ${theme.breakpoints.down('md')} {
+                    justify-content: center;
+                  }
                 `}
               >
                 {headerMetrics &&
@@ -195,16 +201,6 @@ export function StatsContainer({
                     ))}
               </div>
             ))}
-          </div>
-          <div
-            css={(theme) => css`
-              visibility: hidden;
-              ${theme.breakpoints.down('md')} {
-                display: none;
-              }
-            `}
-          >
-            {title}
           </div>
         </div>
       )}

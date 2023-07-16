@@ -98,9 +98,9 @@ export default class MyDocument extends Document {
             siteName: '1inch Info',
             images: [
               {
-                url: 'https://1inch.io/assets/social-image/main-cover-2.png', // TODO: Change this
-                width: 1078,
-                height: 720,
+                url: 'https://i.imgur.com/ZaLvku1.png', // TODO: Change this
+                width: 1008,
+                height: 560,
                 type: 'image/jpeg',
                 alt: '1inch Info Banner',
               },

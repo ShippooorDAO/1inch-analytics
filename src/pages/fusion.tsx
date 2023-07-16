@@ -5,7 +5,6 @@ import {
   KeyboardArrowRight,
   Sort,
 } from '@mui/icons-material';
-import ReceiptIcon from '@mui/icons-material/Receipt';
 import {
   Button,
   Container,
@@ -1002,9 +1001,6 @@ function FusionTradesTable() {
                 flex-grow: 1;
               `}
             >
-              <AutoSkeleton loading={loading}>
-                <ReceiptIcon />
-              </AutoSkeleton>
               <div>
                 <AutoSkeleton loading={loading}>
                   <div
@@ -1268,8 +1264,15 @@ export default function FusionPage() {
   return (
     <Container
       css={css`
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding: 20px;
+        background-repeat: no-repeat;
+        background-size: 1600px 778px;
+        background-position: -1150px -525px;
+        background-image: radial-gradient(
+          50% 50% at 50% 50%,
+          rgba(40, 94, 176, 0.41) 0%,
+          rgba(6, 19, 31, 0) 100%
+        );
       `}
     >
       <div

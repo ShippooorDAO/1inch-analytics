@@ -4,15 +4,14 @@ import { rgba } from 'polished';
 import { Search as SearchIcon } from 'react-feather';
 
 const Search = styled.div`
-  border-radius: 10px;
-  background-color: ${(props) =>
-    rgba(props.theme.palette.material.primary[500], 0.2)};
+  border-radius: 12px;
+  background-color: ${(props) => props.theme.customBackgrounds.dark};
   display: block;
   position: relative;
   width: 100%;
   &:hover {
     background-color: ${(props) =>
-      rgba(props.theme.palette.material.primary[500], 0.3)};
+      rgba(props.theme.customBackgrounds.dark, 0.7)};
   }
 `;
 
@@ -26,13 +25,14 @@ const SearchIconWrapper = styled.div`
   justify-content: center;
 
   svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
 `;
 
 const Input = styled(InputBase)`
   color: inherit;
+  height: 48px;
   width: 100%;
   font-size: ${(props) => props.theme.typography.h6.fontSize};
   > input {

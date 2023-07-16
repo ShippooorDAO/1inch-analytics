@@ -61,6 +61,9 @@ function useBarChartOptions({
         // @ts-ignore
         ...chartOptions.yAxis?.title,
         text: 'Volume (USD)',
+        style: {
+          color: theme.palette.text.secondary,
+        },
       },
       gridLineWidth: 1,
       gridLineDashStyle: 'Dash',
