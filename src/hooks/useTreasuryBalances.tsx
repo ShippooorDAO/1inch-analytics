@@ -1,6 +1,9 @@
 import { gql, useQuery } from '@apollo/client';
 
-import { GetTreasuryBalancesQuery } from '@/gql/graphql';
+import {
+  GetTreasuryBalancesQuery,
+  GetTreasuryBalancesQueryVariables,
+} from '@/gql/graphql';
 import { AssetService } from '@/shared/Currency/AssetService';
 
 import { useAssetService } from './useAssetService';
@@ -30,7 +33,15 @@ function convertResponseToModel(
 ) {
   return (
     response.treasuryBalances?.treasuryBalances
-      ?.filter((t) => !!t && !!t.asset?.id && !!t.amount && !!t.amountUsd)
+      ?.filter(
+        (t) =>
+          !!t &&
+          !!t.asset?.id &&
+          t.amount !== undefined &&
+          t.amount !== null &&
+          t.amountUsd !== undefined &&
+          t.amountUsd !== null
+      )
       .map((t) => t!)
       .map((t) => ({
         id: t.id!,
@@ -43,7 +54,10 @@ function convertResponseToModel(
 
 export function useTreasuryBalances() {
   const assetService = useAssetService();
-  const { data, loading, error } = useQuery(QUERY);
+  const { data, loading, error } = useQuery<
+    GetTreasuryBalancesQuery,
+    GetTreasuryBalancesQueryVariables
+  >(QUERY);
 
   const treasuryBalances =
     assetService && data
