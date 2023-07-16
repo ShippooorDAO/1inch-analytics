@@ -70,6 +70,31 @@ interface UseStakingWalletsProps {
   pageSize?: number;
 }
 
+function convertVersionResponseToModel(version: string) {
+  switch (version) {
+    case 'one':
+      return 'stINCH v1';
+    case 'two':
+      return 'stINCH v2';
+    default:
+      return '';
+  }
+}
+
+function convertResponseToModel(
+  response: StakingWalletsResponse
+): StakingWallet[] {
+  return response.stakingWallets.stakingWallets.map((stakingWallet) => {
+    return {
+      id: stakingWallet.id,
+      address: stakingWallet.address,
+      delegated: stakingWallet.delegated,
+      stakingBalance: stakingWallet.stakingBalance,
+      version: convertVersionResponseToModel(stakingWallet.version),
+    };
+  });
+}
+
 export function useStakingWallets({
   sortBy,
   sortDirection,
@@ -93,16 +118,16 @@ export function useStakingWallets({
       return null;
     }
 
-    return data.stakingWallets;
+    return convertResponseToModel(data);
   }, [data]);
 
   return {
-    stakingWallets: stakingWallets?.stakingWallets as StakingWallet[],
+    stakingWallets: stakingWallets as StakingWallet[],
     pagination: {
-      pageSize: stakingWallets?.pageSize,
-      pageNumber: stakingWallets?.pageNumber,
-      totalEntries: stakingWallets?.totalEntries,
-      totalPages: stakingWallets?.totalPages,
+      pageSize: data?.stakingWallets.pageSize,
+      pageNumber: data?.stakingWallets?.pageNumber,
+      totalEntries: data?.stakingWallets?.totalEntries,
+      totalPages: data?.stakingWallets?.totalPages,
     },
     loading,
     error,

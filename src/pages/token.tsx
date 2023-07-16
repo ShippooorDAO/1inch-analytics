@@ -198,6 +198,7 @@ function useTokenPageData() {
 }
 
 interface StakingWalletsTableProps {
+  tokenPrice: number;
   stakingWallets: StakingWallet[];
   pagination: {
     pageSize?: number;
@@ -209,6 +210,7 @@ interface StakingWalletsTableProps {
 }
 
 function StakingWalletsTable({
+  tokenPrice,
   stakingWallets,
   refetchStakingWallets,
   pagination,
@@ -422,8 +424,8 @@ function StakingWalletsTable({
                 <Typography variant="body2">
                   {format(stakingWallet.stakingBalance, {
                     abbreviate: true,
-                  })}{' '}
-                  st1INCH
+                    symbol: stakingWallet.version,
+                  })}
                 </Typography>
               </div>
               <div
@@ -436,7 +438,10 @@ function StakingWalletsTable({
                 `}
               >
                 <Typography variant="body1" color="textSecondary">
-                  Version {stakingWallet.version}
+                  {format(tokenPrice * stakingWallet.stakingBalance, {
+                    abbreviate: true,
+                    symbol: 'USD',
+                  })}
                 </Typography>
               </div>
             </div>
@@ -695,6 +700,7 @@ export default function TokenPage() {
             `}
           >
             <StakingWalletsTable
+              tokenPrice={marketData?.currentMarketData?.usd ?? 0}
               stakingWallets={stakingWallets}
               pagination={pagination}
               refetchStakingWallets={refetchStakingWallets}
