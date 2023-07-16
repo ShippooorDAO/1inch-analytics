@@ -209,6 +209,14 @@ function DashboardInternal({ children, sidebarNavProps }: DashboardType) {
               z-index: 2;
               height: 100%;
               position: relative;
+              background-repeat: no-repeat;
+              background-size: 1600px 778px;
+              background-position: -1150px -525px;
+              background-image: radial-gradient(
+                50% 50% at 50% 50%,
+                rgba(40, 94, 176, 0.41) 0%,
+                rgba(6, 19, 31, 0) 100%
+              );
             `}
           >
             {children}
