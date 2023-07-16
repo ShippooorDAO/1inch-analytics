@@ -4,7 +4,7 @@ import {
   GetTreasuryFlowsQuery,
   GetTreasuryFlowsQueryVariables,
 } from '@/gql/graphql';
-import { Timeseries } from '@/shared/Model/Timeseries';
+import { DataPoint, Timeseries } from '@/shared/Model/Timeseries';
 
 const QUERY = gql`
   query getTreasuryFlows($timespan: TreasuryFlowTimespan) {
@@ -31,6 +31,7 @@ function convertResponseToModel(response: GetTreasuryFlowsQuery) {
         f.outboundVolumeUsd !== undefined
     )
     .map((f) => f!)
+    .sort((a, b) => a.timestamp! - b.timestamp!)
     .map((flow) => ({
       timestamp: flow.timestamp!,
       inboundVolumeUsd: flow.inboundVolumeUsd ?? 0,
@@ -54,9 +55,23 @@ function convertResponseToModel(response: GetTreasuryFlowsQuery) {
       })) ?? [],
   };
 
+  const balanceUsdTimeseries: Timeseries = {
+    name: 'Balance (USD)',
+    data:
+      data?.reduce((acc, flow) => {
+        const latestValue = acc[acc.length - 1]?.y ?? 0;
+        acc.push({
+          x: flow.timestamp,
+          y: flow.inboundVolumeUsd + flow.outboundVolumeUsd + latestValue,
+        });
+        return acc;
+      }, [] as DataPoint[]) ?? [],
+  };
+
   return {
     inboundVolumeUsdTimeseries,
     outboundVolumeUsdTimeseries,
+    balanceUsdTimeseries,
   };
 }
 
