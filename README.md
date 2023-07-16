@@ -11,18 +11,37 @@ Run the following command to install dependencies:
 yarn install
 ```
 
+## Generate TS interfaces matching production GraphQL API schema
+
+```shell
+yarn schema
+```
+
 ## Running
 ### Development
 
 ```shell
-yarn run dev
+yarn dev
 ```
 
 Open http://localhost:3000
+
+## Production
+```shell
+yarn build
+npm run
+```
 
 ## Checks
 To run the linter, run this command:
 
 ```shell
-yarn run lint
+yarn lint
+```
+
+## Auto-fix
+To automatically fix lint errors, run this command:
+
+```shell
+yarn fix
 ```

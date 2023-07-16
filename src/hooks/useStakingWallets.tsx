@@ -1,11 +1,16 @@
 import { gql, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
-import { Filters } from '@/shared/Model/GraphQL/Filters';
+import {
+  GetStakingWalletsQuery,
+  GetStakingWalletsQueryVariables,
+  InputMaybe,
+  SortDirection,
+} from '@/gql/graphql';
 import { StakingWallet } from '@/shared/Model/StakingWallet';
 
 const STAKING_WALLETS_QUERY = gql`
-  query getFusionResolvers(
+  query getStakingWallets(
     $filter: Filter
     $pageNumber: Int
     $pageSize: Int
@@ -36,41 +41,16 @@ const STAKING_WALLETS_QUERY = gql`
   }
 `;
 
-interface StakingWalletsResponse {
-  stakingWallets: {
-    stakingWallets: {
-      id: string;
-      address: string;
-      delegated: boolean;
-      stakingBalance: number;
-      version: string;
-    }[];
-    pageNumber: number;
-    pageSize: number;
-    totalEntries: number;
-    totalPages: number;
-  };
-}
-
-export interface StakingWalletsQueryVariables {
-  version?: string;
-  filter?: Filters;
-  sortBy?: string;
-  sortDirection?: string;
-  pageNumber?: number;
-  pageSize?: number;
-}
-
 interface UseStakingWalletsProps {
   // version: string; // Not supported at the moment
   // filters: Filters // Not supported at the moment
   sortBy?: string;
-  sortDirection?: string;
+  sortDirection: InputMaybe<SortDirection>;
   pageNumber?: number;
   pageSize?: number;
 }
 
-function convertVersionResponseToModel(version: string) {
+function convertVersionResponseToModel(version?: string | null) {
   switch (version) {
     case 'one':
       return 'stINCH v1';
@@ -82,17 +62,22 @@ function convertVersionResponseToModel(version: string) {
 }
 
 function convertResponseToModel(
-  response: StakingWalletsResponse
+  response: GetStakingWalletsQuery
 ): StakingWallet[] {
-  return response.stakingWallets.stakingWallets.map((stakingWallet) => {
-    return {
-      id: stakingWallet.id,
-      address: stakingWallet.address,
-      delegated: stakingWallet.delegated,
-      stakingBalance: stakingWallet.stakingBalance,
-      version: convertVersionResponseToModel(stakingWallet.version),
-    };
-  });
+  return (
+    response.stakingWallets?.stakingWallets
+      ?.filter((s) => !!s && !!s.id && !!s.address && !!s.stakingBalance)
+      .map((s) => s!)
+      .map((stakingWallet) => {
+        return {
+          id: stakingWallet.id!,
+          address: stakingWallet.address!,
+          delegated: !!stakingWallet.delegated,
+          stakingBalance: stakingWallet.stakingBalance!,
+          version: convertVersionResponseToModel(stakingWallet.version),
+        };
+      }) ?? []
+  );
 }
 
 export function useStakingWallets({
@@ -102,8 +87,8 @@ export function useStakingWallets({
   pageSize,
 }: UseStakingWalletsProps) {
   const { data, loading, error, refetch } = useQuery<
-    StakingWalletsResponse,
-    StakingWalletsQueryVariables
+    GetStakingWalletsQuery,
+    GetStakingWalletsQueryVariables
   >(STAKING_WALLETS_QUERY, {
     variables: {
       sortBy,
@@ -124,7 +109,7 @@ export function useStakingWallets({
   return {
     stakingWallets: stakingWallets as StakingWallet[],
     pagination: {
-      pageSize: data?.stakingWallets.pageSize,
+      pageSize: data?.stakingWallets?.pageSize,
       pageNumber: data?.stakingWallets?.pageNumber,
       totalEntries: data?.stakingWallets?.totalEntries,
       totalPages: data?.stakingWallets?.totalPages,

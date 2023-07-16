@@ -1,0 +1,311 @@
+schema {
+  query: RootQueryType
+}
+
+type Asset {
+  address: String
+  chain: Chain
+  decimals: Int
+
+  """Asset object"""
+  id: ID
+  logoUrl: String
+  name: String
+  price: Float
+  priceUsd: Float
+  symbol: String
+}
+
+input BigintFilter {
+  field: String!
+  operator: Operator!
+  value: String!
+}
+
+input BoolFilter {
+  field: String!
+  value: Boolean!
+}
+
+type Chain {
+  chainIdentifier: Int
+
+  """Chain object"""
+  id: ID
+  name: String
+  nativeToken: String
+}
+
+input Filter {
+  bigintFilters: [BigintFilter] = []
+  boolFilters: [BoolFilter] = []
+  floatFilters: [FloatFilter] = []
+  integerFilters: [IntegerFilter] = []
+  stringFilters: [StringFilter] = []
+}
+
+input FloatFilter {
+  field: String!
+  operator: Operator!
+  value: Float!
+}
+
+type FusionResolver {
+  """Fusion resolver object"""
+  id: ID
+  resolver: String
+  timespan: FusionResolverTimespan
+  timestamp: Int
+  totalVolumeUsd: Float
+  transactionCount: Int
+  walletCount: Int
+}
+
+enum FusionResolverTimespan {
+  WEEK
+}
+
+type FusionTopTrade {
+  chain: Chain
+  destinationAsset: Asset
+  destinationUsdAmount: Float
+  executorAddress: String
+
+  """Fusion top trade object"""
+  id: ID
+  receiverAddress: String
+  sourceAsset: Asset
+  sourceUsdAmount: Float
+  timestamp: Int
+  transactionHash: String
+}
+
+type FusionTopTrader {
+  address: String
+  chain: Chain
+
+  """Fusion top trader object"""
+  id: ID
+  transactionCount: Int
+  volumeUsd: Float
+}
+
+type FusionTopTraders {
+  fusionTopTraders: [FusionTopTrader]
+  pageNumber: Int
+  pageSize: Int
+  totalEntries: Int
+  totalPages: Int
+}
+
+type FusionTopTrades {
+  fusionTopTrades: [FusionTopTrade]
+  pageNumber: Int
+  pageSize: Int
+  totalEntries: Int
+  totalPages: Int
+}
+
+type FusionVolume {
+  """Fusion volume object"""
+  id: ID
+  timespan: FusionVolumeTimespan
+  timestamp: Int
+  totalVolumeUsd: Float
+  transactionCount: Int
+  volumeDexesUsd: Float
+  volumeFusionUsd: Float
+  walletCount: Int
+}
+
+enum FusionVolumeTimespan {
+  ALL
+  DAY
+  HOUR
+  WEEK
+}
+
+input IntegerFilter {
+  field: String!
+  operator: Operator!
+  value: Int!
+}
+
+enum Operator {
+  EQ
+  GT
+  GT_EQ
+  SM
+  SM_EQ
+}
+
+type RootQueryType {
+  """Fetch assets"""
+  assets(chainIds: [String] = []): [Asset]
+
+  """Fetch all chains"""
+  chains: [Chain]
+
+  """Fetch fusion resolvers"""
+  fusionResolvers(timespan: FusionResolverTimespan = WEEK): [FusionResolver]
+
+  """Fetch fusion top traders"""
+  fusionTopTraders(chainIds: [String] = [], filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "volumeUsd", sortDirection: SortDirection = DESC): FusionTopTraders
+
+  """Fetch fusion top trades"""
+  fusionTopTrades(assetIds: [String] = [], chainIds: [String] = [], filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "destinationUsdAmount", sortDirection: SortDirection = DESC): FusionTopTrades
+
+  """Fetch fusion volumes"""
+  fusionVolumes(timespan: FusionVolumeTimespan = HOUR): [FusionVolume]
+
+  """Fetch staking wallets"""
+  stakingWallets(filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "stakingBalance", sortDirection: SortDirection = DESC, version: StakingVersion = ALL): StakingWallets
+
+  """Fetch system status"""
+  systemStatus: SystemStatus
+
+  """Fetch treasury transactions"""
+  treasuryBalances(filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "amountUsd", sortDirection: SortDirection = DESC): TreasuryBalances
+
+  """Fetch treasury flows"""
+  treasuryFlows(timespan: TreasuryFlowTimespan = DAY): [TreasuryFlow]
+
+  """Fetch treasury transactions"""
+  treasuryTransactions(filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "timestamp", sortDirection: SortDirection = DESC): TreasuryTransactions
+
+  """Fetch volumes"""
+  volumes(chainIds: [String] = [], timespan: VolumeTimespan = DAY): [Volume]
+
+  """Fetch wallets"""
+  wallets(chainIds: [String] = [], timespan: WalletTimespan = DAY): [Wallet]
+}
+
+enum SortDirection {
+  ASC
+  DESC
+}
+
+enum StakingVersion {
+  ALL
+  ONE
+  TWO
+}
+
+type StakingWallet {
+  address: String
+  delegated: Boolean
+
+  """Staking Wallet object"""
+  id: ID
+  stakingBalance: Float
+  version: String
+}
+
+type StakingWallets {
+  pageNumber: Int
+  pageSize: Int
+  stakingWallets: [StakingWallet]
+  totalEntries: Int
+  totalPages: Int
+}
+
+input StringFilter {
+  contains: String = ""
+  field: String!
+}
+
+type SystemStatus {
+  """System status object"""
+  id: ID
+  message: String
+}
+
+type TreasuryBalance {
+  amount: Float
+  amountUsd: Float
+  asset: Asset
+
+  """Treasury transaction object"""
+  id: ID
+}
+
+type TreasuryBalances {
+  pageNumber: Int
+  pageSize: Int
+  totalEntries: Int
+  totalPages: Int
+  treasuryBalances: [TreasuryBalance]
+}
+
+type TreasuryFlow {
+  """Treasury flow object"""
+  id: ID
+  inboundVolumeUsd: Float
+  outboundVolumeUsd: Float
+  timespan: TreasuryFlowTimespan
+  timestamp: Int
+}
+
+enum TreasuryFlowTimespan {
+  DAY
+  MONTH
+  WEEK
+}
+
+type TreasuryTransaction {
+  amount: Float
+  amountUsd: Float
+  asset: Asset
+  from: String
+
+  """Treasury transaction object"""
+  id: ID
+  timestamp: Int
+  to: String
+  transactionHash: String
+}
+
+type TreasuryTransactions {
+  pageNumber: Int
+  pageSize: Int
+  totalEntries: Int
+  totalPages: Int
+  treasuryTransactions: [TreasuryTransaction]
+}
+
+type Volume {
+  chain: Chain
+
+  """Volume object"""
+  id: ID
+  timespan: VolumeTimespan
+  timestamp: Int
+  transactionCount: Int
+  volumeUsd: Float
+}
+
+enum VolumeTimespan {
+  ALL
+  DAY
+  MONTH
+  WEEK
+}
+
+type Wallet {
+  chain: Chain
+
+  """Wallet object"""
+  id: ID
+  timespan: WalletTimespan
+  timestamp: Int
+  transactionCount: Int
+  walletCount: Int
+}
+
+enum WalletTimespan {
+  ALL
+  DAY
+  MONTH
+  WEEK
+}
+

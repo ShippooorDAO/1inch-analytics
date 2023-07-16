@@ -1,9 +1,9 @@
 import { gql, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
+import { Filter } from '@/gql/graphql';
 import { ChainId } from '@/shared/Model/Chain';
 import { FusionTrader } from '@/shared/Model/FusionTrader';
-import { Filters } from '@/shared/Model/GraphQL/Filters';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 
@@ -57,7 +57,7 @@ interface FusionTopTradersResponse {
 
 interface FusionTopTradersQueryVariables {
   chainIds?: string[];
-  filter?: Filters;
+  filter?: Filter;
   sortBy?: string;
   sortDirection?: string;
   pageNumber?: number;

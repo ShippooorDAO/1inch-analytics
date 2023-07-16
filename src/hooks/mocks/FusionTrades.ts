@@ -1,4 +1,6 @@
-export const mockFusionTradesResponse = {
+import { GetFusionTradesQuery } from '@/gql/graphql';
+
+export const mockFusionTradesResponse: GetFusionTradesQuery = {
   fusionTopTrades: {
     __typename: 'FusionTopTrades',
     fusionTopTrades: [

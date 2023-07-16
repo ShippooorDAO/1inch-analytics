@@ -24,11 +24,13 @@ import {
   StatsContainerLayout,
 } from '@/components/StatsContainer';
 import { StakingVersionToggleButtonGroup } from '@/components/table/StakingVersionToggleButtonGroup';
-import { useCoingeckoMarketData } from '@/hooks/useCoingeckoMarketData';
 import {
-  StakingWalletsQueryVariables,
-  useStakingWallets,
-} from '@/hooks/useStakingWallets';
+  GetStakingWalletsQueryVariables,
+  SortDirection,
+  StakingVersion,
+} from '@/gql/graphql';
+import { useCoingeckoMarketData } from '@/hooks/useCoingeckoMarketData';
+import { useStakingWallets } from '@/hooks/useStakingWallets';
 import Dashboard from '@/layouts/DashboardLayout';
 import {
   StakingWallet,
@@ -45,7 +47,7 @@ import { format, getAddressShorthand } from '@/shared/Utils/Format';
 function useTokenPageData() {
   const initialStakingWalletsParams = {
     sortBy: 'stakingBalance',
-    sortDirection: 'DESC',
+    sortDirection: SortDirection.Desc,
     pageNumber: 1,
     pageSize: 5,
     version: 'ALL',
@@ -199,12 +201,12 @@ interface StakingWalletsTableProps {
   tokenPrice: number;
   stakingWallets: StakingWallet[];
   pagination: {
-    pageSize?: number;
-    pageNumber?: number;
-    totalEntries?: number;
-    totalPages?: number;
+    pageSize?: number | null;
+    pageNumber?: number | null;
+    totalEntries?: number | null;
+    totalPages?: number | null;
   };
-  refetchStakingWallets: (params: StakingWalletsQueryVariables) => void;
+  refetchStakingWallets: (params: GetStakingWalletsQueryVariables) => void;
 }
 
 function StakingWalletsTable({
@@ -218,8 +220,8 @@ function StakingWalletsTable({
   const [sortBy, setSortBy] = useState<'stakingBalance' | 'address'>(
     'stakingBalance'
   );
-  const [stakingVersion, setStakingVersion] = useState<StakingWalletVersion>(
-    StakingWalletVersion.All
+  const [stakingVersion, setStakingVersion] = useState<StakingVersion>(
+    StakingVersion.All
   );
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -238,8 +240,9 @@ function StakingWalletsTable({
         pageSize,
         pageNumber,
         sortBy,
-        sortDirection: sortBy === 'stakingBalance' ? 'DESC' : 'ASC',
-        version: stakingVersion.valueOf(),
+        sortDirection:
+          sortBy === 'stakingBalance' ? SortDirection.Desc : SortDirection.Asc,
+        version: stakingVersion,
       });
     }
   }, [pageNumber, pageSize, sortBy, stakingVersion]);

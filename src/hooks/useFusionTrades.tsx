@@ -1,8 +1,13 @@
 import { gql, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
+import {
+  GetFusionTradesQuery,
+  GetFusionTradesQueryVariables,
+  InputMaybe,
+  SortDirection,
+} from '@/gql/graphql';
 import { FusionTrade } from '@/shared/Model/FusionTrade';
-import { Filters } from '@/shared/Model/GraphQL/Filters';
 import { AssetStore } from '@/shared/Model/Stores/AssetStore';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
@@ -54,68 +59,50 @@ const QUERY = gql`
   }
 `;
 
-interface QueryResponse {
-  fusionTopTrades: {
-    pageNumber: number;
-    pageSize: number;
-    totalPages: number;
-    totalEntries: number;
-    fusionTopTrades: {
-      id: string;
-      chain: {
-        id: string;
-      };
-      destinationAsset: {
-        id: string;
-      };
-      sourceAsset: {
-        id: string;
-      };
-      executorAddress: string;
-      receiverAddress: string;
-      destinationUsdAmount: number;
-      sourceUsdAmount: number;
-      timestamp: number;
-      transactionHash: string;
-    }[];
-  };
-}
-
-interface QueryVariables {
-  assetIds?: string[];
-  chainIds?: string[];
-  filter?: Filters;
-  pageNumber?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: string;
-}
-
 function convertResponseToModel(
-  response: QueryResponse,
+  response: GetFusionTradesQuery,
   assetStore: AssetStore,
   chainStore: ChainStore
 ): FusionTrade[] {
-  return response.fusionTopTrades.fusionTopTrades.map((trade) => {
-    return {
-      id: trade.id,
-      chain: chainStore.getById(trade.chain.id)!,
-      destinationAsset: assetStore.getById(trade.destinationAsset.id)!,
-      sourceAsset: assetStore.getById(trade.sourceAsset.id)!,
-      executorAddress: trade.executorAddress,
-      receiverAddress: trade.receiverAddress,
-      destinationUsdAmount: trade.destinationUsdAmount,
-      sourceUsdAmount: trade.sourceUsdAmount,
-      slippage: trade.destinationUsdAmount / trade.sourceUsdAmount - 1,
-      timestamp: trade.timestamp,
-      transactionHash: trade.transactionHash,
-    };
-  });
+  return (
+    response.fusionTopTrades?.fusionTopTrades
+      ?.filter(
+        (t) =>
+          !!t &&
+          !!t.id &&
+          !!t.chain &&
+          !!t.chain.id &&
+          !!t.destinationAsset?.id &&
+          !!t.sourceAsset?.id &&
+          !!t.executorAddress &&
+          !!t.receiverAddress &&
+          !!t.destinationUsdAmount &&
+          !!t.sourceUsdAmount &&
+          !!t.timestamp &&
+          !!t.transactionHash
+      )
+      .map((t) => t!)
+      .map((trade) => {
+        return {
+          id: trade.id!,
+          chain: chainStore.getById(trade.chain!.id!)!,
+          destinationAsset: assetStore.getById(trade.destinationAsset!.id!)!,
+          sourceAsset: assetStore.getById(trade.sourceAsset!.id!)!,
+          executorAddress: trade.executorAddress!,
+          receiverAddress: trade.receiverAddress!,
+          destinationUsdAmount: trade.destinationUsdAmount!,
+          sourceUsdAmount: trade.sourceUsdAmount!,
+          slippage: trade.destinationUsdAmount! / trade.sourceUsdAmount! - 1,
+          timestamp: trade.timestamp!,
+          transactionHash: trade.transactionHash!,
+        };
+      }) ?? []
+  );
 }
 
 export interface UseFusionTradesProps {
   sortBy?: 'timestamp' | 'sourceUsdAmount' | 'destinationUsdAmount';
-  sortDirection?: 'asc' | 'desc';
+  sortDirection?: InputMaybe<SortDirection> | undefined;
   pageSize?: number;
   pageNumber?: number;
   assetIds?: string[];
@@ -130,19 +117,19 @@ export function useFusionTrades({
   chainIds,
 }: UseFusionTradesProps) {
   const { assetService, chainStore } = useOneInchAnalyticsAPIContext();
-  const { data, error, loading } = useQuery<QueryResponse, QueryVariables>(
-    QUERY,
-    {
-      variables: {
-        assetIds,
-        chainIds,
-        sortBy,
-        sortDirection,
-        pageSize,
-        pageNumber,
-      },
-    }
-  );
+  const { data, error, loading } = useQuery<
+    GetFusionTradesQuery,
+    GetFusionTradesQueryVariables
+  >(QUERY, {
+    variables: {
+      assetIds,
+      chainIds,
+      sortBy,
+      sortDirection,
+      pageSize,
+      pageNumber,
+    },
+  });
 
   const mock = useMemo(() => {
     if (!assetService || !chainStore) {
