@@ -68,10 +68,38 @@ function convertResponseToModel(response: GetTreasuryFlowsQuery) {
       }, [] as DataPoint[]) ?? [],
   };
 
+  const cumulativeRevenueUsdTimeseries: Timeseries = {
+    name: 'Revenue (USD)',
+    data:
+      data?.reduce((acc, flow) => {
+        const latestValue = acc[acc.length - 1]?.y ?? 0;
+        acc.push({
+          x: flow.timestamp,
+          y: flow.inboundVolumeUsd - flow.outboundVolumeUsd + latestValue,
+        });
+        return acc;
+      }, [] as DataPoint[]) ?? [],
+  };
+
+  const cumulativeExpenseUsdTimeseries: Timeseries = {
+    name: 'Expense (USD)',
+    data:
+      data?.reduce((acc, flow) => {
+        const latestValue = acc[acc.length - 1]?.y ?? 0;
+        acc.push({
+          x: flow.timestamp,
+          y: flow.outboundVolumeUsd - flow.inboundVolumeUsd + latestValue,
+        });
+        return acc;
+      }, [] as DataPoint[]) ?? [],
+  };
+
   return {
     inboundVolumeUsdTimeseries,
     outboundVolumeUsdTimeseries,
     balanceUsdTimeseries,
+    cumulativeRevenueUsdTimeseries,
+    cumulativeExpenseUsdTimeseries,
   };
 }
 
