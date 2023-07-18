@@ -13,12 +13,27 @@ export function AddressCopyButton({
   size,
   contentType,
 }: AddressCopyButtonProps) {
-  const contentTypeLabel =
-    contentType === 'address' ? 'address' : 'transaction hash';
+  const { clickToCopyLabel, successMessage } = (() => {
+    switch (contentType) {
+      case 'address':
+        return {
+          clickToCopyLabel: 'Click to copy address',
+          successMessage: 'Address copied!',
+        };
+      case 'transaction':
+        return {
+          clickToCopyLabel: 'Click to copy transaction hash',
+          successMessage: 'Transaction hash copied!',
+        };
+      default:
+        return {
+          clickToCopyLabel: 'Click to copy',
+          successMessage: 'Copied!',
+        };
+    }
+  })();
 
-  const [tooltipText, setTooltipText] = useState<string>(
-    `Click to copy ${contentTypeLabel}`
-  );
+  const [tooltipText, setTooltipText] = useState<string>(clickToCopyLabel);
 
   const handleCopyButton = () => {
     if (!address) {
@@ -38,7 +53,7 @@ export function AddressCopyButton({
         `}
         onClick={() => handleCopyButton()}
         onMouseOut={() =>
-          setTimeout(() => setTooltipText('Click to copy'), 5000)
+          setTimeout(() => setTooltipText(successMessage), 5000)
         }
       >
         <img height="24px" width="24px" src="/copy.svg" alt="copy" />
