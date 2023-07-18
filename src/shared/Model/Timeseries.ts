@@ -11,6 +11,7 @@ export interface Timeseries {
   dashStyle?: Highcharts.DashStyleValue;
   yAxis?: string | number;
   visible?: boolean;
+  type?: 'bar' | 'area' | 'line' | 'areaspline' | 'spline';
 }
 
 export enum TimeWindow {
@@ -50,8 +51,13 @@ export function getTimeIntervalLabel(timeInterval: TimeInterval) {
     case TimeInterval.WEEKLY:
       return 'Weekly';
     case TimeInterval.MONTHLY:
-    default:
       return 'Monthly';
+    case TimeInterval.QUARTERLY:
+      return 'Quarterly';
+    case TimeInterval.YEARLY:
+      return 'Yearly';
+    default:
+      return '';
   }
 }
 
@@ -59,6 +65,8 @@ export enum TimeInterval {
   DAILY = 1,
   WEEKLY = 2,
   MONTHLY = 3,
+  QUARTERLY = 4,
+  YEARLY = 5,
 }
 
 export interface TimeseriesOptions {

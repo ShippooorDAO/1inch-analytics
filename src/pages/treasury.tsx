@@ -1,5 +1,7 @@
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import { Container } from '@mui/material';
+import { green, red } from '@mui/material/colors';
+import { useMemo, useState } from 'react';
 
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { MetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
@@ -8,150 +10,136 @@ import {
   StatsContainer,
   StatsContainerLayout,
 } from '@/components/StatsContainer';
+import { TreasuryTransactionsTable } from '@/components/TreasuryTransactionsTable';
+import { TreasuryFlows, useTreasuryFlows } from '@/hooks/useTreasuryFlows';
 import Dashboard from '@/layouts/DashboardLayout';
 import {
+  getTimeIntervalLabel,
   TimeInterval,
   Timeseries,
   TimeWindow,
 } from '@/shared/Model/Timeseries';
 
-const revenueTimeseries: Timeseries = {
-  name: 'Revenue',
-  // imageUrl: '/vendors/chains/ethereum.svg',
-  color: '#95a0d7',
-  data: [
-    {
-      x: 1668384000,
-      y: 1779905120.4854121,
-    },
-    {
-      x: 1668988800,
-      y: 2538616358.6104307,
-    },
-    {
-      x: 1669593600,
-      y: 1251016170.7653334,
-    },
-    {
-      x: 1670198400,
-      y: 944675150.9925743,
-    },
-    {
-      x: 1670803200,
-      y: 1467258101.5049558,
-    },
-    {
-      x: 1671408000,
-      y: 1207323703.1668549,
-    },
-    {
-      x: 1672012800,
-      y: 1151943247.4993353,
-    },
-    {
-      x: 1672617600,
-      y: 1200165480.3003216,
-    },
-    {
-      x: 1673222400,
-      y: 2004621613.703743,
-    },
-    {
-      x: 1673827200,
-      y: 1929162858.4731865,
-    },
-    {
-      x: 1674432000,
-      y: 1896111341.283863,
-    },
-    {
-      x: 1675036800,
-      y: 1356890999.09945,
-    },
-    {
-      x: 1675641600,
-      y: 1746423433.0898223,
-    },
-    {
-      x: 1676246400,
-      y: 2418655517.61963,
-    },
-    {
-      x: 1676851200,
-      y: 1438801197.6991875,
-    },
-    {
-      x: 1677456000,
-      y: 1344155969.806383,
-    },
-    {
-      x: 1678060800,
-      y: 6701870451.608492,
-    },
-    {
-      x: 1678665600,
-      y: 3510227312.7254043,
-    },
-    {
-      x: 1679270400,
-      y: 1293773339.1616871,
-    },
-    {
-      x: 1679875200,
-      y: 1190909640.635086,
-    },
-    {
-      x: 1680480000,
-      y: 1169568707.5717394,
-    },
-    {
-      x: 1681084800,
-      y: 1521835881.062703,
-    },
-    {
-      x: 1681689600,
-      y: 1569298539.4100723,
-    },
-    {
-      x: 1682294400,
-      y: 1071226563.4653662,
-    },
-    {
-      x: 1682899200,
-      y: 1348666271.2676032,
-    },
-    {
-      x: 1683504000,
-      y: 1165937180.4346042,
-    },
-    {
-      x: 1684108800,
-      y: 1019636232.4214599,
-    },
-    {
-      x: 1684713600,
-      y: 1330287814.1581075,
-    },
-    {
-      x: 1685318400,
-      y: 940543317.148559,
-    },
-    {
-      x: 1685923200,
-      y: 1153225395.046328,
-    },
-    {
-      x: 1686528000,
-      y: 1689703950.1932364,
-    },
-    {
-      x: 1687132800,
-      y: 1189987923.2035542,
-    },
-  ],
-};
+function ControlledTreasuryFlowsChart({
+  treasuryFlows,
+}: {
+  treasuryFlows?: TreasuryFlows;
+}) {
+  const theme = useTheme();
+  const [selectedTimeWindow, setSelectedTimeWindow] = useState(TimeWindow.MAX);
+  const [selectedTimeInterval, setSelectedTimeInterval] = useState(
+    TimeInterval.MONTHLY
+  );
+
+  const timeseriesList = useMemo(() => {
+    const timeseriesSetForTimeInterval = (() => {
+      switch (selectedTimeInterval) {
+        case TimeInterval.DAILY:
+          return treasuryFlows?.daily;
+        case TimeInterval.WEEKLY:
+          return treasuryFlows?.weekly;
+        case TimeInterval.MONTHLY:
+          return treasuryFlows?.monthly;
+        case TimeInterval.QUARTERLY:
+          return treasuryFlows?.quarterly;
+        case TimeInterval.YEARLY:
+          return treasuryFlows?.yearly;
+        default:
+          return undefined;
+      }
+    })();
+    if (!timeseriesSetForTimeInterval) {
+      return [];
+    }
+    return [
+      {
+        ...timeseriesSetForTimeInterval.inboundVolumeUsdTimeseries,
+        color: green[400],
+        type: 'bar',
+      },
+      {
+        ...timeseriesSetForTimeInterval.outboundVolumeUsdTimeseries,
+        color: red[400],
+        type: 'bar',
+      },
+      {
+        ...timeseriesSetForTimeInterval.cumulativeRevenueUsdTimeseries,
+        type: 'area',
+        color: green[500],
+      },
+      {
+        ...timeseriesSetForTimeInterval.cumulativeExpenseUsdTimeseries,
+        type: 'area',
+        color: red[500],
+      },
+    ] as Timeseries[];
+  }, [selectedTimeWindow, selectedTimeInterval, treasuryFlows]);
+
+  return (
+    <HistogramChart
+      timeseriesList={timeseriesList}
+      timeInterval={selectedTimeInterval}
+      timeWindow={selectedTimeWindow}
+      timeIntervalOptions={[TimeInterval.MONTHLY, TimeInterval.QUARTERLY].map(
+        (t) => ({ label: getTimeIntervalLabel(t), value: t })
+      )}
+      onTimeIntervalChange={setSelectedTimeInterval}
+    />
+  );
+}
+
+function ControlledHistoricalBalanceChart({
+  treasuryFlows,
+}: {
+  treasuryFlows?: TreasuryFlows;
+}) {
+  const theme = useTheme();
+  const [selectedTimeWindow, setSelectedTimeWindow] = useState(TimeWindow.MAX);
+  const [selectedTimeInterval, setSelectedTimeInterval] = useState(
+    TimeInterval.DAILY
+  );
+
+  const timeseriesList = useMemo(() => {
+    const timeseriesSetForTimeInterval = (() => {
+      switch (selectedTimeInterval) {
+        case TimeInterval.DAILY:
+          return treasuryFlows?.daily;
+        case TimeInterval.WEEKLY:
+          return treasuryFlows?.weekly;
+        case TimeInterval.MONTHLY:
+          return treasuryFlows?.monthly;
+        case TimeInterval.QUARTERLY:
+          return treasuryFlows?.quarterly;
+        case TimeInterval.YEARLY:
+          return treasuryFlows?.yearly;
+        default:
+          return undefined;
+      }
+    })();
+    if (!timeseriesSetForTimeInterval) {
+      return [];
+    }
+    return [
+      {
+        ...timeseriesSetForTimeInterval.balanceUsdTimeseries,
+        color: theme.palette.primary.main,
+        type: 'area',
+      },
+    ] as Timeseries[];
+  }, [selectedTimeWindow, selectedTimeInterval, treasuryFlows]);
+
+  return (
+    <HistogramChart
+      timeseriesList={timeseriesList}
+      timeInterval={selectedTimeInterval}
+      timeWindow={selectedTimeWindow}
+    />
+  );
+}
 
 export default function TreasuryPage() {
+  const { treasuryFlows } = useTreasuryFlows();
+
   return (
     <Container
       css={css`
@@ -185,27 +173,34 @@ export default function TreasuryPage() {
           layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
           containers={[
             {
-              title: 'Net Worth',
+              title: 'Treasury Balance',
               content: (
-                <HistogramChart
-                  timeseriesList={[revenueTimeseries]}
-                  timeWindow={TimeWindow.YEAR_TO_DATE}
-                  timeInterval={TimeInterval.WEEKLY}
+                <ControlledHistoricalBalanceChart
+                  treasuryFlows={treasuryFlows}
                 />
               ),
             },
             {
-              title: 'Total Revenue',
+              title: 'Cash Flows',
               content: (
-                <HistogramChart
-                  timeseriesList={[revenueTimeseries]}
-                  timeWindow={TimeWindow.YEAR_TO_DATE}
-                  timeInterval={TimeInterval.WEEKLY}
-                />
+                <ControlledTreasuryFlowsChart treasuryFlows={treasuryFlows} />
               ),
             },
           ]}
         />
+        <div
+          css={(theme) => css`
+            width: 100%;
+            background-color: ${theme.palette.background.paper};
+            border-radius: 24px;
+            ${theme.breakpoints.down('md')} {
+              width: 100%;
+            }
+            height: 768px;
+          `}
+        >
+          <TreasuryTransactionsTable />
+        </div>
       </div>
     </Container>
   );

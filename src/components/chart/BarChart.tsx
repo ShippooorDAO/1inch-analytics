@@ -26,24 +26,6 @@ function useBarChartOptions({
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
 
-  const pieColors = (() => {
-    const colors = [];
-    const base = theme.palette.material.analogousSecondary[300];
-    let i;
-    if (typeof Highcharts === 'object') {
-      for (i = 0; i < 10; i += 1) {
-        // Start out with a darkened base color (negative brighten), and end
-        // up with a much brighter color
-        colors.push(
-          Highcharts.color(base)
-            .brighten((i - 3) / 7)
-            .get()
-        );
-      }
-    }
-    return colors;
-  })();
-
   const options: Highcharts.Options = {
     ...chartOptions,
     chart: {
@@ -98,20 +80,18 @@ function useBarChartOptions({
     },
     plotOptions: {
       bar: {
-        colors: pieColors,
-        borderColor: theme.palette.text.secondary,
-        borderWidth: 0,
-        borderRadius: 4,
+        ...chartOptions.plotOptions?.bar,
         dataLabels: {
+          ...chartOptions.plotOptions?.bar?.dataLabels,
           crop: false,
           enabled: true,
-          formatter() {
-            return `${this.point.name}: ${innerLabelFormatter(this.y)}`;
-          },
           style: {
             fontFamily: theme.typography.fontFamily,
             fontSize: theme.typography.body1.fontSize,
             color: theme.palette.text.primary,
+          },
+          formatter() {
+            return `${this.point.name}: ${innerLabelFormatter(this.y)}`;
           },
         },
       },
@@ -163,6 +143,8 @@ export function BarChart({
         type: 'bar',
         name: seriesName,
         data: sortedData,
+        stacking: 'normal',
+        stack: 1,
       },
     ],
   };

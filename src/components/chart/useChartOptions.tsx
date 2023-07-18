@@ -1,9 +1,31 @@
+import { useTheme } from '@emotion/react';
+import Highcharts from 'highcharts';
+
 import { useHighchartsContext } from '@/shared/Highcharts/HighchartsContextProvider';
 import { format } from '@/shared/Utils/Format';
 
 export function useChartOptions() {
+  const theme = useTheme();
   const { optionsWithOppositeYAxis, columnChartColors } =
     useHighchartsContext();
+
+  const pieColors = (() => {
+    const colors = [];
+    const base = theme.palette.material.analogousSecondary[300];
+    let i;
+    if (typeof Highcharts === 'object') {
+      for (i = 0; i < 10; i += 1) {
+        // Start out with a darkened base color (negative brighten), and end
+        // up with a much brighter color
+        colors.push(
+          Highcharts.color(base)
+            .brighten((i - 3) / 7)
+            .get()
+        );
+      }
+    }
+    return colors;
+  })();
 
   const yAxisOptions = {
     ...optionsWithOppositeYAxis.yAxis,
@@ -35,6 +57,13 @@ export function useChartOptions() {
         color: columnChartColors[0],
         groupPadding: 0,
         shadow: false,
+      },
+      bar: {
+        ...optionsWithOppositeYAxis.plotOptions?.bar,
+        colors: pieColors,
+        borderColor: theme.palette.text.secondary,
+        borderWidth: 0,
+        borderRadius: 4,
       },
     },
     yAxis: [{ ...yAxisOptions }, { ...yAxisOptions }, { ...yAxisOptions }],

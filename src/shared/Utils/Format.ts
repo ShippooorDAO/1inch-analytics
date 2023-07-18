@@ -2,10 +2,17 @@
 import { BigNumber, utils } from 'ethers';
 import numberAbbreviate from 'number-abbreviate';
 
+import { getTaggedAccount } from '../Model/TaggedAccounts';
+
 const bigNumberDecimalPlaces = 18;
 
 export function getTransactionHashShorthand(txHash: string) {
   return `${txHash.substring(0, 14)}...`;
+}
+
+export function getWalletDisplayName(address: string) {
+  const taggedAccount = getTaggedAccount(address);
+  return taggedAccount?.tag ?? getAddressShorthand(address);
 }
 
 export function getAddressShorthand(account: string) {

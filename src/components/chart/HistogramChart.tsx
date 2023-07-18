@@ -159,13 +159,15 @@ export function HistogramChart({
     series.push(
       // @ts-ignore
       ...selectedTimeseries.map((t) => ({
-        type: 'area',
+        type: t.type ?? 'area',
         color: t.color,
         fillColor: t.color
           ? createGradient(t.color, 0.2, 0.7, 'up')
           : undefined,
         name: t.name,
         connectNulls: true,
+        dashStyle: t.dashStyle,
+        yAxis: t.yAxis,
         data: [...t.data],
         visible: !!timeseriesList?.find((t_) => t.name === t_.name),
         stack: 1,
