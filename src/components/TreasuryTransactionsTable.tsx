@@ -1,5 +1,11 @@
 import { css } from '@emotion/react';
-import { ArrowBack, ArrowForward, Sort } from '@mui/icons-material';
+import {
+  ArrowBack,
+  ArrowForward,
+  AttachMoney,
+  NorthEast,
+  Sort,
+} from '@mui/icons-material';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import { Button, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import moment from 'moment';
@@ -16,10 +22,89 @@ import { useTreasuryTransactions } from '@/hooks/useTreasuryTransactions';
 import { Asset } from '@/shared/Model/Asset';
 import { ChainId } from '@/shared/Model/Chain';
 import {
+  TreasuryTransactionSubType,
+  TreasuryTransactionType,
+} from '@/shared/Model/TreasuryTransaction';
+import {
   getEtherscanAddressLink,
   getEtherscanTransactionLink,
 } from '@/shared/Utils/Etherscan';
 import { getWalletDisplayName } from '@/shared/Utils/Format';
+
+function TransactionTypeCell({
+  type,
+  subType,
+}: {
+  type: TreasuryTransactionType;
+  subType: TreasuryTransactionSubType;
+}) {
+  const logo = (() => {
+    switch (type) {
+      case TreasuryTransactionType.WITHDRAW:
+        return <NorthEast />;
+      case TreasuryTransactionType.TRANSFER:
+        return <VerticalAlignBottomIcon />;
+      case TreasuryTransactionType.MINT:
+        return <VerticalAlignBottomIcon />;
+      case TreasuryTransactionType.BURN:
+        return <VerticalAlignBottomIcon />;
+      case TreasuryTransactionType.DEPOSIT:
+      default:
+        return <AttachMoney />;
+    }
+  })();
+
+  const mainLabel = (() => {
+    switch (type) {
+      case TreasuryTransactionType.WITHDRAW:
+        return 'Withdraw';
+      case TreasuryTransactionType.TRANSFER:
+        return 'Transfer';
+      case TreasuryTransactionType.MINT:
+        return 'Mint';
+      case TreasuryTransactionType.BURN:
+        return 'Burn';
+      case TreasuryTransactionType.DEPOSIT:
+      default:
+        return 'Deposit';
+    }
+  })();
+
+  const secondaryLabel = (() => {
+    switch (subType) {
+      case TreasuryTransactionSubType.STAKING_REVENUE:
+        return 'Staking Revenue';
+      case TreasuryTransactionSubType.AGGREGATION_ROUTER_REVENUE:
+        return 'Aggregation Protocol Revenue';
+      case TreasuryTransactionSubType.GRANT_PAYMENT:
+        return 'Grant Payment';
+      case TreasuryTransactionSubType.OTHER:
+      default:
+        return 'Other';
+    }
+  })();
+
+  return (
+    <div
+      css={css`
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: flex-start;
+        width: 260px;
+        gap: 5px;
+      `}
+    >
+      {logo}
+      <div>
+        <Typography variant="body2">{mainLabel}</Typography>
+        <Typography variant="body1" color="textSecondary">
+          {secondaryLabel}
+        </Typography>
+      </div>
+    </div>
+  );
+}
 
 export function TreasuryTransactionsTable() {
   const assetService = useAssetService();
@@ -207,19 +292,6 @@ export function TreasuryTransactionsTable() {
               css={css`
                 display: flex;
                 flex-flow: row;
-                align-items: center;
-                justify-content: flex-start;
-                width: 100px;
-                gap: 5px;
-              `}
-            >
-              <VerticalAlignBottomIcon />
-              <Typography variant="body2">Deposit</Typography>
-            </div>
-            <div
-              css={css`
-                display: flex;
-                flex-flow: row;
                 gap: 10px;
                 align-items: center;
                 flex-grow: 1;
@@ -254,6 +326,7 @@ export function TreasuryTransactionsTable() {
                 </AutoSkeleton>
               </div>
             </div>
+            <TransactionTypeCell type={row.type} subType={row.subType} />
 
             <div
               css={(theme) => css`
@@ -289,7 +362,7 @@ export function TreasuryTransactionsTable() {
                 </AutoSkeleton>
                 <AutoSkeleton loading={loading}>
                   <Typography variant="body1" color="textSecondary">
-                    Sender
+                    From
                   </Typography>
                 </AutoSkeleton>
               </div>
@@ -328,7 +401,7 @@ export function TreasuryTransactionsTable() {
                 </AutoSkeleton>
                 <AutoSkeleton loading={loading}>
                   <Typography variant="body1" color="textSecondary">
-                    Receiver
+                    To
                   </Typography>
                 </AutoSkeleton>
               </div>
@@ -358,6 +431,7 @@ export function TreasuryTransactionsTable() {
                 display: flex;
                 flex-flow: row;
                 align-items: flex-end;
+                justify-content: flex-end;
                 gap: 10px;
                 width: 200px;
               `}

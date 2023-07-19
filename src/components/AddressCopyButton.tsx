@@ -40,7 +40,7 @@ export function AddressCopyButton({
       return;
     }
     navigator.clipboard.writeText(address);
-    setTooltipText('Address copied!');
+    setTooltipText(successMessage);
   };
 
   return (
@@ -53,7 +53,7 @@ export function AddressCopyButton({
         `}
         onClick={() => handleCopyButton()}
         onMouseOut={() =>
-          setTimeout(() => setTooltipText(successMessage), 5000)
+          setTimeout(() => setTooltipText(successMessage), 3000)
         }
       >
         <img height="24px" width="24px" src="/copy.svg" alt="copy" />

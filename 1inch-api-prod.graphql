@@ -171,7 +171,7 @@ type RootQueryType {
   treasuryFlows(timespan: TreasuryFlowTimespan = DAY): [TreasuryFlow]
 
   """Fetch treasury transactions"""
-  treasuryTransactions(filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "timestamp", sortDirection: SortDirection = DESC): TreasuryTransactions
+  treasuryTransactions(assetIds: [String] = [], filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "timestamp", sortDirection: SortDirection = DESC): TreasuryTransactions
 
   """Fetch volumes"""
   volumes(chainIds: [String] = [], timespan: VolumeTimespan = DAY): [Volume]

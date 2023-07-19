@@ -9,7 +9,11 @@ import {
   SortDirection,
 } from '@/gql/graphql';
 import { AssetService } from '@/shared/Currency/AssetService';
-import { TreasuryTransaction } from '@/shared/Model/TreasuryTransaction';
+import {
+  TreasuryTransaction,
+  TreasuryTransactionSubType,
+  TreasuryTransactionType,
+} from '@/shared/Model/TreasuryTransaction';
 
 import { mockTreasuryTransactionsResponse } from './mocks/TreasuryTransactions';
 import { useAssetService } from './useAssetService';
@@ -21,6 +25,7 @@ const QUERY = gql`
     $pageSize: Int
     $sortBy: String
     $sortDirection: SortDirection
+    $assetIds: [String]
   ) {
     treasuryTransactions(
       filter: $filter
@@ -28,6 +33,7 @@ const QUERY = gql`
       pageSize: $pageSize
       sortBy: $sortBy
       sortDirection: $sortDirection
+      assetIds: $assetIds
     ) {
       pageNumber
       pageSize
@@ -60,22 +66,67 @@ function getTransactionType({
   const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
 
   if (from === TREASURY_ADDRESS && to === NULL_ADDRESS) {
-    return 'burn';
+    return TreasuryTransactionType.BURN;
   }
 
   if (to === TREASURY_ADDRESS && from === NULL_ADDRESS) {
-    return 'mint';
+    return TreasuryTransactionType.MINT;
   }
 
   if (to === TREASURY_ADDRESS) {
-    return 'deposit';
+    return TreasuryTransactionType.DEPOSIT;
   }
 
   if (from === TREASURY_ADDRESS) {
-    return 'withdrawal';
+    return TreasuryTransactionType.WITHDRAW;
   }
 
-  return 'unknown';
+  return TreasuryTransactionType.UNKNOWN;
+}
+
+function getTransactionSubType({
+  type,
+  from,
+  to,
+}: {
+  type: TreasuryTransactionType;
+  from?: string | null;
+  to?: string | null;
+}): TreasuryTransactionSubType {
+  const AGGREGATION_ROUTER_ADDRESSES = [
+    '0x1111111254fb6c44bac0bed2854e76f90643097d',
+  ];
+  const GOV_STAKING_ADDRESS = '0x9a0c8ff858d273f57072d714bca7411d717501d7';
+  const GOV_LEFTOVER_EXCHANGER_ADDRESS =
+    '0xdd9f24efc84d93deef3c8745c837ab63e80abd27';
+
+  if (
+    type === TreasuryTransactionType.DEPOSIT &&
+    from === GOV_STAKING_ADDRESS
+  ) {
+    return TreasuryTransactionSubType.STAKING_REVENUE;
+  }
+
+  if (type === TreasuryTransactionType.WITHDRAW) {
+    return TreasuryTransactionSubType.GRANT_PAYMENT;
+  }
+
+  if (
+    type === TreasuryTransactionType.DEPOSIT &&
+    from === GOV_LEFTOVER_EXCHANGER_ADDRESS
+  ) {
+    return TreasuryTransactionSubType.OTHER;
+  }
+
+  if (
+    type === TreasuryTransactionType.DEPOSIT &&
+    from &&
+    AGGREGATION_ROUTER_ADDRESSES.includes(from)
+  ) {
+    return TreasuryTransactionSubType.AGGREGATION_ROUTER_REVENUE;
+  }
+
+  return TreasuryTransactionSubType.OTHER;
 }
 
 function convertResponseToModel(
@@ -99,6 +150,11 @@ function convertResponseToModel(
       .map((t) => t!)
       .map((tx) => ({
         type: getTransactionType(tx),
+        subType: getTransactionSubType({
+          type: getTransactionType(tx),
+          from: tx.from,
+          to: tx.to,
+        }),
         amount: assetService.createAssetAmount(tx.amount!, tx.asset!.id!)!,
         amountUsd: assetService.createUsdAmount(tx.amountUsd!)!,
         asset: assetService.store.getById(tx.asset!.id!)!,
@@ -164,7 +220,7 @@ export function useTreasuryTransactions({
     GetTreasuryTransactionsQueryVariables
   >(QUERY, {
     variables: {
-      // assetIds, // TODO: Implement this.
+      assetIds,
       // chainIds, // TODO: Remove this.
       filter: buildQueryFilter({ from, to }),
       sortBy,
