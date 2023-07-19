@@ -5,6 +5,10 @@ import { GlobalSystemQueryResponse } from '../OneInchAnalyticsAPIProvider';
 export function createMockGlobalSystemResponse(): GlobalSystemQueryResponse {
   return {
     systemStatus: null,
+    treasuryTransactionsLabels: {
+      fromLabels: [],
+      toLabels: [],
+    },
     chains: [
       {
         id: 'ethereum',

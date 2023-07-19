@@ -22,6 +22,7 @@ import {
 } from '../Model/Chain';
 import { AssetStore } from '../Model/Stores/AssetStore';
 import { ChainStore } from '../Model/Stores/ChainStore';
+import { TreasuryTransactionLabelStore } from '../Model/Stores/TreasuryTransactionLabelStore';
 import { createMockGlobalSystemResponse } from './mocks/GlobalSystemQueryResponse';
 
 export interface OneInchAnalyticsAPIProviderState {
@@ -57,6 +58,10 @@ export interface GlobalSystemQueryResponse {
     priceUsd: number | null;
     price: number | null;
   }[];
+  treasuryTransactionsLabels: {
+    fromLabels: string[];
+    toLabels: string[];
+  };
 }
 
 function getAssetDisplayName(symbol: string, chain: Chain): string {
@@ -72,6 +77,10 @@ export function processGlobalSystemResponse(
 ): {
   assets: Asset[];
   chains: Chain[];
+  treasuryTransactionsLabels: {
+    fromLabels: string[];
+    toLabels: string[];
+  };
 } {
   const chains = response.chains.map((chain) => {
     return {
@@ -108,7 +117,11 @@ export function processGlobalSystemResponse(
     chain.nativeToken = nativeToken;
   }
 
-  return { assets, chains };
+  return {
+    assets,
+    chains,
+    treasuryTransactionsLabels: response.treasuryTransactionsLabels,
+  };
 }
 
 export const GET_GLOBAL_SYSTEM = gql`
@@ -135,6 +148,10 @@ export const GET_GLOBAL_SYSTEM = gql`
       logoUrl
       priceUsd
       price
+    }
+    treasuryTransactionsLabels {
+      fromLabels
+      toLabels
     }
   }
 `;
@@ -212,6 +229,8 @@ export const OneInchAnalyticsAPIProvider: FC<
   const featureFlagsContext = useFeatureFlags();
   const [assetService, setAssetService] = useState<AssetService | undefined>();
   const [chainStore, setChainStore] = useState<ChainStore | undefined>();
+  const [treasuryTransactionLabelsStore, setTreasuryTransactionLabelsStore] =
+    useState<TreasuryTransactionLabelStore>();
   const [systemStatus, setSystemStatus] = useState<{
     id: string;
     message: string;
@@ -229,13 +248,15 @@ export const OneInchAnalyticsAPIProvider: FC<
     }
 
     if (featureFlagsContext.enableMockData) {
-      const { assets, chains } = processGlobalSystemResponse(
-        createMockGlobalSystemResponse()
-      );
+      const { assets, chains, treasuryTransactionsLabels } =
+        processGlobalSystemResponse(createMockGlobalSystemResponse());
 
       const assetStore = new AssetStore(assets);
       setAssetService(new AssetService(assetStore));
       setChainStore(new ChainStore(chains));
+      setTreasuryTransactionLabelsStore(
+        new TreasuryTransactionLabelStore(treasuryTransactionsLabels)
+      );
     } else {
       queryGlobalSystem();
     }
@@ -254,11 +275,15 @@ export const OneInchAnalyticsAPIProvider: FC<
       return;
     }
 
-    const { assets, chains } = processGlobalSystemResponse(storedResponse);
+    const { assets, chains, treasuryTransactionsLabels } =
+      processGlobalSystemResponse(storedResponse);
 
     const assetStore = new AssetStore(assets);
     setAssetService(new AssetService(assetStore));
     setChainStore(new ChainStore(chains));
+    setTreasuryTransactionLabelsStore(
+      new TreasuryTransactionLabelStore(treasuryTransactionsLabels)
+    );
   }, [featureFlagsContext]);
 
   useEffect(() => {

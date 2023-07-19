@@ -26,6 +26,8 @@ const QUERY = gql`
     $sortBy: String
     $sortDirection: SortDirection
     $assetIds: [String]
+    $fromLabels: [String]
+    $toLabels: [String]
   ) {
     treasuryTransactions(
       filter: $filter
@@ -34,6 +36,8 @@ const QUERY = gql`
       sortBy: $sortBy
       sortDirection: $sortDirection
       assetIds: $assetIds
+      fromLabels: $fromLabels
+      toLabels: $toLabels
     ) {
       pageNumber
       pageSize
@@ -46,9 +50,11 @@ const QUERY = gql`
           id
         }
         from
+        fromLabel
         id
         timestamp
         to
+        toLabel
         transactionHash
       }
     }
@@ -158,10 +164,12 @@ function convertResponseToModel(
         amount: assetService.createAssetAmount(tx.amount!, tx.asset!.id!)!,
         amountUsd: assetService.createUsdAmount(tx.amountUsd!)!,
         asset: assetService.store.getById(tx.asset!.id!)!,
+        fromLabel: tx.fromLabel,
         from: tx.from!,
         id: tx.id!,
         timestamp: tx.timestamp!,
         to: tx.to!,
+        toLabel: tx.toLabel,
         transactionHash: tx.transactionHash!,
       })) ??
     [] ??
@@ -176,8 +184,16 @@ interface UseTreasuryTransactionsProps {
   pageNumber?: number;
   assetIds?: string[];
   chainIds?: string[];
+  fromLabels?: string[];
+  toLabels?: string[];
   from?: string;
   to?: string;
+  includeSpreadSurplus?: boolean;
+  includeStakingFees?: boolean;
+  includeSpending?: boolean;
+  includeGrantPayments?: boolean;
+  includeColdWalletTransfers?: boolean;
+  includeAave?: boolean;
 }
 
 function buildQueryFilter({
@@ -204,24 +220,83 @@ function buildQueryFilter({
   return filter;
 }
 
+function getTransactionTypeQueryFilter({
+  includeSpreadSurplus,
+  includeStakingFees,
+  includeGrantPayments,
+  includeSpending,
+  includeColdWalletTransfers,
+  includeAave,
+}: {
+  includeSpreadSurplus?: boolean;
+  includeStakingFees?: boolean;
+  includeSpending?: boolean;
+  includeGrantPayments?: boolean;
+  includeColdWalletTransfers?: boolean;
+  includeAave?: boolean;
+}): { fromLabels: string[]; toLabels: string[] } {
+  const fromLabels: string[] = [];
+  const toLabels: string[] = [];
+
+  if (includeSpreadSurplus) {
+    fromLabels.push('1inch: Spread Surplus');
+  }
+
+  if (includeStakingFees) {
+    fromLabels.push('1inch: Staking v2 fees');
+  }
+
+  if (includeSpending) {
+    toLabels.push('1inch: Spending');
+  }
+
+  if (includeGrantPayments) {
+    toLabels.push('1inch: Grant');
+  }
+
+  if (includeColdWalletTransfers) {
+    toLabels.push('1inch: Cold wallet');
+  }
+
+  if (includeAave) {
+    toLabels.push('Aave: USDC V3');
+  }
+
+  return { fromLabels, toLabels };
+}
+
 export function useTreasuryTransactions({
   sortBy,
   sortDirection,
   pageSize,
   pageNumber,
   assetIds,
-  chainIds,
+  includeSpreadSurplus,
+  includeStakingFees,
+  includeGrantPayments,
+  includeSpending,
+  includeColdWalletTransfers,
+  includeAave,
   from,
   to,
 }: UseTreasuryTransactionsProps) {
   const assetService = useAssetService();
+  const transactionTypeQueryFilter = getTransactionTypeQueryFilter({
+    includeSpreadSurplus,
+    includeStakingFees,
+    includeGrantPayments,
+    includeSpending,
+    includeColdWalletTransfers,
+    includeAave,
+  });
   const { data, error, loading } = useQuery<
     GetTreasuryTransactionsQuery,
     GetTreasuryTransactionsQueryVariables
   >(QUERY, {
     variables: {
       assetIds,
-      // chainIds, // TODO: Remove this.
+      fromLabels: transactionTypeQueryFilter.fromLabels,
+      toLabels: transactionTypeQueryFilter.toLabels,
       filter: buildQueryFilter({ from, to }),
       sortBy,
       sortDirection,

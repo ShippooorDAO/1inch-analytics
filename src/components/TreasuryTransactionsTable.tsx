@@ -6,8 +6,15 @@ import {
   NorthEast,
   Sort,
 } from '@mui/icons-material';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import { Button, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
 import moment from 'moment';
 import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
@@ -34,54 +41,108 @@ import { getWalletDisplayName } from '@/shared/Utils/Format';
 function TransactionTypeCell({
   type,
   subType,
+  fromLabel,
+  toLabel,
 }: {
   type: TreasuryTransactionType;
   subType: TreasuryTransactionSubType;
+  fromLabel?: string | null;
+  toLabel?: string | null;
 }) {
   const logo = (() => {
-    switch (type) {
-      case TreasuryTransactionType.WITHDRAW:
-        return <NorthEast />;
-      case TreasuryTransactionType.TRANSFER:
-        return <VerticalAlignBottomIcon />;
-      case TreasuryTransactionType.MINT:
-        return <VerticalAlignBottomIcon />;
-      case TreasuryTransactionType.BURN:
-        return <VerticalAlignBottomIcon />;
-      case TreasuryTransactionType.DEPOSIT:
-      default:
-        return <AttachMoney />;
+    if (fromLabel === '1inch: Spread Surplus') {
+      return <AttachMoney />;
+    }
+
+    if (fromLabel === '1inch: Staking v2 fees') {
+      return <AttachMoney />;
+    }
+
+    if (toLabel === '1inch: Spending') {
+      return <NorthEast />; // TODO
+    }
+
+    if (toLabel === '1inch: Grant') {
+      return <NorthEast />; // TODO
+    }
+
+    if (toLabel === '1inch: Cold wallet') {
+      return <NorthEast />; // TODO
+    }
+
+    if (toLabel === 'Aave: USDC V3') {
+      return <NorthEast />; // TODO
+    }
+
+    if (fromLabel === '1inch: Treasury') {
+      return <AttachMoney />;
+    }
+
+    if (toLabel === '1inch: Treasury') {
+      return <NorthEast />; // TODO
     }
   })();
 
   const mainLabel = (() => {
-    switch (type) {
-      case TreasuryTransactionType.WITHDRAW:
-        return 'Withdraw';
-      case TreasuryTransactionType.TRANSFER:
-        return 'Transfer';
-      case TreasuryTransactionType.MINT:
-        return 'Mint';
-      case TreasuryTransactionType.BURN:
-        return 'Burn';
-      case TreasuryTransactionType.DEPOSIT:
-      default:
-        return 'Deposit';
+    if (fromLabel === '1inch: Spread Surplus') {
+      return 'Deposit';
+    }
+
+    if (fromLabel === '1inch: Staking v2 fees') {
+      return 'Deposit';
+    }
+
+    if (toLabel === '1inch: Spending') {
+      return 'Withdraw';
+    }
+
+    if (toLabel === '1inch: Grant') {
+      return 'Withdraw';
+    }
+
+    if (toLabel === '1inch: Cold wallet') {
+      return 'Transfer';
+    }
+
+    if (toLabel === 'Aave: USDC V3') {
+      return 'Lend';
+    }
+
+    if (fromLabel === '1inch: Treasury') {
+      return 'Deposit';
+    }
+
+    if (toLabel === '1inch: Treasury') {
+      return 'Withdraw';
     }
   })();
 
   const secondaryLabel = (() => {
-    switch (subType) {
-      case TreasuryTransactionSubType.STAKING_REVENUE:
-        return 'Staking Revenue';
-      case TreasuryTransactionSubType.AGGREGATION_ROUTER_REVENUE:
-        return 'Aggregation Protocol Revenue';
-      case TreasuryTransactionSubType.GRANT_PAYMENT:
-        return 'Grant Payment';
-      case TreasuryTransactionSubType.OTHER:
-      default:
-        return 'Other';
+    if (fromLabel === '1inch: Spread Surplus') {
+      return 'Spread surplus';
     }
+
+    if (fromLabel === '1inch: Staking v2 fees') {
+      return 'Staking v2 fees';
+    }
+
+    if (toLabel === '1inch: Spending') {
+      return 'Spending';
+    }
+
+    if (toLabel === '1inch: Grant') {
+      return 'Grant payment';
+    }
+
+    if (toLabel === '1inch: Cold wallet') {
+      return 'Transfer to cold wallet';
+    }
+
+    if (toLabel === 'Aave: USDC V3') {
+      return 'Lend on AAVE v3';
+    }
+
+    return 'Other';
   })();
 
   return (
@@ -113,7 +174,22 @@ export function TreasuryTransactionsTable() {
 
   const [pageNumber, setPageNumber] = useState(0);
   const [pageSize, setPageSize] = useState(7);
+  const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<
+    string[]
+  >([]);
   const { transactions, mock, loading } = useTreasuryTransactions({
+    includeSpreadSurplus: selectedTransactionTypes.includes(
+      'includeSpreadSurplus'
+    ),
+    includeStakingFees: selectedTransactionTypes.includes('includeStakingFees'),
+    includeSpending: selectedTransactionTypes.includes('includeSpending'),
+    includeGrantPayments: selectedTransactionTypes.includes(
+      'includeGrantPayments'
+    ),
+    includeColdWalletTransfers: selectedTransactionTypes.includes(
+      'includeColdWalletTransfers'
+    ),
+    includeAave: selectedTransactionTypes.includes('includeAave'),
     pageSize: pageSize * 100,
     pageNumber: 1,
     sortBy,
@@ -169,6 +245,13 @@ export function TreasuryTransactionsTable() {
     setSortBy('timestamp');
   };
 
+  const handleTransactionTypeFilterChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newTransactionTypes: string[] | null
+  ) => {
+    setSelectedTransactionTypes(newTransactionTypes ?? []);
+  };
+
   return (
     <div
       css={css`
@@ -209,6 +292,47 @@ export function TreasuryTransactionsTable() {
               onChange={setSelectedAssets}
             />
           </AutoSkeleton>
+          <ToggleButtonGroup
+            size="small"
+            value={selectedTransactionTypes}
+            color="primary"
+            onChange={handleTransactionTypeFilterChange}
+            aria-label="text formatting"
+            exclusive
+          >
+            <ToggleButton
+              value="includeStakingFees"
+              aria-label="staking fees"
+              size="small"
+            >
+              Staking fees
+            </ToggleButton>
+            <ToggleButton
+              value="includeSpreadSurplus"
+              aria-label="spread surplus"
+            >
+              Spread surplus
+            </ToggleButton>
+            <ToggleButton value="includeGrantPayments" aria-label="grants">
+              Grants
+            </ToggleButton>
+            <ToggleButton
+              value="includeSpending"
+              aria-label="spending"
+              size="small"
+            >
+              Spending
+            </ToggleButton>
+            <ToggleButton
+              value="includeColdWalletTransfers"
+              aria-label="cold wallet"
+            >
+              Cold wallet
+            </ToggleButton>
+            <ToggleButton value="includeAave" aria-label="aave">
+              AAVE
+            </ToggleButton>
+          </ToggleButtonGroup>
           <div
             css={css`
               display: flex;
@@ -294,7 +418,7 @@ export function TreasuryTransactionsTable() {
                 flex-flow: row;
                 gap: 10px;
                 align-items: center;
-                flex-grow: 1;
+                width: 300px;
               `}
             >
               <div>
@@ -326,13 +450,18 @@ export function TreasuryTransactionsTable() {
                 </AutoSkeleton>
               </div>
             </div>
-            <TransactionTypeCell type={row.type} subType={row.subType} />
+            <TransactionTypeCell
+              type={row.type}
+              subType={row.subType}
+              fromLabel={row.fromLabel}
+              toLabel={row.toLabel}
+            />
 
             <div
               css={(theme) => css`
                 display: flex;
                 flex-flow: row;
-                width: 300px;
+                width: 400px;
                 gap: 10px;
                 ${theme.breakpoints.down('md')} {
                   display: none;
@@ -371,7 +500,8 @@ export function TreasuryTransactionsTable() {
               css={(theme) => css`
                 display: flex;
                 flex-flow: row;
-                width: 250px;
+                justify-content: flex-start;
+                width: 300px;
                 gap: 10px;
                 ${theme.breakpoints.down('lg')} {
                   display: none;
@@ -406,34 +536,14 @@ export function TreasuryTransactionsTable() {
                 </AutoSkeleton>
               </div>
             </div>
-
-            {/* <div
-              css={css`
-                display: flex;
-                flex-flow: column;
-                align-items: flex-end;
-                width: 200px;
-              `}
-            >
-              <AutoSkeleton loading={loading}>
-                <Typography variant="body2">
-                  {row.amountUsd.toDisplayString()}
-                </Typography>
-              </AutoSkeleton>
-              <AutoSkeleton loading={loading}>
-                <Typography variant="body1" color="textSecondary">
-                  {row.amount.toDisplayString()}
-                </Typography>
-              </AutoSkeleton>
-            </div> */}
             <div
               css={css`
                 display: flex;
                 flex-flow: row;
                 align-items: flex-end;
-                justify-content: flex-end;
+                justify-content: center;
                 gap: 10px;
-                width: 200px;
+                flex-grow: 1;
               `}
             >
               <div

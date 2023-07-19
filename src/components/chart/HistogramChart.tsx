@@ -262,7 +262,7 @@ export function HistogramChart({
           css={css`
             display: flex;
             flex-flow: row;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             gap: 20px;
           `}

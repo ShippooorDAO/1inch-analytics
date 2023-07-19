@@ -24,9 +24,11 @@ export interface TreasuryTransaction {
   amountUsd: UsdAmount;
   asset: Asset;
   from: string;
+  fromLabel?: string | null;
   id: string;
   timestamp: number;
   to: string;
+  toLabel?: string | null;
   transactionHash: string;
   type: TreasuryTransactionType;
   subType: TreasuryTransactionSubType;
