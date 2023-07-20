@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import { Typography } from '@mui/material';
 
 import { Timeseries } from '@/shared/Model/Timeseries';
 
@@ -85,6 +86,38 @@ export function TimeseriesMultiSelect({
         );
       }
       if (values.length > 1) {
+        const firstTimeseriesLabel = optionsInternal.find(
+          (o) => o.key === values[0].name
+        )?.label;
+        const additionalSeriesLabel = (() => {
+          if (values.length === 2) {
+            return `+ ${values.length - 1} other series`;
+          }
+          return `+ ${values.length - 1} series`;
+        })();
+        if (firstTimeseriesLabel) {
+          return (
+            <div
+              css={css`
+                display: flex;
+                flex-flow: row;
+                gap: 5px;
+                align-content: flex-end;
+              `}
+            >
+              {firstTimeseriesLabel}{' '}
+              <Typography
+                variant="body1"
+                color="textSecondary"
+                css={css`
+                  margin-top: 1px;
+                `}
+              >
+                {`+ ${values.length - 1} other series`}
+              </Typography>
+            </div>
+          );
+        }
         return `${values.length} timeseries`;
       }
       if (values.length === options.length) {

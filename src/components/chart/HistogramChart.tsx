@@ -274,11 +274,12 @@ export function HistogramChart({
             gap: 20px;
           `}
         >
-          {timeseriesList && timeseriesList?.length > 1 && (
+          {timeseriesList && timeseriesList?.length !== 0 && (
             <TimeseriesMultiSelect
               options={timeseriesList ?? []}
               values={selectedTimeseries}
               onChange={setSelectedTimeseries}
+              disabled={timeseriesList.length <= 1}
             />
           )}
           {timeIntervalOptions && onTimeIntervalChange && (

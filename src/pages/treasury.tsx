@@ -142,6 +142,7 @@ function ControlledHistoricalBalanceChart({
       timeseriesList={timeseriesList}
       timeInterval={selectedTimeInterval}
       timeWindow={selectedTimeWindow}
+      excludeTotalFromTooltip={true}
     />
   );
 }
@@ -210,15 +211,24 @@ export default function TreasuryPage() {
           ]}
           containers={[
             {
-              title: 'Balance',
+              // title: 'Balance',
               content: (
-                <ControlledHistoricalBalanceChart
-                  treasuryFlows={treasuryFlowsContext.data}
-                />
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: column;
+                    justify-content: flex-end;
+                    height: 100%;
+                  `}
+                >
+                  <ControlledHistoricalBalanceChart
+                    treasuryFlows={treasuryFlowsContext.data}
+                  />
+                </div>
               ),
             },
             {
-              title: 'Cash Flows',
+              // title: 'Cash Flows',
               content: (
                 <ControlledTreasuryFlowsChart
                   treasuryFlows={treasuryFlowsContext.data}

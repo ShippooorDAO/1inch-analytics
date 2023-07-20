@@ -267,7 +267,7 @@ export function SelectWithSearch<T>({
               height: 40px;
               width: 100%;
               min-width: 200px;
-              max-width: 260px;
+              max-width: 450px;
               & .MuiChip-label {
                 padding-left: 10px;
                 padding-right: 10px;
