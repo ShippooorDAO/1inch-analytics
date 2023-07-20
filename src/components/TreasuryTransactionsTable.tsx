@@ -152,7 +152,6 @@ function TransactionTypeCell({
         flex-flow: row;
         align-items: center;
         justify-content: flex-start;
-        width: 260px;
         gap: 5px;
       `}
     >
@@ -418,7 +417,7 @@ export function TreasuryTransactionsTable() {
                 flex-flow: row;
                 gap: 10px;
                 align-items: center;
-                width: 300px;
+                width: 160px;
               `}
             >
               <div>
@@ -450,19 +449,24 @@ export function TreasuryTransactionsTable() {
                 </AutoSkeleton>
               </div>
             </div>
-            <TransactionTypeCell
-              type={row.type}
-              subType={row.subType}
-              fromLabel={row.fromLabel}
-              toLabel={row.toLabel}
-            />
-
+            <div
+              css={css`
+                width: 160px;
+              `}
+            >
+              <TransactionTypeCell
+                type={row.type}
+                subType={row.subType}
+                fromLabel={row.fromLabel}
+                toLabel={row.toLabel}
+              />
+            </div>
             <div
               css={(theme) => css`
                 display: flex;
                 flex-flow: row;
-                width: 400px;
                 gap: 10px;
+                width: 360px;
                 ${theme.breakpoints.down('md')} {
                   display: none;
                 }
@@ -501,8 +505,8 @@ export function TreasuryTransactionsTable() {
                 display: flex;
                 flex-flow: row;
                 justify-content: flex-start;
-                width: 300px;
                 gap: 10px;
+                flex-grow: 2;
                 ${theme.breakpoints.down('lg')} {
                   display: none;
                 }
@@ -540,10 +544,11 @@ export function TreasuryTransactionsTable() {
               css={css`
                 display: flex;
                 flex-flow: row;
-                align-items: flex-end;
-                justify-content: center;
+                align-items: center;
+                justify-content: flex-end;
                 gap: 10px;
-                flex-grow: 1;
+                margin-left: auto;
+                flex-grow: 3;
               `}
             >
               <div
