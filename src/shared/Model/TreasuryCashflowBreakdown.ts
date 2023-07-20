@@ -1,6 +1,7 @@
 export interface TreasuryCashflowBreakdown {
   deposits: number;
   revenues: number;
+  otherDeposits: number;
   stakingFees: number;
   spreadSurplus: number;
   otherTransfersIn: number;

@@ -110,7 +110,7 @@ export function TreasuryCashflowBreakdownTable({
           </AutoSkeleton>
         </div>
       </div>
-      {/* <div
+      <div
         css={css`
           display: flex;
           flex-flow: row;
@@ -118,12 +118,19 @@ export function TreasuryCashflowBreakdownTable({
           margin-left: ${INDENT_SIZE}px;
         `}
       >
-        <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
-          Transfers
-        </Typography>
-        <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
-          {format(data.transfersIn, { abbreviate: true, symbol: 'USD' })}
-        </Typography>
+        <AutoSkeleton loading={loading}>
+          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
+            Others
+          </Typography>
+        </AutoSkeleton>
+        <AutoSkeleton loading={loading}>
+          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
+            {format(data?.otherDeposits, {
+              abbreviate: true,
+              symbol: 'USD',
+            })}
+          </Typography>
+        </AutoSkeleton>
       </div>
       <div
         css={css`
@@ -141,27 +148,16 @@ export function TreasuryCashflowBreakdownTable({
           `}
         >
           <Typography variant="body2" color="textSecondary">
-            Staking fees
+            Lending on AAVE
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            {}
+            {format(data?.depositOnAave, {
+              abbreviate: true,
+              symbol: 'USD',
+            })}
           </Typography>
         </div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <Typography variant="body2" color="textSecondary">
-            Spread surplus
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            0.00
-          </Typography>
-        </div>
-      </div> */}
+      </div>
       <div
         css={(theme) => css`
           border: 1px solid ${theme.palette.divider};

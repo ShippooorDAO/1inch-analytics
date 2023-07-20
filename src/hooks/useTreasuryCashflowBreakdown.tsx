@@ -57,7 +57,9 @@ function convertResponseToModel(
   response: GetTreasuryCashflowBreakdownQuery
 ): TreasuryCashflowBreakdown {
   const stakingFees = getCashflowForLabel('stakingFees', response).inflow;
-  const spreadSurplus = getCashflowForLabel('spreadSurplus', response).inflow;
+  const depositOnAave = getCashflowForLabel('aave', response).net;
+  const spreadSurplus =
+    getCashflowForLabel('spreadSurplus', response).inflow - depositOnAave; // Temporary fix
   const transfersIn = 0;
   const otherTransfersIn = 0;
   const grants = getCashflowForLabel('grants', response).net;
@@ -66,10 +68,10 @@ function convertResponseToModel(
     'coldWallet',
     response
   ).net;
-  const depositOnAave = getCashflowForLabel('aave', response).net;
 
   const revenues = stakingFees + spreadSurplus;
   const deposits = revenues;
+  const otherDeposits = depositOnAave;
 
   const expenses = grants + otherSpending;
   const otherWithdrawals = transferOutToColdWallet + depositOnAave;
@@ -79,6 +81,7 @@ function convertResponseToModel(
 
   return {
     deposits,
+    otherDeposits,
     revenues,
     stakingFees,
     spreadSurplus,
