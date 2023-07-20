@@ -137,7 +137,7 @@ export function TreasuryBalancesTable({
               >
                 <AutoSkeleton loading={loading}>
                   <Typography variant="body2" align="right">
-                    {format(row.share, { symbol: '%' })}
+                    {format(row.share, { symbol: '%', decimals: 1 })}
                   </Typography>
                 </AutoSkeleton>
               </div>
