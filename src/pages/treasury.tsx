@@ -1,9 +1,10 @@
 import { css, useTheme } from '@emotion/react';
-import { Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { green, red } from '@mui/material/colors';
 import { useMemo, useState } from 'react';
 
 import { HistogramChart } from '@/components/chart/HistogramChart';
+import { EtherscanButton } from '@/components/EtherscanButton';
 import { PageTitle } from '@/components/PageTitle';
 import {
   StatsContainer,
@@ -16,6 +17,7 @@ import { useTreasuryBalances } from '@/hooks/useTreasuryBalances';
 import { useTreasuryCashflowBreakdown } from '@/hooks/useTreasuryCashflowBreakdown';
 import { TreasuryFlows, useTreasuryFlows } from '@/hooks/useTreasuryFlows';
 import Dashboard from '@/layouts/DashboardLayout';
+import { TREASURY_ADDRESS } from '@/shared/Constants';
 import {
   getTimeIntervalLabel,
   TimeInterval,
@@ -241,7 +243,18 @@ export default function TreasuryPage() {
           layout={StatsContainerLayout.TWO_THIRDS_ONE_THIRD}
           containers={[
             {
-              title: 'Portfolio',
+              title: (
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row;
+                    gap: 10px;
+                  `}
+                >
+                  <Typography variant="h3">Portfolio</Typography>
+                  <EtherscanButton size="medium" address={TREASURY_ADDRESS} />
+                </div>
+              ),
               content: (
                 <TreasuryBalancesTable
                   data={treasuryBalanceContext.data}

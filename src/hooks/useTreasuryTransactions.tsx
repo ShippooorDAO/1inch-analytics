@@ -8,6 +8,13 @@ import {
   InputMaybe,
   SortDirection,
 } from '@/gql/graphql';
+import {
+  AGGREGATION_ROUTER_ADDRESSES,
+  GOV_LEFTOVER_EXCHANGER_ADDRESS,
+  GOV_STAKING_ADDRESS,
+  NULL_ADDRESS,
+  TREASURY_ADDRESS,
+} from '@/shared/Constants';
 import { AssetService } from '@/shared/Currency/AssetService';
 import {
   TreasuryTransaction,
@@ -68,9 +75,6 @@ function getTransactionType({
   from?: string | null;
   to?: string | null;
 }) {
-  const TREASURY_ADDRESS = '0x7951c7ef839e26f63da87a42c9a87986507f1c07';
-  const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
-
   if (from === TREASURY_ADDRESS && to === NULL_ADDRESS) {
     return TreasuryTransactionType.BURN;
   }
@@ -99,13 +103,6 @@ function getTransactionSubType({
   from?: string | null;
   to?: string | null;
 }): TreasuryTransactionSubType {
-  const AGGREGATION_ROUTER_ADDRESSES = [
-    '0x1111111254fb6c44bac0bed2854e76f90643097d',
-  ];
-  const GOV_STAKING_ADDRESS = '0x9a0c8ff858d273f57072d714bca7411d717501d7';
-  const GOV_LEFTOVER_EXCHANGER_ADDRESS =
-    '0xdd9f24efc84d93deef3c8745c837ab63e80abd27';
-
   if (
     type === TreasuryTransactionType.DEPOSIT &&
     from === GOV_STAKING_ADDRESS

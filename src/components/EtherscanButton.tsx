@@ -22,13 +22,13 @@ export function EtherscanButton({
   chainId,
   size,
 }: EtherscanButtonProps) {
-  const imageHeight = size === 'small' ? '20px' : '30px';
+  const imageHeight = size === 'small' ? '20px' : '24px';
 
   const link = getEtherscanLink(address, chainId, linkType);
   const blockExplorerName = getBlockExplorerName(chainId);
 
   return (
-    <Tooltip title={`Open on ${blockExplorerName}`} placement="bottom">
+    <Tooltip title={`View on ${blockExplorerName}`} placement="bottom">
       <a href={link} target="_blank" rel="noreferrer">
         <IconButton
           size={size}
