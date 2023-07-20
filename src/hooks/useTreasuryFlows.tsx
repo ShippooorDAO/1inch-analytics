@@ -222,15 +222,16 @@ export interface TreasuryFlows {
 }
 
 export function useTreasuryFlows() {
-  const { data, loading, error } = useQuery<
-    GetTreasuryFlowsQuery,
-    GetTreasuryFlowsQueryVariables
-  >(QUERY);
+  const {
+    data: response,
+    loading,
+    error,
+  } = useQuery<GetTreasuryFlowsQuery, GetTreasuryFlowsQueryVariables>(QUERY);
 
-  const treasuryFlows = data ? convertResponseToModel(data) : undefined;
+  const data = response ? convertResponseToModel(response) : undefined;
 
   return {
-    treasuryFlows,
+    data,
     loading,
     error,
   };

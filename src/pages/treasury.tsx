@@ -10,7 +10,10 @@ import {
   StatsContainerLayout,
 } from '@/components/StatsContainer';
 import { TreasuryBalancesTable } from '@/components/TreasuryBalancesTable';
+import { TreasuryCashflowBreakdownTable } from '@/components/TreasuryCashflowBreakdownTable';
 import { TreasuryTransactionsTable } from '@/components/TreasuryTransactionsTable';
+import { useTreasuryBalances } from '@/hooks/useTreasuryBalances';
+import { useTreasuryCashflowBreakdown } from '@/hooks/useTreasuryCashflowBreakdown';
 import { TreasuryFlows, useTreasuryFlows } from '@/hooks/useTreasuryFlows';
 import Dashboard from '@/layouts/DashboardLayout';
 import {
@@ -19,6 +22,7 @@ import {
   Timeseries,
   TimeWindow,
 } from '@/shared/Model/Timeseries';
+import { format } from '@/shared/Utils/Format';
 
 function ControlledTreasuryFlowsChart({
   treasuryFlows,
@@ -56,21 +60,25 @@ function ControlledTreasuryFlowsChart({
         ...timeseriesSetForTimeInterval.inboundVolumeUsdTimeseries,
         color: green[400],
         type: 'bar',
+        stack: 1,
       },
       {
         ...timeseriesSetForTimeInterval.outboundVolumeUsdTimeseries,
         color: red[400],
         type: 'bar',
+        stack: 1,
       },
       {
         ...timeseriesSetForTimeInterval.cumulativeRevenueUsdTimeseries,
         type: 'area',
         color: green[500],
+        stack: 2,
       },
       {
         ...timeseriesSetForTimeInterval.cumulativeExpenseUsdTimeseries,
         type: 'area',
         color: red[500],
+        stack: 3,
       },
     ] as Timeseries[];
   }, [selectedTimeWindow, selectedTimeInterval, treasuryFlows]);
@@ -84,6 +92,7 @@ function ControlledTreasuryFlowsChart({
         (t) => ({ label: getTimeIntervalLabel(t), value: t })
       )}
       onTimeIntervalChange={setSelectedTimeInterval}
+      excludeTotalFromTooltip={true}
     />
   );
 }
@@ -138,12 +147,14 @@ function ControlledHistoricalBalanceChart({
 }
 
 export default function TreasuryPage() {
-  const { treasuryFlows } = useTreasuryFlows();
+  const treasuryFlowsContext = useTreasuryFlows();
+  const treasuryBalanceContext = useTreasuryBalances();
+  const treasuryCashFlowBreakdown = useTreasuryCashflowBreakdown();
 
   return (
     <Container
       css={css`
-        padding: 20px;
+        padding: 10px 0;
       `}
     >
       <div
@@ -153,29 +164,14 @@ export default function TreasuryPage() {
           gap: 20px;
         `}
       >
-        {/* <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: center;
-            gap: 20px;
-          `}
-        >
-          <MetricsCard
-            title="Net Worth (7D)"
-            value="$1.26M"
-            subValue={<TrendLabelPercent value={-0.09} />}
-          />
-          <MetricsCard title="Total Revenue (7D)" value="$1.26M" />
-        </div> */}
         <StatsContainer
           layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
           title={
             <PageTitle
               icon={
                 <img
-                  height="24px"
-                  width="24px"
+                  height="32px"
+                  width="32px"
                   src="/bank.svg"
                   alt="treasury"
                 />
@@ -184,18 +180,32 @@ export default function TreasuryPage() {
               Treasury
             </PageTitle>
           }
+          loading={treasuryFlowsContext.loading || !treasuryBalanceContext.data}
           headerMetrics={[
             {
-              title: 'Total Revenue',
-              value: '$1.26M',
+              title: 'Total Revenues',
+              value: format(
+                treasuryCashFlowBreakdown?.data?.revenues ?? 12345,
+                {
+                  abbreviate: true,
+                }
+              ),
             },
             {
-              title: 'Total Expense',
-              value: '$1.26M',
+              title: 'Total Expenses',
+              value: format(
+                treasuryCashFlowBreakdown?.data?.expenses ?? 12345,
+                {
+                  abbreviate: true,
+                }
+              ),
             },
             {
               title: 'Net Worth',
-              value: '$1.26M',
+              value:
+                treasuryBalanceContext.data?.totalValueUsd?.toDisplayString({
+                  abbreviate: true,
+                }) ?? 12345,
             },
           ]}
           containers={[
@@ -203,30 +213,42 @@ export default function TreasuryPage() {
               title: 'Balance',
               content: (
                 <ControlledHistoricalBalanceChart
-                  treasuryFlows={treasuryFlows}
+                  treasuryFlows={treasuryFlowsContext.data}
                 />
               ),
             },
             {
               title: 'Cash Flows',
               content: (
-                <ControlledTreasuryFlowsChart treasuryFlows={treasuryFlows} />
+                <ControlledTreasuryFlowsChart
+                  treasuryFlows={treasuryFlowsContext.data}
+                />
               ),
             },
           ]}
         />
-        <div
-          css={(theme) => css`
-            width: 100%;
-            background-color: ${theme.palette.background.paper};
-            border-radius: 24px;
-            ${theme.breakpoints.down('md')} {
-              width: 100%;
-            }
-          `}
-        >
-          <TreasuryBalancesTable />
-        </div>
+        <StatsContainer
+          layout={StatsContainerLayout.TWO_THIRDS_ONE_THIRD}
+          containers={[
+            {
+              title: 'Portfolio',
+              content: (
+                <TreasuryBalancesTable
+                  data={treasuryBalanceContext.data}
+                  mockData={treasuryBalanceContext.mockData ?? undefined}
+                />
+              ),
+            },
+            {
+              title: 'Cash Flow Breakdown',
+              content: (
+                <TreasuryCashflowBreakdownTable
+                  data={treasuryCashFlowBreakdown.data}
+                />
+              ),
+            },
+          ]}
+        />
         <div
           css={(theme) => css`
             width: 100%;

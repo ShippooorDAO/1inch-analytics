@@ -282,7 +282,7 @@ export function TreasuryTransactionsTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h4">Transactions</Typography>
+          <Typography variant="h3">Transactions</Typography>
           <AutoSkeleton loading={!assetOptions}>
             <AssetMultiSelect
               placeholder="Filter by assets"

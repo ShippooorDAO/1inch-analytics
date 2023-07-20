@@ -33,7 +33,8 @@ function getTooltipFormatter(
   timeseriesList: Timeseries[],
   selectedTimeseries: Timeseries[],
   theme: Theme,
-  formatter: (y?: number) => string = (y) => format(y, { symbol: 'USD' })
+  formatter: (y?: number) => string = (y) => format(y, { symbol: 'USD' }),
+  excludeTotalFromTooltip = false
 ) {
   const tooltipRows = timeseriesList
     .filter((t) => timeseriesIsSelected(t, selectedTimeseries))
@@ -51,14 +52,17 @@ function getTooltipFormatter(
     return acc + (data?.y || 0);
   }, 0);
 
-  tooltipRows.push({
-    y: totalY,
-    row: {
-      color: 'white',
-      name: 'Total (all selected chains)',
-      y: formatter(totalY),
-    },
-  });
+  if (!excludeTotalFromTooltip) {
+    tooltipRows.push({
+      y: totalY,
+      row: {
+        color: 'white',
+        name: 'Total',
+        y: formatter(totalY),
+      },
+    });
+  }
+
   tooltipRows.sort((a, b) => {
     return (b.y || 0) - (a.y || 0);
   });
@@ -117,6 +121,7 @@ export interface HistogramChartProps {
   onTimeIntervalChange?: (timeInterval: TimeInterval) => void;
   formatter?: (y?: number) => string;
   yAxisFormatter?: (y?: number) => string;
+  excludeTotalFromTooltip?: boolean;
 }
 
 export function HistogramChart({
@@ -129,6 +134,7 @@ export function HistogramChart({
   onTimeIntervalChange,
   formatter,
   yAxisFormatter = (y) => format(y, { symbol: 'USD', abbreviate: true }),
+  excludeTotalFromTooltip,
 }: HistogramChartProps) {
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
@@ -170,7 +176,7 @@ export function HistogramChart({
         yAxis: t.yAxis,
         data: [...t.data],
         visible: !!timeseriesList?.find((t_) => t.name === t_.name),
-        stack: 1,
+        stack: t.stack ?? 1,
         stacking: 'normal',
         states: {
           inactive: {
@@ -240,7 +246,8 @@ export function HistogramChart({
           selectedTimeseries,
           timeseriesList,
           theme,
-          formatter
+          formatter,
+          excludeTotalFromTooltip
         );
       },
       shared: false,

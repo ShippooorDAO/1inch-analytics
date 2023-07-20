@@ -586,8 +586,7 @@ export default function TokenPage() {
   return (
     <Container
       css={css`
-        padding: 20px;
-        padding-top: 0;
+        padding: 10px 0;
       `}
     >
       <div
@@ -618,8 +617,8 @@ export default function TokenPage() {
                 <PageTitle
                   icon={
                     <img
-                      height="24px"
-                      width="24px"
+                      height="32px"
+                      width="32px"
                       src="/vendors/1inch/1inch_logo.svg"
                       alt="1inch token"
                     />

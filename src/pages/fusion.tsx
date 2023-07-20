@@ -1279,8 +1279,8 @@ export default function FusionPage() {
             <PageTitle
               icon={
                 <img
-                  height="24px"
-                  width="24px"
+                  height="32px"
+                  width="32px"
                   src="/vendors/1inch/fusion.webp"
                   alt="fusion"
                 />

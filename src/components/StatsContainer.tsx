@@ -67,7 +67,7 @@ export function StatsContainer({
           ]}
         >
           {leftContainer.title && (
-            <Typography variant="h4">{leftContainer.title}</Typography>
+            <Typography variant="h3">{leftContainer.title}</Typography>
           )}
           <div
             css={css`
@@ -115,7 +115,7 @@ export function StatsContainer({
           ]}
         >
           {rightContainer.title && (
-            <Typography variant="h4">{rightContainer.title}</Typography>
+            <Typography variant="h3">{rightContainer.title}</Typography>
           )}
           {rightContainer.content}
         </div>

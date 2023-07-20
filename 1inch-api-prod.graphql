@@ -169,6 +169,7 @@ type RootQueryType {
 
   """Fetch treasury flows"""
   treasuryFlows(timespan: TreasuryFlowTimespan = DAY): [TreasuryFlow]
+  treasuryTransactionSums: TransactionSums
 
   """Fetch treasury transactions"""
   treasuryTransactions(assetIds: [String] = [], filter: Filter, fromLabels: [String] = [], pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "timestamp", sortDirection: SortDirection = DESC, toLabels: [String] = []): TreasuryTransactions
@@ -226,6 +227,16 @@ type SystemStatus {
 type TransactionLabels {
   fromLabels: [String]
   toLabels: [String]
+}
+
+type TransactionSum {
+  label: String
+  sumUsd: Float
+}
+
+type TransactionSums {
+  from: [TransactionSum]
+  to: [TransactionSum]
 }
 
 type TreasuryBalance {

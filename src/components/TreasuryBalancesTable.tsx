@@ -3,16 +3,24 @@ import { Typography } from '@mui/material';
 import { lighten, rgba } from 'polished';
 
 import { AutoSkeleton } from '@/components/AutoSkeleton';
-import { useTreasuryBalances } from '@/hooks/useTreasuryBalances';
+import { TreasuryBalances } from '@/shared/Model/TreasuryBalances';
 import { format } from '@/shared/Utils/Format';
 
 import { SlimAssetTableCell } from './table/SlimAssetTableCell';
 
-export function TreasuryBalancesTable() {
-  const { treasury, loading, mock } = useTreasuryBalances();
+interface TreasuryBalancesTableProps {
+  data?: TreasuryBalances;
+  mockData?: TreasuryBalances;
+  loading?: boolean;
+}
 
+export function TreasuryBalancesTable({
+  data,
+  mockData,
+  loading,
+}: TreasuryBalancesTableProps) {
   const displayedRows =
-    !loading && treasury?.positions ? treasury.positions : mock?.positions;
+    !loading && data?.positions ? data.positions : mockData?.positions;
 
   return (
     <div
@@ -29,27 +37,10 @@ export function TreasuryBalancesTable() {
           flex-flow: column;
           gap: 10px;
           white-space: nowrap;
-          padding: 10px;
+          //   padding: 10px;
           height: 100%;
         `}
       >
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-            align-items: center;
-            white-space: nowrap;
-            padding: 10px 10px 0 10px;
-            width: 100%;
-          `}
-        >
-          <Typography variant="h4">Portfolio</Typography>
-          <Typography variant="body2" color="textSecondary">
-            Total Value: &nbsp;
-            {treasury?.totalValueUsd?.toDisplayString({ abbreviate: true })}
-          </Typography>
-        </div>
         {displayedRows?.length === 0 && (
           <div
             css={css`
@@ -99,8 +90,11 @@ export function TreasuryBalancesTable() {
               </AutoSkeleton>
             </div>
             <div
-              css={css`
+              css={(theme) => css`
                 width: 200px;
+                ${theme.breakpoints.down('lg')} {
+                  display: none;
+                }
               `}
             >
               <Typography variant="body2" align="right">
@@ -119,13 +113,29 @@ export function TreasuryBalancesTable() {
 
             <div
               css={css`
-                width: 160px;
+                width: 120px;
                 position: relative;
+                display: flex;
+                flex-flow: row;
+                justify-content: flex-end;
               `}
             >
-              <Typography variant="body2" align="right">
-                {format(row.share, { symbol: '%' })}
-              </Typography>
+              <div
+                css={(theme) =>
+                  css`
+                    display: flex;
+                    border-radius: 10px;
+                    padding: 6px;
+                    margin: -8px;
+                    background-color: ${theme.palette.background.paper};
+                    z-index: 2;
+                  `
+                }
+              >
+                <Typography variant="body2" align="right">
+                  {format(row.share, { symbol: '%' })}
+                </Typography>
+              </div>
             </div>
             <div
               css={(theme) => css`

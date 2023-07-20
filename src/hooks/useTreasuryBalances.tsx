@@ -6,6 +6,7 @@ import {
   GetTreasuryBalancesQueryVariables,
 } from '@/gql/graphql';
 import { AssetService } from '@/shared/Currency/AssetService';
+import { TreasuryBalances } from '@/shared/Model/TreasuryBalances';
 
 import { mockTreasuryBalancesResponse } from './mocks/TreasuryBalances';
 import { useAssetService } from './useAssetService';
@@ -32,7 +33,7 @@ const QUERY = gql`
 function convertResponseToModel(
   response: GetTreasuryBalancesQuery,
   assetService: AssetService
-) {
+): TreasuryBalances {
   const totalValueUsd =
     response.treasuryBalances?.treasuryBalances
       ?.map((t) => t?.amountUsd ?? 0)
@@ -66,17 +67,20 @@ function convertResponseToModel(
 
 export function useTreasuryBalances() {
   const assetService = useAssetService();
-  const { data, loading, error } = useQuery<
-    GetTreasuryBalancesQuery,
-    GetTreasuryBalancesQueryVariables
-  >(QUERY);
+  const {
+    data: response,
+    loading,
+    error,
+  } = useQuery<GetTreasuryBalancesQuery, GetTreasuryBalancesQueryVariables>(
+    QUERY
+  );
 
-  const treasury =
-    assetService && data
-      ? convertResponseToModel(data, assetService)
+  const data =
+    assetService && response
+      ? convertResponseToModel(response, assetService)
       : undefined;
 
-  const mock = useMemo(() => {
+  const mockData = useMemo(() => {
     if (!assetService) {
       return null;
     }
@@ -84,9 +88,9 @@ export function useTreasuryBalances() {
   }, [assetService]);
 
   return {
-    treasury,
+    data,
     loading,
     error,
-    mock,
+    mockData,
   };
 }

@@ -253,7 +253,7 @@ export default function Home() {
               `}
             >
               <img height="24px" width="24px" src="/chart.svg" alt="volume" />
-              <Typography variant="h4">Volume</Typography>
+              <Typography variant="h3">Volume</Typography>
             </div>
           }
           // backgroundImageUrl="card-bg-5.svg"
@@ -418,7 +418,7 @@ export default function Home() {
                 src="/swap.svg"
                 alt="transactions"
               />
-              <Typography variant="h4">Transactions</Typography>
+              <Typography variant="h3">Transactions</Typography>
             </div>
           }
           layout={StatsContainerLayout.TWO_THIRDS_ONE_THIRD}
@@ -581,7 +581,7 @@ export default function Home() {
               `}
             >
               <img height="24px" width="24px" src="/profile.svg" alt="users" />
-              <Typography variant="h4">Users</Typography>
+              <Typography variant="h3">Users</Typography>
             </div>
           }
           // backgroundImageUrl="card-bg-2.svg"

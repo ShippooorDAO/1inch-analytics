@@ -17,7 +17,7 @@ export function PageTitle({ children, icon }: PageTitleProps) {
       `}
     >
       {icon}
-      <Typography variant="h3" color="textPrimary" whiteSpace="nowrap">
+      <Typography variant="h2" color="textPrimary" whiteSpace="nowrap">
         {children}
       </Typography>
     </div>

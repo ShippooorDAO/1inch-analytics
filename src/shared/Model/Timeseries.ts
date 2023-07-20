@@ -12,6 +12,7 @@ export interface Timeseries {
   yAxis?: string | number;
   visible?: boolean;
   type?: 'bar' | 'area' | 'line' | 'areaspline' | 'spline';
+  stack?: number;
 }
 
 export enum TimeWindow {
