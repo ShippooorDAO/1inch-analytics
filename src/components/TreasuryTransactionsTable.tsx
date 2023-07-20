@@ -209,7 +209,7 @@ export function TreasuryTransactionsTable() {
 
   useEffect(() => {
     setPageNumber(0);
-  }, [sortBy, selectedTransactionTypes]);
+  }, [sortBy, selectedTransactionTypes, selectedAssets]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const sortMenuOpen = Boolean(anchorEl);
