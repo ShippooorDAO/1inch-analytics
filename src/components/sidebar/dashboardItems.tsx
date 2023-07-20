@@ -71,8 +71,6 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
           <img height="24px" width="24px" src="/bank.svg" alt="treasury" />
         ),
         title: 'Treasury',
-        badge: 'Soon',
-        disabled: true,
       },
     ],
     [

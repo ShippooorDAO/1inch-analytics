@@ -1275,7 +1275,20 @@ export default function FusionPage() {
         `}
       >
         <MultiTabSection
-          title={<PageTitle>Fusion Mode</PageTitle>}
+          title={
+            <PageTitle
+              icon={
+                <img
+                  height="24px"
+                  width="24px"
+                  src="/vendors/1inch/fusion.webp"
+                  alt="fusion"
+                />
+              }
+            >
+              Fusion Mode
+            </PageTitle>
+          }
           tabs={[
             {
               label: 'Volume',

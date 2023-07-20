@@ -170,7 +170,20 @@ export default function TreasuryPage() {
         </div> */}
         <StatsContainer
           layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
-          title={<PageTitle>Treasury</PageTitle>}
+          title={
+            <PageTitle
+              icon={
+                <img
+                  height="24px"
+                  width="24px"
+                  src="/bank.svg"
+                  alt="treasury"
+                />
+              }
+            >
+              Treasury
+            </PageTitle>
+          }
           headerMetrics={[
             {
               title: 'Total Revenue',

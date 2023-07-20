@@ -614,7 +614,20 @@ export default function TokenPage() {
             <StatsContainer
               layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
               loading={!marketData}
-              title={<PageTitle>1INCH Token</PageTitle>}
+              title={
+                <PageTitle
+                  icon={
+                    <img
+                      height="24px"
+                      width="24px"
+                      src="/vendors/1inch/1inch_logo.svg"
+                      alt="1inch token"
+                    />
+                  }
+                >
+                  1INCH Token
+                </PageTitle>
+              }
               headerMetrics={[
                 {
                   title: 'Price (24H)',
