@@ -10,6 +10,7 @@ import {
   StatsContainer,
   StatsContainerLayout,
 } from '@/components/StatsContainer';
+import { TreasuryBalancesTable } from '@/components/TreasuryBalancesTable';
 import { TreasuryTransactionsTable } from '@/components/TreasuryTransactionsTable';
 import { TreasuryFlows, useTreasuryFlows } from '@/hooks/useTreasuryFlows';
 import Dashboard from '@/layouts/DashboardLayout';
@@ -188,6 +189,19 @@ export default function TreasuryPage() {
             },
           ]}
         />
+        <div
+          css={(theme) => css`
+            width: 100%;
+            background-color: ${theme.palette.background.paper};
+            border-radius: 24px;
+            ${theme.breakpoints.down('md')} {
+              width: 100%;
+            }
+            height: 768px;
+          `}
+        >
+          <TreasuryBalancesTable />
+        </div>
         <div
           css={(theme) => css`
             width: 100%;

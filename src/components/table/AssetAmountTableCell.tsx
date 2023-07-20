@@ -21,11 +21,9 @@ export function AssetAmountTableCell({
         padding-right: 10px;
       `}
     >
-      <Typography variant="body2" fontWeight={300} color="textSecondary">
-        {amount.toDisplayString({ abbreviate: true })}
-      </Typography>
-      <Typography variant="h3" fontWeight={300}>
-        {amountUsd.toDisplayString({ abbreviate: true })}
+      <Typography variant="body2">{amount.toDisplayString()}</Typography>
+      <Typography variant="body2" color="textSecondary">
+        {amountUsd.toDisplayString()}
       </Typography>
     </div>
   );

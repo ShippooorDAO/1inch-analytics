@@ -92,11 +92,9 @@ export function AssetTableCell({ asset, assetPriceUsd }: AssetTableCellProps) {
               justify-content: space-between;
             `}
           >
-            <Typography variant="body2" fontWeight={800}>
-              {asset.displayName}
-            </Typography>
+            <Typography variant="body2">{asset.displayName}</Typography>
             {priceUsd && (
-              <Typography variant="subtitle1" color="textSecondary">
+              <Typography variant="body2" color="textSecondary">
                 {priceUsd?.toDisplayString()}
               </Typography>
             )}

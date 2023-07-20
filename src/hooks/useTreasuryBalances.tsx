@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { useMemo } from 'react';
 
 import {
   GetTreasuryBalancesQuery,
@@ -6,6 +7,7 @@ import {
 } from '@/gql/graphql';
 import { AssetService } from '@/shared/Currency/AssetService';
 
+import { mockTreasuryBalancesResponse } from './mocks/TreasuryBalances';
 import { useAssetService } from './useAssetService';
 
 const QUERY = gql`
@@ -64,9 +66,17 @@ export function useTreasuryBalances() {
       ? convertResponseToModel(data, assetService)
       : undefined;
 
+  const mock = useMemo(() => {
+    if (!assetService) {
+      return null;
+    }
+    return convertResponseToModel(mockTreasuryBalancesResponse, assetService);
+  }, [assetService]);
+
   return {
     treasuryBalances,
     loading,
     error,
+    mock,
   };
 }
