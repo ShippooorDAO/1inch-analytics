@@ -5,7 +5,7 @@ import {
   ToggleButtonGroup,
   Typography,
 } from '@mui/material';
-import { ClassAttributes, HTMLAttributes, useState } from 'react';
+import React, { ClassAttributes, HTMLAttributes, useState } from 'react';
 
 export type SectionContainerProps = {
   title?: string;
@@ -55,6 +55,7 @@ export function SectionContainer({
 }
 
 interface MultiTabSectionContainerProps {
+  title: React.ReactNode;
   tabs: {
     key: string;
     label: string;
@@ -64,6 +65,7 @@ interface MultiTabSectionContainerProps {
 }
 
 export function MultiTabSection({
+  title,
   tabs,
   loading,
 }: MultiTabSectionContainerProps) {
@@ -75,29 +77,47 @@ export function MultiTabSection({
         display: flex;
         flex-flow: column;
         justify-content: center;
-        align-items: flex-end;
-        gap: 20px;
+        align-items: center;
+        gap: 10px;
         width: 100%;
       `}
     >
-      <ToggleButtonGroup
-        color="primary"
-        exclusive
-        disabled={loading}
-        aria-label="Select tab"
-        value={selectedTab}
-        onChange={(e, value) => {
-          if (value !== null) {
-            setSelectedTab(value);
-          }
-        }}
+      <div
+        css={css`
+          display: flex;
+          flex-flow: row;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        `}
       >
-        {tabs.map((tab) => (
-          <ToggleButton key={tab.key} value={tab.key}>
-            {loading ? <Skeleton variant="text" width="80px" /> : tab.label}
-          </ToggleButton>
-        ))}
-      </ToggleButtonGroup>
+        {title && title}
+        <ToggleButtonGroup
+          color="primary"
+          exclusive
+          disabled={loading}
+          aria-label="Select tab"
+          value={selectedTab}
+          onChange={(e, value) => {
+            if (value !== null) {
+              setSelectedTab(value);
+            }
+          }}
+        >
+          {tabs.map((tab) => (
+            <ToggleButton key={tab.key} value={tab.key}>
+              {loading ? <Skeleton variant="text" width="80px" /> : tab.label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+        <div
+          css={css`
+            visibility: hidden;
+          `}
+        >
+          {title}
+        </div>
+      </div>
       <div
         css={css`
           width: 100%;

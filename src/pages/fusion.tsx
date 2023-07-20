@@ -326,7 +326,7 @@ function FusionResolversTable({
             width: 100%;
           `}
         >
-          <Typography variant="h3">Fusion Resolvers</Typography>
+          <Typography variant="h4">Fusion Resolvers</Typography>
           <TimeWindowToggleButtonGroup
             value={timeWindow}
             onChange={(e, value) => setTimeWindow(value)}
@@ -647,7 +647,7 @@ function FusionTradersTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h3">Fusion Traders</Typography>
+          <Typography variant="h4">Fusion Traders</Typography>
           <Button
             onClick={handleSortMenuClick}
             endIcon={<Sort />}
@@ -904,7 +904,7 @@ function FusionTradesTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h3">Top Fusion Trades</Typography>
+          <Typography variant="h4">Top Fusion Trades</Typography>
           <AutoSkeleton loading={!assetOptions}>
             <AssetMultiSelect
               placeholder="Filter by assets"
@@ -1274,190 +1274,181 @@ export default function FusionPage() {
           gap: 20px;
         `}
       >
-        <PageTitle>Fusion Mode</PageTitle>
-        <div
-          css={css`
-            margin-top: -40px;
-          `}
-        >
-          <MultiTabSection
-            tabs={[
-              {
-                label: 'Volume',
-                key: 'volume',
-                content: (
-                  <StatsContainer
-                    containers={[
-                      {
-                        title: 'Historical volume per resolver',
-                        content: (
-                          <HistogramChart
-                            timeseriesList={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => m.volumeWeeklyTimeseries)}
-                            timeWindow={TimeWindow.MAX}
-                            timeInterval={TimeInterval.WEEKLY}
-                            onTimeWindowChange={() => {}}
-                            onTimeIntervalChange={() => {}}
-                          />
-                        ),
-                      },
-                      {
-                        title: 'Current volume per resolver',
-                        content: (
-                          <ControlledBarChart
-                            seriesName="Volume (USD)"
-                            volumeLastWeek={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => {
-                              const volume = m?.volumeLastWeek ?? 0;
-                              return {
-                                name: m.volumeWeeklyTimeseries.name,
-                                y: volume,
-                                color: m.volumeWeeklyTimeseries.color,
-                              };
-                            })}
-                            volumeAllTime={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => {
-                              const volume = m?.volumeAllTime ?? 0;
-                              return {
-                                name: m.volumeWeeklyTimeseries.name,
-                                y: volume,
-                                color: m.volumeWeeklyTimeseries.color,
-                              };
-                            })}
-                            tooltipFormatter={(y) =>
-                              format(y, { symbol: 'USD' })
-                            }
-                            labelFormatter={(y) =>
-                              format(y, { symbol: 'USD', abbreviate: true })
-                            }
-                          />
-                        ),
-                      },
-                    ]}
-                  />
-                ),
-              },
-              {
-                label: 'Transactions',
-                key: 'transactions',
-                content: (
-                  <StatsContainer
-                    containers={[
-                      {
-                        title: 'Historical transaction count per resolver',
-                        content: (
-                          <HistogramChart
-                            timeseriesList={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => m.transactionsCountWeeklyTimeseries)}
-                            timeWindow={TimeWindow.MAX}
-                            timeInterval={TimeInterval.WEEKLY}
-                            onTimeWindowChange={() => {}}
-                            onTimeIntervalChange={() => {}}
-                            formatter={(y) => format(y, { abbreviate: true })}
-                          />
-                        ),
-                      },
-                      {
-                        title: 'Total transaction count per resolver',
-                        content: (
-                          <ControlledBarChart
-                            seriesName="Transactions"
-                            volumeLastWeek={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => {
-                              const y = m?.transactionsCountLastWeek ?? 0;
-                              return {
-                                name: m.volumeWeeklyTimeseries.name,
-                                y,
-                                color: m.volumeWeeklyTimeseries.color,
-                              };
-                            })}
-                            volumeAllTime={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => {
-                              const y = m?.transactionsCountAllTime ?? 0;
-                              return {
-                                name: m.transactionsCountWeeklyTimeseries.name,
-                                y,
-                                color:
-                                  m.transactionsCountWeeklyTimeseries.color,
-                              };
-                            })}
-                            tooltipFormatter={(y) => format(y)}
-                            labelFormatter={(y) =>
-                              format(y, { abbreviate: true })
-                            }
-                          />
-                        ),
-                      },
-                    ]}
-                  />
-                ),
-              },
-              {
-                label: 'Users',
-                key: 'users',
-                content: (
-                  <StatsContainer
-                    containers={[
-                      {
-                        title: 'Historical users per resolver',
-                        content: (
-                          <HistogramChart
-                            timeseriesList={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => m.walletsCountWeeklyTimeseries)}
-                            timeWindow={TimeWindow.MAX}
-                            timeInterval={TimeInterval.WEEKLY}
-                            onTimeWindowChange={() => {}}
-                            onTimeIntervalChange={() => {}}
-                            formatter={(y) => format(y, { abbreviate: true })}
-                          />
-                        ),
-                      },
-                      {
-                        title: 'Total users per resolver',
-                        content: (
-                          <ControlledBarChart
-                            seriesName="Users"
-                            volumeLastWeek={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => {
-                              const y = m?.walletsCountLastWeek ?? 0;
-                              return {
-                                name: m.walletsCountWeeklyTimeseries.name,
-                                y,
-                                color: m.walletsCountWeeklyTimeseries.color,
-                              };
-                            })}
-                            volumeAllTime={Array.from(
-                              fusionResolversMetrics?.byResolver.values() ?? []
-                            ).map((m) => {
-                              const y = m?.transactionsCountAllTime ?? 0;
-                              return {
-                                name: m.walletsCountWeeklyTimeseries.name,
-                                y,
-                                color: m.walletsCountWeeklyTimeseries.color,
-                              };
-                            })}
-                            tooltipFormatter={(y) => format(y)}
-                            labelFormatter={(y) =>
-                              format(y, { abbreviate: true })
-                            }
-                          />
-                        ),
-                      },
-                    ]}
-                  />
-                ),
-              },
-            ]}
-          />
-        </div>
+        <MultiTabSection
+          title={<PageTitle>Fusion Mode</PageTitle>}
+          tabs={[
+            {
+              label: 'Volume',
+              key: 'volume',
+              content: (
+                <StatsContainer
+                  containers={[
+                    {
+                      title: 'Historical volume per resolver',
+                      content: (
+                        <HistogramChart
+                          timeseriesList={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => m.volumeWeeklyTimeseries)}
+                          timeWindow={TimeWindow.MAX}
+                          timeInterval={TimeInterval.WEEKLY}
+                          onTimeWindowChange={() => {}}
+                          onTimeIntervalChange={() => {}}
+                        />
+                      ),
+                    },
+                    {
+                      title: 'Current volume per resolver',
+                      content: (
+                        <ControlledBarChart
+                          seriesName="Volume (USD)"
+                          volumeLastWeek={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => {
+                            const volume = m?.volumeLastWeek ?? 0;
+                            return {
+                              name: m.volumeWeeklyTimeseries.name,
+                              y: volume,
+                              color: m.volumeWeeklyTimeseries.color,
+                            };
+                          })}
+                          volumeAllTime={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => {
+                            const volume = m?.volumeAllTime ?? 0;
+                            return {
+                              name: m.volumeWeeklyTimeseries.name,
+                              y: volume,
+                              color: m.volumeWeeklyTimeseries.color,
+                            };
+                          })}
+                          tooltipFormatter={(y) => format(y, { symbol: 'USD' })}
+                          labelFormatter={(y) =>
+                            format(y, { symbol: 'USD', abbreviate: true })
+                          }
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              ),
+            },
+            {
+              label: 'Transactions',
+              key: 'transactions',
+              content: (
+                <StatsContainer
+                  containers={[
+                    {
+                      title: 'Historical transaction count per resolver',
+                      content: (
+                        <HistogramChart
+                          timeseriesList={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => m.transactionsCountWeeklyTimeseries)}
+                          timeWindow={TimeWindow.MAX}
+                          timeInterval={TimeInterval.WEEKLY}
+                          onTimeWindowChange={() => {}}
+                          onTimeIntervalChange={() => {}}
+                          formatter={(y) => format(y, { abbreviate: true })}
+                        />
+                      ),
+                    },
+                    {
+                      title: 'Total transaction count per resolver',
+                      content: (
+                        <ControlledBarChart
+                          seriesName="Transactions"
+                          volumeLastWeek={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => {
+                            const y = m?.transactionsCountLastWeek ?? 0;
+                            return {
+                              name: m.volumeWeeklyTimeseries.name,
+                              y,
+                              color: m.volumeWeeklyTimeseries.color,
+                            };
+                          })}
+                          volumeAllTime={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => {
+                            const y = m?.transactionsCountAllTime ?? 0;
+                            return {
+                              name: m.transactionsCountWeeklyTimeseries.name,
+                              y,
+                              color: m.transactionsCountWeeklyTimeseries.color,
+                            };
+                          })}
+                          tooltipFormatter={(y) => format(y)}
+                          labelFormatter={(y) =>
+                            format(y, { abbreviate: true })
+                          }
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              ),
+            },
+            {
+              label: 'Users',
+              key: 'users',
+              content: (
+                <StatsContainer
+                  containers={[
+                    {
+                      title: 'Historical users per resolver',
+                      content: (
+                        <HistogramChart
+                          timeseriesList={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => m.walletsCountWeeklyTimeseries)}
+                          timeWindow={TimeWindow.MAX}
+                          timeInterval={TimeInterval.WEEKLY}
+                          onTimeWindowChange={() => {}}
+                          onTimeIntervalChange={() => {}}
+                          formatter={(y) => format(y, { abbreviate: true })}
+                        />
+                      ),
+                    },
+                    {
+                      title: 'Total users per resolver',
+                      content: (
+                        <ControlledBarChart
+                          seriesName="Users"
+                          volumeLastWeek={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => {
+                            const y = m?.walletsCountLastWeek ?? 0;
+                            return {
+                              name: m.walletsCountWeeklyTimeseries.name,
+                              y,
+                              color: m.walletsCountWeeklyTimeseries.color,
+                            };
+                          })}
+                          volumeAllTime={Array.from(
+                            fusionResolversMetrics?.byResolver.values() ?? []
+                          ).map((m) => {
+                            const y = m?.transactionsCountAllTime ?? 0;
+                            return {
+                              name: m.walletsCountWeeklyTimeseries.name,
+                              y,
+                              color: m.walletsCountWeeklyTimeseries.color,
+                            };
+                          })}
+                          tooltipFormatter={(y) => format(y)}
+                          labelFormatter={(y) =>
+                            format(y, { abbreviate: true })
+                          }
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
         <div
           css={css`
             display: flex;

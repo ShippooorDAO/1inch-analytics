@@ -209,7 +209,7 @@ export default function Home() {
         css={css`
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
+          align-items: center;
           gap: 20px;
           margin-bottom: 5px;
         `}
@@ -253,7 +253,7 @@ export default function Home() {
               `}
             >
               <img height="24px" width="24px" src="/chart.svg" alt="volume" />
-              <Typography variant="h3">Volume</Typography>
+              <Typography variant="h4">Volume</Typography>
             </div>
           }
           // backgroundImageUrl="card-bg-5.svg"
@@ -418,7 +418,7 @@ export default function Home() {
                 src="/swap.svg"
                 alt="transactions"
               />
-              <Typography variant="h3">Transactions</Typography>
+              <Typography variant="h4">Transactions</Typography>
             </div>
           }
           layout={StatsContainerLayout.TWO_THIRDS_ONE_THIRD}
@@ -429,7 +429,6 @@ export default function Home() {
                 data?.allSelectedChains.transactionsCountAllTime ??
                   loadingStubValue,
                 {
-                  symbol: 'USD',
                   abbreviate: true,
                 }
               ),
@@ -441,7 +440,6 @@ export default function Home() {
                 data?.allSelectedChains.transactionsCountLastDay ??
                   loadingStubValue,
                 {
-                  symbol: 'USD',
                   abbreviate: true,
                 }
               ),
@@ -461,7 +459,6 @@ export default function Home() {
                 data?.allSelectedChains.transactionsCountLastWeek ??
                   loadingStubValue,
                 {
-                  symbol: 'USD',
                   abbreviate: true,
                 }
               ),
@@ -481,7 +478,6 @@ export default function Home() {
                 data?.allSelectedChains.transactionsCountLastMonth ??
                   loadingStubValue,
                 {
-                  symbol: 'USD',
                   abbreviate: true,
                 }
               ),
@@ -585,7 +581,7 @@ export default function Home() {
               `}
             >
               <img height="24px" width="24px" src="/profile.svg" alt="users" />
-              <Typography variant="h3">Users</Typography>
+              <Typography variant="h4">Users</Typography>
             </div>
           }
           // backgroundImageUrl="card-bg-2.svg"

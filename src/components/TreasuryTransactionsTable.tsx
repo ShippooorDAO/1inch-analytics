@@ -282,7 +282,7 @@ export function TreasuryTransactionsTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h3">Transactions</Typography>
+          <Typography variant="h4">Transactions</Typography>
           <AutoSkeleton loading={!assetOptions}>
             <AssetMultiSelect
               placeholder="Filter by assets"
@@ -387,7 +387,7 @@ export function TreasuryTransactionsTable() {
               height: 100%;
             `}
           >
-            <Typography variant="h3">No trades found</Typography>
+            <Typography variant="h4">No trades found</Typography>
             <Button variant="outlined" onClick={() => resetFilters()}>
               Reset Filters
             </Button>

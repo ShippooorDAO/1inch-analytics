@@ -4,7 +4,6 @@ import { green, red } from '@mui/material/colors';
 import { useMemo, useState } from 'react';
 
 import { HistogramChart } from '@/components/chart/HistogramChart';
-import { MetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { PageTitle } from '@/components/PageTitle';
 import {
   StatsContainer,
@@ -154,8 +153,7 @@ export default function TreasuryPage() {
           gap: 20px;
         `}
       >
-        <PageTitle>Treasury</PageTitle>
-        <div
+        {/* <div
           css={css`
             display: flex;
             flex-flow: row;
@@ -169,12 +167,27 @@ export default function TreasuryPage() {
             subValue={<TrendLabelPercent value={-0.09} />}
           />
           <MetricsCard title="Total Revenue (7D)" value="$1.26M" />
-        </div>
+        </div> */}
         <StatsContainer
           layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
+          title={<PageTitle>Treasury</PageTitle>}
+          headerMetrics={[
+            {
+              title: 'Total Revenue',
+              value: '$1.26M',
+            },
+            {
+              title: 'Total Expense',
+              value: '$1.26M',
+            },
+            {
+              title: 'Net Worth',
+              value: '$1.26M',
+            },
+          ]}
           containers={[
             {
-              title: 'Treasury Balance',
+              title: 'Balance',
               content: (
                 <ControlledHistoricalBalanceChart
                   treasuryFlows={treasuryFlows}

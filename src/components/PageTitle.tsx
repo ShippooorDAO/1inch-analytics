@@ -6,7 +6,7 @@ export interface PageTitleProps {
 
 export function PageTitle({ children }: PageTitleProps) {
   return (
-    <Typography variant="h3" fontWeight={600} color="textPrimary">
+    <Typography variant="h3" color="textPrimary" whiteSpace="nowrap">
       {children}
     </Typography>
   );

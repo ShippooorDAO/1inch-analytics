@@ -44,7 +44,7 @@ export function TreasuryBalancesTable() {
             width: 100%;
           `}
         >
-          <Typography variant="h3">Portfolio</Typography>
+          <Typography variant="h4">Portfolio</Typography>
           <Typography variant="body2" color="textSecondary">
             Total Value: &nbsp;
             {treasury?.totalValueUsd?.toDisplayString({ abbreviate: true })}
@@ -61,7 +61,9 @@ export function TreasuryBalancesTable() {
               height: 100%;
             `}
           >
-            <Typography variant="h3">No positions found</Typography>
+            <Typography variant="subtitle1" color="textSecondary">
+              No positions found
+            </Typography>
           </div>
         )}
         {displayedRows?.map((row) => (

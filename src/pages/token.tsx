@@ -306,7 +306,7 @@ function StakingWalletsTable({
             width: 100%;
           `}
         >
-          <Typography variant="h3">Staking Wallets</Typography>
+          <Typography variant="h4">Staking Wallets</Typography>
           <StakingVersionToggleButtonGroup
             value={stakingVersion}
             onChange={handleVersionChange}
@@ -587,6 +587,7 @@ export default function TokenPage() {
     <Container
       css={css`
         padding: 20px;
+        padding-top: 0;
       `}
     >
       <div
@@ -596,7 +597,6 @@ export default function TokenPage() {
           gap: 20px;
         `}
       >
-        <PageTitle>1INCH Token</PageTitle>
         <div
           css={css`
             display: flex;
@@ -614,24 +614,7 @@ export default function TokenPage() {
             <StatsContainer
               layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
               loading={!marketData}
-              title={
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row;
-                    flex: 1 0 auto;
-                    gap: 5px;
-                  `}
-                >
-                  <img
-                    height="24px"
-                    width="24px"
-                    src="/market.svg"
-                    alt="market data"
-                  />
-                  <Typography variant="h3">1INCH Market data</Typography>
-                </div>
-              }
+              title={<PageTitle>1INCH Token</PageTitle>}
               headerMetrics={[
                 {
                   title: 'Price (24H)',
