@@ -33,7 +33,12 @@ function convertResponseToModel(
   response: GetTreasuryBalancesQuery,
   assetService: AssetService
 ) {
-  return (
+  const totalValueUsd =
+    response.treasuryBalances?.treasuryBalances
+      ?.map((t) => t?.amountUsd ?? 0)
+      .reduce((a, b) => a + b, 0) ?? 1;
+
+  const positions =
     response.treasuryBalances?.treasuryBalances
       ?.filter(
         (t) =>
@@ -50,8 +55,13 @@ function convertResponseToModel(
         asset: assetService.store.getById(t.asset!.id!),
         amount: assetService.createAssetAmount(t.amount!, t.asset!.id!),
         amountUsd: assetService.createUsdAmount(t.amountUsd!),
-      })) ?? []
-  );
+        share: t.amountUsd! / totalValueUsd,
+      })) ?? [];
+
+  return {
+    positions,
+    totalValueUsd: assetService.createUsdAmount(totalValueUsd),
+  };
 }
 
 export function useTreasuryBalances() {
@@ -61,7 +71,7 @@ export function useTreasuryBalances() {
     GetTreasuryBalancesQueryVariables
   >(QUERY);
 
-  const treasuryBalances =
+  const treasury =
     assetService && data
       ? convertResponseToModel(data, assetService)
       : undefined;
@@ -74,7 +84,7 @@ export function useTreasuryBalances() {
   }, [assetService]);
 
   return {
-    treasuryBalances,
+    treasury,
     loading,
     error,
     mock,

@@ -1,48 +1,18 @@
 import { css } from '@emotion/react';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
-import { Button, IconButton, Typography } from '@mui/material';
-import { lighten } from 'polished';
-import { useState } from 'react';
+import { Typography } from '@mui/material';
+import { lighten, rgba } from 'polished';
 
 import { AutoSkeleton } from '@/components/AutoSkeleton';
 import { useTreasuryBalances } from '@/hooks/useTreasuryBalances';
+import { format } from '@/shared/Utils/Format';
 
-import { AssetAmountTableCell } from './table/AssetAmountTableCell';
-import { AssetTableCell } from './table/AssetTableCell';
+import { SlimAssetTableCell } from './table/SlimAssetTableCell';
 
 export function TreasuryBalancesTable() {
-  const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const { treasury, loading, mock } = useTreasuryBalances();
 
-  const { treasuryBalances, loading, mock } = useTreasuryBalances();
-
-  const rows = !loading && treasuryBalances ? treasuryBalances : mock;
-
-  //   useEffect(() => {
-  //     setPageNumber(0);
-  //   }, [sortBy, selectedTransactionTypes, selectedAssets]);
-
-  const isLastPage = pageSize * (pageNumber + 1) >= (rows?.length ?? 0);
-  const isFirstPage = pageNumber === 0;
-
-  const displayedRows = rows?.slice(
-    pageNumber * pageSize,
-    pageNumber * pageSize + pageSize
-  );
-
-  const nextPage = () => {
-    if (rows?.length && rows.length < pageSize * pageNumber) return;
-    setPageNumber(pageNumber + 1);
-  };
-
-  const resetFilters = () => {
-    // setSelectedAssets([]);
-  };
-
-  const previousPage = () => {
-    if (pageNumber === 0) return;
-    setPageNumber(pageNumber - 1);
-  };
+  const displayedRows =
+    !loading && treasury?.positions ? treasury.positions : mock?.positions;
 
   return (
     <div
@@ -59,8 +29,7 @@ export function TreasuryBalancesTable() {
           flex-flow: column;
           gap: 10px;
           white-space: nowrap;
-          padding-left: 10px;
-          padding-right: 10px;
+          padding: 10px;
           height: 100%;
         `}
       >
@@ -76,6 +45,10 @@ export function TreasuryBalancesTable() {
           `}
         >
           <Typography variant="h3">Portfolio</Typography>
+          <Typography variant="body2" color="textSecondary">
+            Total Value: &nbsp;
+            {treasury?.totalValueUsd?.toDisplayString({ abbreviate: true })}
+          </Typography>
         </div>
         {displayedRows?.length === 0 && (
           <div
@@ -88,10 +61,7 @@ export function TreasuryBalancesTable() {
               height: 100%;
             `}
           >
-            <Typography variant="h3">No trades found</Typography>
-            <Button variant="outlined" onClick={() => resetFilters()}>
-              Reset Filters
-            </Button>
+            <Typography variant="h3">No positions found</Typography>
           </div>
         )}
         {displayedRows?.map((row) => (
@@ -102,9 +72,11 @@ export function TreasuryBalancesTable() {
               flex-flow: row;
               gap: 10px;
               align-items: center;
+              overflow: hidden;
               justify-content: space-between;
               padding: 10px 20px;
-              border-radius: 24px;
+              border-radius: 16px;
+              position: relative;
               background-color: ${lighten(
                 0.05,
                 theme.palette.background.paper
@@ -117,42 +89,78 @@ export function TreasuryBalancesTable() {
                 flex-flow: row;
                 gap: 10px;
                 align-items: center;
-                width: 160px;
+                flex-grow: 1;
               `}
             >
               <AutoSkeleton loading={!row.asset}>
-                <AssetTableCell asset={row.asset!} />
+                <SlimAssetTableCell asset={row.asset!} />
               </AutoSkeleton>
             </div>
-            <div>
-              <AutoSkeleton loading={!row.amount || !row.amountUsd}>
-                <AssetAmountTableCell
-                  amount={row.amount!}
-                  amountUsd={row.amountUsd!}
-                />
-              </AutoSkeleton>
+            <div
+              css={css`
+                width: 200px;
+              `}
+            >
+              <Typography variant="body2" align="right">
+                {row.amount?.toDisplayString()}
+              </Typography>
             </div>
+            <div
+              css={css`
+                width: 200px;
+              `}
+            >
+              <Typography variant="body2" align="right">
+                {row.amountUsd?.toDisplayString()}
+              </Typography>
+            </div>
+
+            <div
+              css={css`
+                width: 160px;
+                position: relative;
+              `}
+            >
+              <Typography variant="body2" align="right">
+                {format(row.share, { symbol: '%' })}
+              </Typography>
+            </div>
+            <div
+              css={(theme) => css`
+                position: absolute;
+                background-color: ${rgba(theme.palette.primary.main, 0.07)};
+                bottom: 0;
+                overflow: hidden;
+                right: 0;
+                width: calc(${row.share * 100}%);
+                height: 100%;
+                border-radius: 4px;
+              `}
+            >
+              <div
+                css={(theme) => css`
+                  position: absolute;
+                  background-color: ${theme.palette.primary.main};
+                  bottom: 0;
+                  right: 0;
+                  width: 100%;
+                  height: 5px;
+                `}
+              ></div>
+            </div>
+            <div
+              css={(theme) => css`
+                position: absolute;
+                background-color: ${rgba(theme.palette.primary.main, 0.07)};
+                bottom: 0;
+                right: 0;
+                width: 100%;
+                height: 5px;
+                border-radius: 5px;
+              `}
+            ></div>
           </div>
         ))}
-      </div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: row;
-          justify-content: center;
-          align-items: center;
-          gap: 10px;
-        `}
-      >
-        <IconButton onClick={previousPage} disabled={loading || isFirstPage}>
-          <ArrowBack />
-        </IconButton>
-        <Typography variant="body1" fontWeight={500}>
-          {pageNumber + 1} / {Math.ceil((rows?.length ?? 0) / pageSize)}
-        </Typography>
-        <IconButton onClick={nextPage} disabled={loading || isLastPage}>
-          <ArrowForward />
-        </IconButton>
       </div>
     </div>
   );

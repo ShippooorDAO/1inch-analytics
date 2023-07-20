@@ -197,7 +197,6 @@ export default function TreasuryPage() {
             ${theme.breakpoints.down('md')} {
               width: 100%;
             }
-            height: 768px;
           `}
         >
           <TreasuryBalancesTable />
