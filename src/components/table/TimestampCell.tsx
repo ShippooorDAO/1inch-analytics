@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
-import { Typography } from '@mui/material';
+import { NoSsr, Typography } from '@mui/material';
 import moment from 'moment';
+import TimeAgo from 'react-timeago';
 
 export interface TimestampCellProps {
   timestamp: number;
@@ -30,7 +31,9 @@ export function TimestampCell({ timestamp }: TimestampCellProps) {
         `}
       >
         <Typography variant="subtitle1" color="textSecondary">
-          {moment(date).fromNow()}
+          <NoSsr>
+            <TimeAgo date={date} />
+          </NoSsr>
         </Typography>
       </div>
     </div>

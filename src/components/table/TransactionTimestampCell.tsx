@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { Typography } from '@mui/material';
+import { NoSsr, Typography } from '@mui/material';
 import moment from 'moment';
+import TimeAgo from 'react-timeago';
 
 export interface TimestampCellProps {
   timestamp: number;
@@ -38,7 +39,9 @@ export function TransactionTimestampCell({
         `}
       >
         <Typography variant="subtitle1" color="textSecondary">
-          {moment(date).fromNow()}
+          <NoSsr>
+            <TimeAgo date={date} />
+          </NoSsr>
         </Typography>
         <OpenInNewIcon
           css={css`

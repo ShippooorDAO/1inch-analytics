@@ -11,11 +11,13 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  NoSsr,
   Typography,
 } from '@mui/material';
 import moment from 'moment';
 import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
+import TimeAgo from 'react-timeago';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
 import { AutoSkeleton } from '@/components/AutoSkeleton';
@@ -1030,7 +1032,9 @@ function FusionTradesTable() {
                 </AutoSkeleton>
                 <AutoSkeleton loading={loading}>
                   <Typography variant="body1" color="textSecondary">
-                    {moment.unix(row.timestamp).fromNow()}
+                    <NoSsr>
+                      <TimeAgo date={row.timestamp * 1000} />
+                    </NoSsr>
                   </Typography>
                 </AutoSkeleton>
               </div>

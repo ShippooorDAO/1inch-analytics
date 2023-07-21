@@ -1,7 +1,8 @@
 import { css } from '@emotion/react';
-import { Typography } from '@mui/material';
+import { NoSsr, Typography } from '@mui/material';
 import moment from 'moment';
 import { lighten } from 'polished';
+import TimeAgo from 'react-timeago';
 
 function getLastSyncTimestamp() {
   return moment.utc().startOf('day').unix();
@@ -69,7 +70,9 @@ export function LastSyncWidget() {
           `}
         >
           <Typography variant="body2" gutterBottom={false}>
-            {moment.unix(lastSyncTimestamp).fromNow()}
+            <NoSsr>
+              <TimeAgo date={lastSyncTimestamp * 1000} />
+            </NoSsr>
           </Typography>
         </div>
       </div>
