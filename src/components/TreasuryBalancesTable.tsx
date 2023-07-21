@@ -85,7 +85,7 @@ export function TreasuryBalancesTable({
                 flex-grow: 1;
               `}
             >
-              <AutoSkeleton loading={!row.asset}>
+              <AutoSkeleton loading={loading || !row.asset}>
                 <SlimAssetTableCell asset={row.asset!} />
               </AutoSkeleton>
             </div>
@@ -97,20 +97,23 @@ export function TreasuryBalancesTable({
                 }
               `}
             >
-              <Typography variant="body2" align="right">
-                {row.amount?.toDisplayString()}
-              </Typography>
+              <AutoSkeleton loading={loading}>
+                <Typography variant="body2" align="right">
+                  {row.amount?.toDisplayString()}
+                </Typography>
+              </AutoSkeleton>
             </div>
             <div
               css={css`
                 width: 200px;
               `}
             >
-              <Typography variant="body2" align="right">
-                {row.amountUsd?.toDisplayString()}
-              </Typography>
+              <AutoSkeleton loading={loading}>
+                <Typography variant="body2" align="right">
+                  {row.amountUsd?.toDisplayString()}
+                </Typography>
+              </AutoSkeleton>
             </div>
-
             <div
               css={css`
                 width: 120px;
@@ -132,45 +135,51 @@ export function TreasuryBalancesTable({
                   `
                 }
               >
-                <Typography variant="body2" align="right">
-                  {format(row.share, { symbol: '%' })}
-                </Typography>
+                <AutoSkeleton loading={loading}>
+                  <Typography variant="body2" align="right">
+                    {format(row.share, { symbol: '%', decimals: 1 })}
+                  </Typography>
+                </AutoSkeleton>
               </div>
             </div>
-            <div
-              css={(theme) => css`
-                position: absolute;
-                background-color: ${rgba(theme.palette.primary.main, 0.07)};
-                bottom: 0;
-                overflow: hidden;
-                right: 0;
-                width: calc(${row.share * 100}%);
-                height: 100%;
-                border-radius: 4px;
-              `}
-            >
-              <div
-                css={(theme) => css`
-                  position: absolute;
-                  background-color: ${theme.palette.primary.main};
-                  bottom: 0;
-                  right: 0;
-                  width: 100%;
-                  height: 5px;
-                `}
-              ></div>
-            </div>
-            <div
-              css={(theme) => css`
-                position: absolute;
-                background-color: ${rgba(theme.palette.primary.main, 0.07)};
-                bottom: 0;
-                right: 0;
-                width: 100%;
-                height: 5px;
-                border-radius: 5px;
-              `}
-            ></div>
+            {!loading && (
+              <>
+                <div
+                  css={(theme) => css`
+                    position: absolute;
+                    background-color: ${rgba(theme.palette.primary.main, 0.07)};
+                    bottom: 0;
+                    overflow: hidden;
+                    right: 0;
+                    width: calc(${row.share * 100}%);
+                    height: 100%;
+                    border-radius: 4px;
+                  `}
+                >
+                  <div
+                    css={(theme) => css`
+                      position: absolute;
+                      background-color: ${theme.palette.primary.main};
+                      bottom: 0;
+                      right: 0;
+                      width: 100%;
+                      height: 5px;
+                    `}
+                  ></div>
+                </div>
+                <div
+                  css={(theme) => css`
+                    position: absolute;
+                    background-color: ${rgba(theme.palette.primary.main, 0.07)};
+                    bottom: 0;
+                    right: 0;
+                    width: 100%;
+                    height: 5px;
+                    border-radius: 5px;
+                  `}
+                ></div>
+              </>
+            )}
           </div>
         ))}
       </div>

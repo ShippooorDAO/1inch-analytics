@@ -89,12 +89,7 @@ export function TimeseriesMultiSelect({
         const firstTimeseriesLabel = optionsInternal.find(
           (o) => o.key === values[0].name
         )?.label;
-        const additionalSeriesLabel = (() => {
-          if (values.length === 2) {
-            return `+ ${values.length - 1} other series`;
-          }
-          return `+ ${values.length - 1} series`;
-        })();
+
         if (firstTimeseriesLabel) {
           return (
             <div
@@ -105,16 +100,24 @@ export function TimeseriesMultiSelect({
                 align-content: flex-end;
               `}
             >
-              {firstTimeseriesLabel}{' '}
-              <Typography
-                variant="body1"
-                color="textSecondary"
+              <div>{firstTimeseriesLabel} </div>
+              <div
                 css={css`
-                  margin-top: 1px;
+                  display: flex;
+                  flex-flow: column;
+                  justify-content: center;
                 `}
               >
-                {`+ ${values.length - 1} other series`}
-              </Typography>
+                <Typography
+                  variant="body1"
+                  color="textSecondary"
+                  css={css`
+                    margin-top: 1px;
+                  `}
+                >
+                  {`+ ${values.length - 1} other series`}
+                </Typography>
+              </div>
             </div>
           );
         }

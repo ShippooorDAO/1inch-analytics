@@ -34,7 +34,8 @@ function getTooltipFormatter(
   selectedTimeseries: Timeseries[],
   theme: Theme,
   formatter: (y?: number) => string = (y) => format(y, { symbol: 'USD' }),
-  excludeTotalFromTooltip = false
+  excludeTotalFromTooltip = false,
+  excludeSharesFromTooltip = false
 ) {
   const tooltipRows = timeseriesList
     .filter((t) => timeseriesIsSelected(t, selectedTimeseries))
@@ -43,7 +44,8 @@ function getTooltipFormatter(
         xValue,
         timeseries,
         selectedTimeseries,
-        formatter
+        formatter,
+        excludeSharesFromTooltip
       )
     );
 
@@ -78,7 +80,8 @@ function getTooltipRowForTimeseries(
   x: number,
   timeseries: Timeseries,
   selectedTimeseries: Timeseries[],
-  formatter: (y?: number) => string
+  formatter: (y?: number) => string,
+  excludeSharesFromTooltip = false
 ) {
   const totalY = selectedTimeseries.reduce((acc, t) => {
     const data = t.data.find((d) => d.x === x);
@@ -97,12 +100,15 @@ function getTooltipRowForTimeseries(
 
   const share = data?.y ? data.y / totalY : 0;
 
+  const yLabel = excludeSharesFromTooltip
+    ? formatter(data?.y)
+    : `${formatter(data?.y)} (${format(share, {
+        symbol: '%',
+      })})`;
   const point = {
     color: timeseries.color,
     name: timeseries.name,
-    y: `${formatter(data?.y)} (${format(share, {
-      symbol: '%',
-    })})`,
+    y: yLabel,
   };
 
   return {
@@ -122,6 +128,7 @@ export interface HistogramChartProps {
   formatter?: (y?: number) => string;
   yAxisFormatter?: (y?: number) => string;
   excludeTotalFromTooltip?: boolean;
+  excludeSharesFromTooltip?: boolean;
 }
 
 export function HistogramChart({
@@ -135,6 +142,7 @@ export function HistogramChart({
   formatter,
   yAxisFormatter = (y) => format(y, { symbol: 'USD', abbreviate: true }),
   excludeTotalFromTooltip,
+  excludeSharesFromTooltip,
 }: HistogramChartProps) {
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
@@ -247,7 +255,8 @@ export function HistogramChart({
           timeseriesList,
           theme,
           formatter,
-          excludeTotalFromTooltip
+          excludeTotalFromTooltip,
+          excludeSharesFromTooltip
         );
       },
       shared: false,

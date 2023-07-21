@@ -147,22 +147,26 @@ export function TreasuryCashflowBreakdownTable({
             justify-content: space-between;
           `}
         >
-          <Typography variant="body2" color="textSecondary">
-            Lending on AAVE
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {format(data?.depositOnAave, {
-              abbreviate: true,
-              symbol: 'USD',
-            })}
-          </Typography>
+          <AutoSkeleton loading={loading}>
+            <Typography variant="body2" color="textSecondary">
+              Lending on AAVE
+            </Typography>
+          </AutoSkeleton>
+          <AutoSkeleton loading={loading}>
+            <Typography variant="body2" color="textSecondary">
+              {format(data?.depositOnAave, {
+                abbreviate: true,
+                symbol: 'USD',
+              })}
+            </Typography>
+          </AutoSkeleton>
         </div>
       </div>
       <div
         css={(theme) => css`
           border: 1px solid ${theme.palette.divider};
           height: 1px;
-          margin: 10px 0;
+          margin: 5px 0;
         `}
       ></div>
       <div
@@ -284,15 +288,19 @@ export function TreasuryCashflowBreakdownTable({
             justify-content: space-between;
           `}
         >
-          <Typography variant="body2" color="textSecondary">
-            Transfer to cold wallet
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {format(data?.transferOutToColdWallet, {
-              abbreviate: true,
-              symbol: 'USD',
-            })}
-          </Typography>
+          <AutoSkeleton loading={loading}>
+            <Typography variant="body2" color="textSecondary">
+              Transfer to cold wallet
+            </Typography>
+          </AutoSkeleton>
+          <AutoSkeleton loading={loading}>
+            <Typography variant="body2" color="textSecondary">
+              {format(data?.transferOutToColdWallet, {
+                abbreviate: true,
+                symbol: 'USD',
+              })}
+            </Typography>
+          </AutoSkeleton>
         </div>
         <div
           css={css`
@@ -301,22 +309,26 @@ export function TreasuryCashflowBreakdownTable({
             justify-content: space-between;
           `}
         >
-          <Typography variant="body2" color="textSecondary">
-            Lending on AAVE
-          </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {format(data?.depositOnAave, {
-              abbreviate: true,
-              symbol: 'USD',
-            })}
-          </Typography>
+          <AutoSkeleton loading={loading}>
+            <Typography variant="body2" color="textSecondary">
+              Lending on AAVE
+            </Typography>
+          </AutoSkeleton>
+          <AutoSkeleton loading={loading}>
+            <Typography variant="body2" color="textSecondary">
+              {format(data?.depositOnAave, {
+                abbreviate: true,
+                symbol: 'USD',
+              })}
+            </Typography>
+          </AutoSkeleton>
         </div>
       </div>
       <div
         css={(theme) => css`
           border: 1px solid ${theme.palette.divider};
           height: 1px;
-          margin: 10px 0;
+          margin: 5px 0;
         `}
       ></div>
       <div

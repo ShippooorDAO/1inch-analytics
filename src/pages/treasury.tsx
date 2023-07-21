@@ -95,6 +95,7 @@ function ControlledTreasuryFlowsChart({
       )}
       onTimeIntervalChange={setSelectedTimeInterval}
       excludeTotalFromTooltip={true}
+      excludeSharesFromTooltip={true}
     />
   );
 }
@@ -145,6 +146,7 @@ function ControlledHistoricalBalanceChart({
       timeInterval={selectedTimeInterval}
       timeWindow={selectedTimeWindow}
       excludeTotalFromTooltip={true}
+      excludeSharesFromTooltip={true}
     />
   );
 }
