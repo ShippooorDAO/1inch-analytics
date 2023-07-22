@@ -47,7 +47,11 @@ import {
   FusionResolver,
   getDuneResolverNameFromResolverAddress,
 } from '@/shared/Model/FusionResolver';
-import { TimeInterval, TimeWindow } from '@/shared/Model/Timeseries';
+import {
+  TimeInterval,
+  Timeseries,
+  TimeWindow,
+} from '@/shared/Model/Timeseries';
 import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import {
   getEtherscanAddressLink,
@@ -85,7 +89,6 @@ function ControlledBarChart({
   volumeAllTime,
 }: ControlledBarChartProps) {
   const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
-
   const handleTimeWindowChange = (e: any, value: any) => {
     if (value) {
       setTimeWindow(value);
@@ -1265,6 +1268,45 @@ export default function FusionPage() {
   const { getFusionResolverMetrics, fusionResolvers, fusionResolversMetrics } =
     useFusionPageData();
 
+  const [volumeTimeseriesList, setVolumeTimeseriesList] =
+    useState<Timeseries[]>();
+  const [volumeTimeseriesOptions, setVolumeTimeseriesOptions] =
+    useState<Timeseries[]>();
+
+  const [usersTimeseriesList, setUsersTimeseriesList] =
+    useState<Timeseries[]>();
+  const [usersTimeseriesOptions, setUsersTimeseriesOptions] =
+    useState<Timeseries[]>();
+
+  const [transactionsTimeseriesList, setTransactionsTimeseriesList] =
+    useState<Timeseries[]>();
+  const [transactionsTimeseriesOptions, setTransactionsTimeseriesOptions] =
+    useState<Timeseries[]>();
+
+  useEffect(() => {
+    if (!fusionResolversMetrics) {
+      return;
+    }
+
+    const volumeTimeseriesList_ = Array.from(
+      fusionResolversMetrics.byResolver.values()
+    ).map((v) => v.volumeWeeklyTimeseries);
+    const transactionsTimeseriesList_ = Array.from(
+      fusionResolversMetrics.byResolver.values()
+    ).map((v) => v.transactionsCountWeeklyTimeseries);
+    const usersTimeseriesList_ = Array.from(
+      fusionResolversMetrics.byResolver.values()
+    ).map((v) => v.walletsCountWeeklyTimeseries);
+
+    setVolumeTimeseriesList(volumeTimeseriesList_);
+    setTransactionsTimeseriesList(transactionsTimeseriesList_);
+    setUsersTimeseriesList(usersTimeseriesList_);
+
+    setVolumeTimeseriesOptions(volumeTimeseriesList_);
+    setTransactionsTimeseriesOptions(transactionsTimeseriesList_);
+    setUsersTimeseriesOptions(usersTimeseriesList_);
+  }, [fusionResolversMetrics]);
+
   return (
     <Container
       css={css`
@@ -1302,17 +1344,16 @@ export default function FusionPage() {
                   containers={[
                     {
                       title: 'Historical volume per resolver',
-                      content: (
-                        <HistogramChart
-                          timeseriesList={Array.from(
-                            fusionResolversMetrics?.byResolver.values() ?? []
-                          ).map((m) => m.volumeWeeklyTimeseries)}
-                          timeWindow={TimeWindow.MAX}
-                          timeInterval={TimeInterval.WEEKLY}
-                          onTimeWindowChange={() => {}}
-                          onTimeIntervalChange={() => {}}
-                        />
-                      ),
+                      content: volumeTimeseriesList &&
+                        volumeTimeseriesOptions && (
+                          <HistogramChart
+                            timeseriesList={volumeTimeseriesList}
+                            timeseriesOptions={volumeTimeseriesOptions}
+                            onTimeseriesChange={setVolumeTimeseriesList}
+                            timeWindow={TimeWindow.MAX}
+                            timeInterval={TimeInterval.WEEKLY}
+                          />
+                        ),
                     },
                     {
                       title: 'Current volume per resolver',
@@ -1358,18 +1399,16 @@ export default function FusionPage() {
                   containers={[
                     {
                       title: 'Historical transaction count per resolver',
-                      content: (
-                        <HistogramChart
-                          timeseriesList={Array.from(
-                            fusionResolversMetrics?.byResolver.values() ?? []
-                          ).map((m) => m.transactionsCountWeeklyTimeseries)}
-                          timeWindow={TimeWindow.MAX}
-                          timeInterval={TimeInterval.WEEKLY}
-                          onTimeWindowChange={() => {}}
-                          onTimeIntervalChange={() => {}}
-                          formatter={(y) => format(y, { abbreviate: true })}
-                        />
-                      ),
+                      content: transactionsTimeseriesList &&
+                        transactionsTimeseriesOptions && (
+                          <HistogramChart
+                            timeseriesList={transactionsTimeseriesList}
+                            timeseriesOptions={transactionsTimeseriesOptions}
+                            onTimeseriesChange={setTransactionsTimeseriesList}
+                            timeWindow={TimeWindow.MAX}
+                            timeInterval={TimeInterval.WEEKLY}
+                          />
+                        ),
                     },
                     {
                       title: 'Total transaction count per resolver',
@@ -1415,18 +1454,16 @@ export default function FusionPage() {
                   containers={[
                     {
                       title: 'Historical users per resolver',
-                      content: (
-                        <HistogramChart
-                          timeseriesList={Array.from(
-                            fusionResolversMetrics?.byResolver.values() ?? []
-                          ).map((m) => m.walletsCountWeeklyTimeseries)}
-                          timeWindow={TimeWindow.MAX}
-                          timeInterval={TimeInterval.WEEKLY}
-                          onTimeWindowChange={() => {}}
-                          onTimeIntervalChange={() => {}}
-                          formatter={(y) => format(y, { abbreviate: true })}
-                        />
-                      ),
+                      content: usersTimeseriesList &&
+                        usersTimeseriesOptions && (
+                          <HistogramChart
+                            timeseriesList={usersTimeseriesList}
+                            timeseriesOptions={usersTimeseriesOptions}
+                            onTimeseriesChange={setUsersTimeseriesList}
+                            timeWindow={TimeWindow.MAX}
+                            timeInterval={TimeInterval.WEEKLY}
+                          />
+                        ),
                     },
                     {
                       title: 'Total users per resolver',

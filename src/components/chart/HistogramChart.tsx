@@ -1,7 +1,8 @@
 import { css, Theme, useTheme } from '@emotion/react';
 import Highcharts, { YAxisOptions } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { useEffect, useRef, useState } from 'react';
+import { cloneDeep } from 'lodash';
+import { useEffect, useState } from 'react';
 
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { LoadingWrapper } from '@/components/SkeletonWrapper';
@@ -118,14 +119,17 @@ function getTooltipRowForTimeseries(
 }
 
 export interface HistogramChartProps {
-  timeseriesList?: Timeseries[];
+  timeseriesList: Timeseries[];
+  timeseriesOptions?: Timeseries[];
   timeWindow?: TimeWindow;
   timeWindowOptions?: { value: TimeWindow; label: string }[];
   timeInterval?: TimeInterval;
   timeIntervalOptions?: { value: TimeInterval; label: string }[];
   onTimeWindowChange?: (timeWindow: TimeWindow) => void;
   onTimeIntervalChange?: (timeInterval: TimeInterval) => void;
+  onTimeseriesChange?: (timeseriesList: Timeseries[]) => void;
   formatter?: (y?: number) => string;
+  loading?: boolean;
   yAxisFormatter?: (y?: number) => string;
   excludeTotalFromTooltip?: boolean;
   excludeSharesFromTooltip?: boolean;
@@ -133,12 +137,15 @@ export interface HistogramChartProps {
 
 export function HistogramChart({
   timeseriesList,
+  timeseriesOptions,
   timeWindow,
   timeWindowOptions,
   timeInterval,
   timeIntervalOptions,
   onTimeWindowChange,
   onTimeIntervalChange,
+  onTimeseriesChange,
+  loading,
   formatter,
   yAxisFormatter = (y) => format(y, { symbol: 'USD', abbreviate: true }),
   excludeTotalFromTooltip,
@@ -146,22 +153,6 @@ export function HistogramChart({
 }: HistogramChartProps) {
   const theme = useTheme();
   const { chartOptions } = useChartOptions();
-
-  const [selectedTimeseries, setSelectedTimeseries] = useState<Timeseries[]>(
-    []
-  );
-
-  const initialized = useRef<boolean>(false);
-
-  const loading = !timeseriesList;
-
-  useEffect(() => {
-    if (loading || initialized.current) {
-      return;
-    }
-
-    setSelectedTimeseries(timeseriesList);
-  }, [loading, timeseriesList]);
 
   const series: Highcharts.SeriesOptionsType[] = (() => {
     const series = new Array<Highcharts.SeriesOptionsType>();
@@ -172,7 +163,8 @@ export function HistogramChart({
 
     series.push(
       // @ts-ignore
-      ...selectedTimeseries.map((t) => ({
+      ...timeseriesList.map((t) => ({
+        id: t.name,
         type: t.type ?? 'area',
         color: t.color,
         fillColor: t.color
@@ -182,7 +174,7 @@ export function HistogramChart({
         connectNulls: true,
         dashStyle: t.dashStyle,
         yAxis: t.yAxis,
-        data: [...t.data],
+        data: cloneDeep(t.data),
         visible: !!timeseriesList?.find((t_) => t.name === t_.name),
         stack: t.stack ?? 1,
         stacking: 'normal',
@@ -251,7 +243,7 @@ export function HistogramChart({
 
         return getTooltipFormatter(
           this.x,
-          selectedTimeseries,
+          timeseriesList,
           timeseriesList,
           theme,
           formatter,
@@ -265,7 +257,7 @@ export function HistogramChart({
   };
 
   return (
-    <LoadingWrapper width="100%" variant="rounded" loading={loading}>
+    <LoadingWrapper width="100%" variant="rounded" loading={!!loading}>
       <div
         css={css`
           display: flex;
@@ -283,14 +275,17 @@ export function HistogramChart({
             gap: 20px;
           `}
         >
-          {timeseriesList && timeseriesList?.length !== 0 && (
-            <TimeseriesMultiSelect
-              options={timeseriesList ?? []}
-              values={selectedTimeseries}
-              onChange={setSelectedTimeseries}
-              disabled={timeseriesList.length <= 1}
-            />
-          )}
+          {timeseriesList &&
+            timeseriesList?.length !== 0 &&
+            timeseriesOptions &&
+            onTimeseriesChange && (
+              <TimeseriesMultiSelect
+                options={timeseriesOptions ?? []}
+                values={timeseriesList}
+                onChange={onTimeseriesChange}
+                disabled={timeseriesList.length <= 1}
+              />
+            )}
           {timeIntervalOptions && onTimeIntervalChange && (
             <TimeIntervalToggleButtonGroup
               value={timeInterval}
@@ -314,5 +309,35 @@ export function HistogramChart({
         />
       </div>
     </LoadingWrapper>
+  );
+}
+
+export interface ControlledHistogramChartProps
+  extends Omit<
+    HistogramChartProps,
+    'onTimeWindowChange' | 'onTimeIntervalChange' | 'onTimeseriesChange'
+  > {}
+
+export function ControlledHistogramChart({
+  ...props
+}: ControlledHistogramChartProps) {
+  const [timeWindow, setTimeWindow] = useState(props.timeWindow);
+  const [timeInterval, setTimeInterval] = useState(props.timeInterval);
+  const [timeseriesList, setTimeseriesList] = useState(props.timeseriesList);
+
+  useEffect(() => {
+    setTimeseriesList(props.timeseriesList);
+  }, [props.timeseriesList]);
+
+  return (
+    <HistogramChart
+      {...props}
+      timeWindow={timeWindow}
+      timeInterval={timeInterval}
+      timeseriesList={timeseriesList}
+      onTimeWindowChange={setTimeWindow}
+      onTimeIntervalChange={setTimeInterval}
+      onTimeseriesChange={setTimeseriesList}
+    />
   );
 }

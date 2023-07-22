@@ -114,6 +114,8 @@ export function SelectWithSearch<T>({
 
   const values = value instanceof Array ? value : [value];
 
+  const forceCancelBlur = useRef<boolean>(false);
+  const [search, setSearch] = useState<string>('');
   const [panelOpen, setPanelOpen] = useState<boolean>(false);
   const [showSelectedOptionsOnly, setShowSelectedOptionsOnly] =
     useState<boolean>(true);
@@ -134,10 +136,6 @@ export function SelectWithSearch<T>({
   };
 
   useEffect(() => {
-    setMatchingOptions(options);
-  }, [options]);
-
-  useEffect(() => {
     if (forceOpen) {
       openPopper();
     }
@@ -146,6 +144,11 @@ export function SelectWithSearch<T>({
   const onSearchChangeInternal = (search: string) => {
     if (onSearchChange) {
       onSearchChange(search);
+      return;
+    }
+
+    if (search === '') {
+      setMatchingOptions(options);
       return;
     }
 
@@ -162,6 +165,10 @@ export function SelectWithSearch<T>({
 
     setMatchingOptions(matchingOptions_);
   };
+
+  useEffect(() => {
+    onSearchChangeInternal(search);
+  }, [options, search]);
 
   const label_ = (() => {
     if (label) {
@@ -188,7 +195,7 @@ export function SelectWithSearch<T>({
     }
     setPanelOpen(false);
     setTimeout(() => {
-      onSearchChangeInternal('');
+      setSearch('');
     }, 200);
   };
 
@@ -246,10 +253,20 @@ export function SelectWithSearch<T>({
           if (disabled) {
             return;
           }
+          forceCancelBlur.current = true;
           openPopper();
           e.stopPropagation();
         }}
-        onBlur={() => closePopper()}
+        onBlur={() =>
+          setTimeout(() => {
+            if (forceCancelBlur.current) {
+              forceCancelBlur.current = false;
+              return;
+            }
+            closePopper();
+            forceCancelBlur.current = false;
+          }, 100)
+        }
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
             // ESC
@@ -353,17 +370,17 @@ export function SelectWithSearch<T>({
                       >
                         {!disableSearch && (
                           <SearchInput
+                            value={search}
                             tabIndex={-1}
                             onChange={(e) =>
-                              onSearchChangeInternal(
-                                e.target.value.toLowerCase()
-                              )
+                              setSearch(e.target.value.toLowerCase())
                             }
                             placeholder={searchPlaceholder}
                             onKeyDown={(e) => {
                               if (e.key === 'Escape') {
                                 // ESC
                                 closePopper();
+                                setSearch('');
                               }
                             }}
                           />

@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import { cloneDeep } from 'lodash';
 import { useMemo } from 'react';
 
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
@@ -46,6 +47,7 @@ export function LineChart({
     series.push(
       // @ts-ignore
       ...(selectedTimeseriesList ?? []).map((t, i) => ({
+        id: t.name,
         type: 'area',
         color: t.color ?? colors[i],
         fillColor:
@@ -53,9 +55,8 @@ export function LineChart({
             ? createGradient(t.color ?? colors[i], 0.2, 0.7, 'up')
             : undefined,
         name: t.name,
-        data: t.data,
+        data: cloneDeep(t.data),
         yAxis: t.yAxis,
-        visible: !!timeseriesList?.find((t_) => t.name === t_.name),
         states: {
           inactive: {
             enabled: false,
@@ -65,7 +66,7 @@ export function LineChart({
     );
 
     return series;
-  }, [selectedTimeseriesList, timeseriesList]);
+  }, [selectedTimeseriesList]);
 
   const handleTimeWindowChange = (e: any, value: any) => {
     if (value) {

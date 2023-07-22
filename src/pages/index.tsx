@@ -76,7 +76,7 @@ function ControlledHistogramChart({
 
   return (
     <HistogramChart
-      timeseriesList={timeseriesList}
+      timeseriesList={timeseriesList ?? []}
       timeWindow={timeWindow}
       timeInterval={timeInterval}
       timeWindowOptions={[

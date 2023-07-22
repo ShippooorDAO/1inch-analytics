@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { Typography } from '@mui/material';
+import { useMemo } from 'react';
 
 import { Timeseries } from '@/shared/Model/Timeseries';
 
@@ -26,31 +27,35 @@ export function TimeseriesMultiSelect({
   onChange,
   ...props
 }: TimeseriesMultiSelectProps) {
-  const optionsInternal = options.map((option) => {
-    return {
-      key: option.name,
-      value: option,
-      label: (
-        <SelectOptionLabel
-          name={option.name}
-          icon={
-            option.imageUrl ? (
-              <RoundedImageIcon size="small" src={option.imageUrl} />
-            ) : option.color ? (
-              <span
-                css={css`
-                  background-color: ${option.color};
-                  height: 16px;
-                  width: 16px;
-                  border-radius: 24px;
-                `}
-              />
-            ) : undefined
-          }
-        />
-      ),
-    };
-  });
+  const optionsInternal = useMemo(
+    () =>
+      options.map((option) => {
+        return {
+          key: option.name,
+          value: option,
+          label: (
+            <SelectOptionLabel
+              name={option.name}
+              icon={
+                option.imageUrl ? (
+                  <RoundedImageIcon size="small" src={option.imageUrl} />
+                ) : option.color ? (
+                  <span
+                    css={css`
+                      background-color: ${option.color};
+                      height: 16px;
+                      width: 16px;
+                      border-radius: 24px;
+                    `}
+                  />
+                ) : undefined
+              }
+            />
+          ),
+        };
+      }),
+    [options]
+  );
 
   const searchPredicate = (search: string, option: Timeseries): boolean => {
     const predicates = search.split(' ');
@@ -60,6 +65,7 @@ export function TimeseriesMultiSelect({
       );
     });
   };
+
   const onChangeInternal = (values: Timeseries[] | Timeseries | null) => {
     if (!values) {
       onChange([]);
