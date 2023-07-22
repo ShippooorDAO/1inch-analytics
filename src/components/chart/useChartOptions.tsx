@@ -54,8 +54,8 @@ export function useChartOptions() {
         ...optionsWithOppositeYAxis.plotOptions?.column,
         pointPadding: 0,
         borderWidth: 0,
+        borderRadius: 4,
         color: columnChartColors[0],
-        groupPadding: 0,
         shadow: false,
       },
       bar: {

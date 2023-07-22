@@ -61,13 +61,13 @@ function ControlledTreasuryFlowsChart({
       {
         ...timeseriesSetForTimeInterval.inboundVolumeUsdTimeseries,
         color: green[400],
-        type: 'bar',
+        type: 'column',
         stack: 1,
       },
       {
         ...timeseriesSetForTimeInterval.outboundVolumeUsdTimeseries,
         color: red[400],
-        type: 'bar',
+        type: 'column',
         stack: 1,
       },
       {
@@ -93,6 +93,8 @@ function ControlledTreasuryFlowsChart({
       timeIntervalOptions={[TimeInterval.MONTHLY, TimeInterval.QUARTERLY].map(
         (t) => ({ label: getTimeIntervalLabel(t), value: t })
       )}
+      timeseriesOptions={timeseriesList}
+      onTimeseriesChange={() => {}}
       onTimeIntervalChange={setSelectedTimeInterval}
       excludeTotalFromTooltip={true}
       excludeSharesFromTooltip={true}
@@ -145,6 +147,8 @@ function ControlledHistoricalBalanceChart({
       timeseriesList={timeseriesList}
       timeInterval={selectedTimeInterval}
       timeWindow={selectedTimeWindow}
+      timeseriesOptions={timeseriesList}
+      onTimeseriesChange={() => {}}
       excludeTotalFromTooltip={true}
       excludeSharesFromTooltip={true}
     />
