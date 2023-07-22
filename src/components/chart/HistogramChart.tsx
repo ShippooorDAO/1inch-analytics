@@ -275,31 +275,34 @@ export function HistogramChart({
             gap: 20px;
           `}
         >
-          {timeseriesList &&
-            timeseriesList?.length !== 0 &&
-            timeseriesOptions &&
+          {timeseriesOptions &&
+            timeseriesOptions.length > 0 &&
             onTimeseriesChange && (
               <TimeseriesMultiSelect
                 options={timeseriesOptions ?? []}
                 values={timeseriesList}
                 onChange={onTimeseriesChange}
-                disabled={timeseriesList.length <= 1}
+                disabled={timeseriesOptions.length <= 1}
               />
             )}
-          {timeIntervalOptions && onTimeIntervalChange && (
-            <TimeIntervalToggleButtonGroup
-              value={timeInterval}
-              onChange={handleTimeIntervalChange}
-              options={timeIntervalOptions}
-            />
-          )}
-          {timeWindowOptions && onTimeWindowChange && (
-            <TimeWindowToggleButtonGroup
-              value={timeWindow}
-              options={timeWindowOptions}
-              onChange={handleTimeWindowChange}
-            />
-          )}
+          {timeIntervalOptions &&
+            timeIntervalOptions.length > 0 &&
+            onTimeIntervalChange && (
+              <TimeIntervalToggleButtonGroup
+                value={timeInterval}
+                options={timeIntervalOptions}
+                onChange={handleTimeIntervalChange}
+              />
+            )}
+          {timeWindowOptions &&
+            timeWindowOptions.length > 0 &&
+            onTimeWindowChange && (
+              <TimeWindowToggleButtonGroup
+                value={timeWindow}
+                options={timeWindowOptions}
+                onChange={handleTimeWindowChange}
+              />
+            )}
         </div>
 
         <HighchartsReact
