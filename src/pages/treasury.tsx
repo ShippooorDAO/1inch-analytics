@@ -31,11 +31,11 @@ function ControlledTreasuryFlowsChart({
 }: {
   treasuryFlows?: TreasuryFlows;
 }) {
-  const theme = useTheme();
   const [selectedTimeWindow, setSelectedTimeWindow] = useState(TimeWindow.MAX);
   const [selectedTimeInterval, setSelectedTimeInterval] = useState(
     TimeInterval.MONTHLY
   );
+  const [selectedTimeseries, setSelectedTimeseries] = useState<Timeseries[]>();
 
   const timeseriesList = useMemo(() => {
     const timeseriesSetForTimeInterval = (() => {
@@ -57,7 +57,7 @@ function ControlledTreasuryFlowsChart({
     if (!timeseriesSetForTimeInterval) {
       return [];
     }
-    return [
+    const res = [
       {
         ...timeseriesSetForTimeInterval.inboundVolumeUsdTimeseries,
         color: green[400],
@@ -83,18 +83,20 @@ function ControlledTreasuryFlowsChart({
         stack: 3,
       },
     ] as Timeseries[];
+    setSelectedTimeseries(res);
+    return res;
   }, [selectedTimeWindow, selectedTimeInterval, treasuryFlows]);
 
   return (
     <HistogramChart
-      timeseriesList={timeseriesList}
+      timeseriesList={selectedTimeseries ?? []}
       timeInterval={selectedTimeInterval}
       timeWindow={selectedTimeWindow}
       timeIntervalOptions={[TimeInterval.MONTHLY, TimeInterval.QUARTERLY].map(
         (t) => ({ label: getTimeIntervalLabel(t), value: t })
       )}
       timeseriesOptions={timeseriesList}
-      onTimeseriesChange={() => {}}
+      onTimeseriesChange={setSelectedTimeseries}
       onTimeIntervalChange={setSelectedTimeInterval}
       excludeTotalFromTooltip={true}
       excludeSharesFromTooltip={true}
