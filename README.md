@@ -1,5 +1,5 @@
 # 1Inch Analytics Webapp
-An open source analytics webapp for 1INCH DEX aggregator protocol. https://1inch.io/
+An open source analytics webapp for 1INCH DEX aggregator protocol. https://info.1inch.io/
 
 The project uses the following frameworks:
 - NextJS
