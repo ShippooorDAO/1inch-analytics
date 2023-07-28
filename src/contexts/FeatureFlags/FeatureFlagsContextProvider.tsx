@@ -113,6 +113,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
 
     let allExperimentalFeaturesEnabledFlags = removeUndefinedFeatureFlags({
       enableAllExperimentalFeatures,
+      enableTransactionsPage: true,
       sudo: enableAllExperimentalFeatures,
     });
 
