@@ -26,15 +26,4 @@ module.exports =
 
       return config;
     },
-    async rewrites() {
-      if (process.env.NEXT_PUBLIC_IGNORE_CORS) {
-         return [
-           {
-             source: '/no_cors',
-             destination: process.env.NEXT_PUBLIC_ONE_INCH_ANALYTICS_API_URL,
-           },
-         ];
-      } 
-      return [];
-    },
   });

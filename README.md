@@ -1,20 +1,18 @@
 # 1Inch Analytics Webapp
-1Inch Analytics front-end NextJS app.
+An open source webapp for 1inch analytics
 
-## Requirements
+- NextJS React Framework
+- Emotion
+- Material UI
 
-- Node.js 16+ and npm
+## How to use
 
+Node.js 16+ and npm are required
 Run the following command to install dependencies:
 
 ```shell
+cp .env.example .env.local
 yarn install
-```
-
-## Generate TS interfaces matching production GraphQL API schema
-
-```shell
-yarn schema
 ```
 
 ## Running
@@ -30,6 +28,13 @@ Open http://localhost:3000
 ```shell
 yarn build
 npm run
+```
+
+## Regenerate GQL interfaces
+The following command auto-generates code contained within `src/gql` sub-directory and `1inch-api-prod.graphql` file.
+
+```shell
+yarn schema
 ```
 
 ## Checks
