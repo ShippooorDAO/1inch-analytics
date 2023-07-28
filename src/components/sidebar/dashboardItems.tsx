@@ -93,14 +93,12 @@ export function getNavItems(featureFlags: FeatureFlags): SidebarNavProps {
   const tokenSection = pageSections.get(PageSection.TOKEN)!;
   const fusionSection = pageSections.get(PageSection.FUSION)!;
   const treasurySection = pageSections.get(PageSection.TREASURY)!;
-  const transactionsSection = pageSections.get(PageSection.TRANSACTIONS)!;
 
   const items: SidebarItemsType[] = [
     overviewSection,
     tokenSection,
     fusionSection,
     treasurySection,
-    transactionsSection,
   ];
 
   if (featureFlags.enableTransactionsPage) {
