@@ -31,9 +31,18 @@ export interface GasPriceQueryResponse {
 }
 
 export function processGasPriceResponse(response: GasPriceQueryResponse) {
+  const transactions = response.transactions.slice();
+  const gasPriceAverage =
+    transactions.reduce(
+      (acc, transaction) => Number(transaction.gasPrice) + acc,
+      0
+    ) / transactions.length;
+
   return response.transactions
-    .slice()
     .reverse()
+    .filter(
+      (transaction) => Number(transaction.gasPrice) <= gasPriceAverage * 2
+    )
     .filter((_transaction, index) => index % 25 === 0)
     .map((transaction) => {
       return {
