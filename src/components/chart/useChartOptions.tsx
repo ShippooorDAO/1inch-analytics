@@ -2,7 +2,6 @@ import { useTheme } from '@emotion/react';
 import Highcharts from 'highcharts';
 
 import { useHighchartsContext } from '@/contexts/Highcharts/HighchartsContextProvider';
-import { format } from '@/shared/Utils/Format';
 
 export function useChartOptions() {
   const theme = useTheme();

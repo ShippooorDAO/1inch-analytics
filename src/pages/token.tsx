@@ -15,15 +15,15 @@ import { AddressCopyButton } from '@/components/AddressCopyButton';
 import { DonutChart } from '@/components/chart/DonutChart';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { LineChart } from '@/components/chart/LineChart';
+import {
+  StatsContainer,
+  StatsContainerLayout,
+} from '@/components/container/StatsContainer';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { TrendLabelPercent } from '@/components/MetricsCard';
 import { PageTitle } from '@/components/PageTitle';
 import { StakingVersionToggleButtonGroup } from '@/components/StakingVersionToggleButtonGroup';
-import {
-  StatsContainer,
-  StatsContainerLayout,
-} from '@/components/container/StatsContainer';
 import {
   GetStakingWalletsQueryVariables,
   SortDirection,

@@ -20,18 +20,18 @@ import { useEffect, useMemo, useState } from 'react';
 import TimeAgo from 'react-timeago';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
-import { AutoSkeleton } from '@/components/loading/AutoSkeleton';
 import { BarChart } from '@/components/chart/BarChart';
 import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
+import { MultiTabSection } from '@/components/container/SectionContainer';
+import { StatsContainer } from '@/components/container/StatsContainer';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AssetMultiSelect } from '@/components/filters/AssetMultiSelect';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { AssetIcon } from '@/components/icons/AssetIcon';
+import { AutoSkeleton } from '@/components/loading/AutoSkeleton';
 import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { PageTitle } from '@/components/PageTitle';
-import { MultiTabSection } from '@/components/container/SectionContainer';
-import { StatsContainer } from '@/components/container/StatsContainer';
 import { useAssetStore } from '@/hooks/useAssetStore';
 import { useFusionResolvers } from '@/hooks/useFusionResolvers';
 import {

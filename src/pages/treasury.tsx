@@ -4,12 +4,12 @@ import { green, red } from '@mui/material/colors';
 import { useMemo, useState } from 'react';
 
 import { HistogramChart } from '@/components/chart/HistogramChart';
-import { EtherscanButton } from '@/components/EtherscanButton';
-import { PageTitle } from '@/components/PageTitle';
 import {
   StatsContainer,
   StatsContainerLayout,
 } from '@/components/container/StatsContainer';
+import { EtherscanButton } from '@/components/EtherscanButton';
+import { PageTitle } from '@/components/PageTitle';
 import { TreasuryBalancesTable } from '@/components/TreasuryBalancesTable';
 import { TreasuryCashflowBreakdownTable } from '@/components/TreasuryCashflowBreakdownTable';
 import { TreasuryTransactionsTable } from '@/components/TreasuryTransactionsTable';

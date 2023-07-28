@@ -14,9 +14,9 @@ import {
 } from '@/hooks/useNativeTokenRates';
 import { Chain } from '@/shared/Model/Chain';
 
-import { AutoSkeleton } from './loading/AutoSkeleton';
-import { ChainSelect } from './filters/ChainSelect';
 import { GasPriceChart } from './chart/GasPriceChart';
+import { ChainSelect } from './filters/ChainSelect';
+import { AutoSkeleton } from './loading/AutoSkeleton';
 
 function formatSwapPrice(chainGasPrice: number, gasTokenPrice: number) {
   const usdPrice = ((chainGasPrice * gasTokenPrice) / 1e9) * 100000;

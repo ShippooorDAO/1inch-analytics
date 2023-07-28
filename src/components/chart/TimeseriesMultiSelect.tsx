@@ -4,12 +4,12 @@ import { useMemo } from 'react';
 
 import { Timeseries } from '@/shared/Model/Timeseries';
 
+import { SelectOptionLabel } from '../filters/SelectOptionLabel';
 import {
   SelectWithSearch,
   SelectWithSearchProps,
 } from '../filters/SelectWithSearch';
 import { RoundedImageIcon } from '../icons/RoundedImageIcon';
-import { SelectOptionLabel } from '../filters/SelectOptionLabel';
 
 export interface TimeseriesMultiSelectProps
   extends Omit<
