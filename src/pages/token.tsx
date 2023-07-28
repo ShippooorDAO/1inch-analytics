@@ -731,7 +731,7 @@ export default function TokenPage() {
           <div
             css={(theme) => css`
               width: 100%;
-              max-width: 768px;
+              max-width: 1024px;
               margin-left: auto;
               margin-right: auto;
               background-color: ${theme.palette.background.paper};
