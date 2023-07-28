@@ -32,6 +32,7 @@ import { SlimMetricsCard, TrendLabelPercent } from '@/components/MetricsCard';
 import { PageTitle } from '@/components/PageTitle';
 import { MultiTabSection } from '@/components/SectionContainer';
 import { StatsContainer } from '@/components/StatsContainer';
+import { useAssetStore } from '@/hooks/useAssetStore';
 import { useFusionResolvers } from '@/hooks/useFusionResolvers';
 import {
   FusionResolverMetrics,
@@ -52,7 +53,6 @@ import {
   Timeseries,
   TimeWindow,
 } from '@/shared/Model/Timeseries';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import {
   getEtherscanAddressLink,
   getEtherscanTransactionLink,
@@ -812,7 +812,7 @@ function FusionTradersTable() {
 }
 
 function FusionTradesTable() {
-  const { assetService } = useOneInchAnalyticsAPIContext();
+  const assetStore = useAssetStore();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [sortBy, setSortBy] = useState<'timestamp' | 'destinationUsdAmount'>(
     'destinationUsdAmount'
@@ -832,14 +832,14 @@ function FusionTradesTable() {
   const rows = !loading && fusionTrades ? fusionTrades : mockFusionTrades;
 
   const assetOptions = useMemo(() => {
-    if (!assetService) {
+    if (!assetStore) {
       return undefined;
     }
 
-    return assetService.store
+    return assetStore
       .getAll()
       .filter((asset) => asset.chain.chainId === ChainId.ETHEREUM);
-  }, [assetService]);
+  }, [assetStore]);
 
   useEffect(() => {
     setPageNumber(0);

@@ -4,7 +4,8 @@ import Highcharts from 'highcharts';
 import { lighten, rgba } from 'polished';
 import { createContext, FC, ReactNode, useContext } from 'react';
 
-import { format } from '../Utils/Format';
+import { format } from '@/shared/Utils/Format';
+
 import { HighchartsContextProviderState } from './Highcharts.type';
 
 export interface TooltipProps {

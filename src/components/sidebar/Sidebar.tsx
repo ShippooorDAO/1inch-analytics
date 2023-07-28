@@ -3,7 +3,7 @@ import { Menu } from '@mui/icons-material';
 import { Drawer, IconButton, PaperProps } from '@mui/material';
 import Link from 'next/link';
 
-import { UniswapV3SubgraphProvider } from '@/shared/UniswapV3Subgraph/UniswapV3SubgraphProvider';
+import { UniswapV3SubgraphProvider } from '@/contexts/UniswapV3Subgraph/UniswapV3SubgraphProvider';
 
 import { GasMeter } from '../GasMeter';
 import SidebarNav, { SidebarNavProps } from './SidebarNav';

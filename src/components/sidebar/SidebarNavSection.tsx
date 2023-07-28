@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { Typography } from '@mui/material';
 import React from 'react';
 
-import { SidebarItemsType } from '@/types/sidebar';
-
+import { SidebarItemsType } from './Sidebar.type';
 import SidebarNavList from './SidebarNavList';
 
 const Title = styled(Typography)`

@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useTheme } from '@mui/material';
 import { useMemo } from 'react';
 
-import { useFeatureFlags } from '@/shared/FeatureFlags/FeatureFlagsContextProvider';
+import { useFeatureFlags } from '@/contexts/FeatureFlags/FeatureFlagsContextProvider';
 import {
   getAllTimeShare,
   getAllTimeTotal,
@@ -16,9 +16,9 @@ import {
   getResolverAddressFromDuneResolverName,
 } from '@/shared/Model/FusionResolver';
 import { Timeseries } from '@/shared/Model/Timeseries';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 
 import { createMockFusionResolversQueryResponse } from './mocks/FusionResolversQueryResponse';
+import { useChainStore } from './useChainStore';
 
 const FUSION_RESOLVERS_QUERY = gql`
   query getFusionResolvers {
@@ -327,8 +327,7 @@ function parseFusionResolversQueryResponse(
 
 export function useFusionResolversMetrics(fusionResolvers?: FusionResolver[]) {
   const muiTheme = useTheme();
-  const { chainStore } = useOneInchAnalyticsAPIContext();
-
+  const chainStore = useChainStore();
   const featureFlags = useFeatureFlags();
 
   const { data, loading } = useQuery<

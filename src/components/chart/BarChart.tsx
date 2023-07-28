@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import { rgba } from 'polished';
 
 import { LoadingWrapper } from '@/components/SkeletonWrapper';
-import { createTooltipFormatter } from '@/shared/Highcharts/HighchartsContextProvider';
+import { createTooltipFormatter } from '@/contexts/Highcharts/HighchartsContextProvider';
 import { format } from '@/shared/Utils/Format';
 
 import { useChartOptions } from './useChartOptions';

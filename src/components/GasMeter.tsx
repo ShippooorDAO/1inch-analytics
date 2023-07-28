@@ -4,15 +4,15 @@ import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
+  TimedGasPrice,
+  useUniswapV3SubgraphContext,
+} from '@/contexts/UniswapV3Subgraph/UniswapV3SubgraphProvider';
+import { useChainStore } from '@/hooks/useChainStore';
+import {
   ChainGasPrice,
   useNativeTokenRates,
 } from '@/hooks/useNativeTokenRates';
 import { Chain } from '@/shared/Model/Chain';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
-import {
-  TimedGasPrice,
-  useUniswapV3SubgraphContext,
-} from '@/shared/UniswapV3Subgraph/UniswapV3SubgraphProvider';
 
 import { AutoSkeleton } from './AutoSkeleton';
 import { ChainSelect } from './filters/ChainSelect';
@@ -49,7 +49,7 @@ const MOCK_CHAIN_GAS_PRICE: ChainGasPrice = {
 
 export function GasMeter() {
   const theme = useTheme();
-  const { chainStore } = useOneInchAnalyticsAPIContext();
+  const chainStore = useChainStore();
   const { latestGasPrices } = useUniswapV3SubgraphContext();
   const gasData = useNativeTokenRates();
 

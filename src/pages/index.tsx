@@ -18,7 +18,6 @@ import { BarChart } from '@/components/chart/BarChart';
 import { Chain } from '@/shared/Model/Chain';
 import { useDexAggregatorOverview } from '@/hooks/useDexAggregatorOverview';
 import { useMemo, useState } from 'react';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import {
   StatsContainer,
@@ -27,6 +26,7 @@ import {
 import { scopeTimeseriesToTimeWindow } from '@/shared/Utils/Chart';
 import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 import { PageTitle } from '@/components/PageTitle';
+import { useChainStore } from '@/hooks/useChainStore';
 
 interface ControllerHistogramChartProps {
   dailyTimeseriesList?: Timeseries[];
@@ -176,7 +176,7 @@ function ControlledBarChart({
 }
 
 export default function Home() {
-  const { chainStore } = useOneInchAnalyticsAPIContext();
+  const chainStore = useChainStore();
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
 
   const chainOptions = useMemo(() => chainStore?.getAll() ?? [], [chainStore]);

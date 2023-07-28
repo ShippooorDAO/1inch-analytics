@@ -2,11 +2,7 @@ const withTM = require("next-transpile-modules")([
   "@babel/preset-react",
 ]);
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-});
-
-module.exports = withBundleAnalyzer(
+module.exports = 
   withTM({
     webpack(config) {
       config.module.rules.push({
@@ -34,12 +30,11 @@ module.exports = withBundleAnalyzer(
       if (process.env.NEXT_PUBLIC_IGNORE_CORS) {
          return [
            {
-             source: '/cors_light',
+             source: '/no_cors',
              destination: process.env.NEXT_PUBLIC_ONE_INCH_ANALYTICS_API_URL,
            },
          ];
       } 
       return [];
     },
-  })
-);
+  });

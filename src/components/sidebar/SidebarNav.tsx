@@ -1,8 +1,7 @@
 import { css } from '@emotion/react';
 import { List } from '@mui/material';
 
-import { SidebarItemsType } from '@/types/sidebar';
-
+import { SidebarItemsType } from './Sidebar.type';
 import SidebarNavSection from './SidebarNavSection';
 
 export interface SidebarNavProps {

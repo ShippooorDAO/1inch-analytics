@@ -14,11 +14,11 @@ import Head from 'next/head';
 import { NextSeo } from 'next-seo';
 import type { ReactNode } from 'react';
 
+import { FeatureFlagsContextProvider } from '@/contexts/FeatureFlags/FeatureFlagsContextProvider';
+import { HighchartsContextProvider } from '@/contexts/Highcharts/HighchartsContextProvider';
+import { ONE_INCH_ANALYTICS_API_URL } from '@/contexts/OneInchAnalyticsAPI/config';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import useTheme from '@/hooks/useTheme';
-import { FeatureFlagsContextProvider } from '@/shared/FeatureFlags/FeatureFlagsContextProvider';
-import { HighchartsContextProvider } from '@/shared/Highcharts/HighchartsContextProvider';
-import { ONE_INCH_ANALYTICS_API_URL } from '@/shared/OneInchAnalyticsAPI/config';
 import createEmotionCache from '@/shared/Rendering/Emotion';
 import { OneInchAnalyticsAppProps } from '@/shared/Rendering/OneInchAnalyticsApp';
 import createTheme from '@/theme';

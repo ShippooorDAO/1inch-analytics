@@ -10,7 +10,7 @@ import {
   chartDateTooltipFormatter,
   createGradient,
   createTooltipFormatter,
-} from '@/shared/Highcharts/HighchartsContextProvider';
+} from '@/contexts/Highcharts/HighchartsContextProvider';
 import {
   TimeInterval,
   Timeseries,

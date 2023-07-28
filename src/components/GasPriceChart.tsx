@@ -4,7 +4,7 @@ import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Line, LineChart, Tooltip } from 'recharts';
 
-import { TimedGasPrice } from '@/shared/UniswapV3Subgraph/UniswapV3SubgraphProvider';
+import { TimedGasPrice } from '@/contexts/UniswapV3Subgraph/UniswapV3SubgraphProvider';
 
 import { AutoSkeleton } from './AutoSkeleton';
 

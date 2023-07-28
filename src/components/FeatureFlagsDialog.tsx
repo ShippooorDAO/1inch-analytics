@@ -2,9 +2,7 @@ import { css } from '@emotion/react';
 import { Close } from '@mui/icons-material';
 import { Button, IconButton, Typography } from '@mui/material';
 
-import { staticFeatureFlags } from '@/shared/FeatureFlags/StaticFeatureFlags';
-
-import { Card } from './HoverCard';
+import { staticFeatureFlags } from '@/contexts/FeatureFlags/StaticFeatureFlags';
 
 export interface FeatureFlagsDialogProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -31,8 +29,10 @@ export function FeatureFlagsDialog({
   }
 
   return (
-    <Card
-      css={css`
+    <div
+      css={(theme) => css`
+        background-color: ${theme.palette.background.paper};
+        border-radius: 24px;
         padding: 20px;
         min-width: 300px;
       `}
@@ -88,6 +88,6 @@ export function FeatureFlagsDialog({
           Reset to Prod-like
         </Button>
       </div>
-    </Card>
+    </div>
   );
 }

@@ -2,9 +2,8 @@ import { css } from '@emotion/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-import { SidebarItemsType } from '@/types/sidebar';
-
 import reduceChildRoutes from './reduceChildRoutes';
+import { SidebarItemsType } from './Sidebar.type';
 
 interface SidebarNavListProps {
   depth: number;

@@ -1,5 +1,4 @@
-import { SidebarItemsType } from '@/types/sidebar';
-
+import { SidebarItemsType } from './Sidebar.type';
 import SidebarNavList from './SidebarNavList';
 import SidebarNavListItem from './SidebarNavListItem';
 

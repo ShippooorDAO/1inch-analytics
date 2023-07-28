@@ -1,6 +1,6 @@
-import { FeatureFlags } from '@/shared/FeatureFlags/FeatureFlags.type';
-import { SidebarItemsType } from '@/types/sidebar';
+import { FeatureFlags } from '@/contexts/FeatureFlags/FeatureFlags.type';
 
+import { SidebarItemsType } from './Sidebar.type';
 import { SidebarNavProps } from './SidebarNav';
 
 export enum PageSection {

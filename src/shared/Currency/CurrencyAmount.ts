@@ -5,7 +5,7 @@ export interface CurrencyAmount {
   readonly symbol: string;
 
   /**
-   * Amount of currency, using full-precision BigNumber structure.
+   * Amount of currency, stored in fixed-point data structure.
    */
   readonly n: bigint;
 

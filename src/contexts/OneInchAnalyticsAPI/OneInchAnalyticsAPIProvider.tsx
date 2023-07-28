@@ -8,21 +8,22 @@ import {
   useState,
 } from 'react';
 
-import { AssetService } from '../Currency/AssetService';
-import { UsdAmount } from '../Currency/UsdAmount';
-import { FeatureFlags } from '../FeatureFlags/FeatureFlags.type';
-import { useFeatureFlags } from '../FeatureFlags/FeatureFlagsContextProvider';
-import { Asset } from '../Model/Asset';
+import { FeatureFlags } from '@/contexts/FeatureFlags/FeatureFlags.type';
+import { useFeatureFlags } from '@/contexts/FeatureFlags/FeatureFlagsContextProvider';
+import { AssetService } from '@/shared/Currency/AssetService';
+import { UsdAmount } from '@/shared/Currency/UsdAmount';
+import { Asset } from '@/shared/Model/Asset';
 import {
   Chain,
   ChainId,
   getChainColor,
   getChainImageUrl,
   getChainName,
-} from '../Model/Chain';
-import { AssetStore } from '../Model/Stores/AssetStore';
-import { ChainStore } from '../Model/Stores/ChainStore';
-import { TreasuryTransactionLabelStore } from '../Model/Stores/TreasuryTransactionLabelStore';
+} from '@/shared/Model/Chain';
+import { AssetStore } from '@/shared/Model/Stores/AssetStore';
+import { ChainStore } from '@/shared/Model/Stores/ChainStore';
+import { TreasuryTransactionLabelStore } from '@/shared/Model/Stores/TreasuryTransactionLabelStore';
+
 import { createMockGlobalSystemResponse } from './mocks/GlobalSystemQueryResponse';
 
 export interface OneInchAnalyticsAPIProviderState {

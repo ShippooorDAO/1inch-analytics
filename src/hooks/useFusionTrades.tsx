@@ -10,9 +10,10 @@ import {
 import { FusionTrade } from '@/shared/Model/FusionTrade';
 import { AssetStore } from '@/shared/Model/Stores/AssetStore';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 
 import { mockFusionTradesResponse } from './mocks/FusionTrades';
+import { useAssetStore } from './useAssetStore';
+import { useChainStore } from './useChainStore';
 
 const QUERY = gql`
   query getFusionTrades(
@@ -116,7 +117,8 @@ export function useFusionTrades({
   assetIds,
   chainIds,
 }: UseFusionTradesProps) {
-  const { assetService, chainStore } = useOneInchAnalyticsAPIContext();
+  const assetStore = useAssetStore();
+  const chainStore = useChainStore();
   const { data, error, loading } = useQuery<
     GetFusionTradesQuery,
     GetFusionTradesQueryVariables
@@ -132,22 +134,22 @@ export function useFusionTrades({
   });
 
   const mock = useMemo(() => {
-    if (!assetService || !chainStore) {
+    if (!assetStore || !chainStore) {
       return null;
     }
     return convertResponseToModel(
       mockFusionTradesResponse,
-      assetService.store,
+      assetStore,
       chainStore
     );
-  }, [assetService, chainStore]);
+  }, [assetStore, chainStore]);
 
   const fusionTrades = useMemo(() => {
-    if (!assetService || !chainStore || !data) {
+    if (!assetStore || !chainStore || !data) {
       return null;
     }
-    return convertResponseToModel(data, assetService.store, chainStore);
-  }, [data, assetService, chainStore]);
+    return convertResponseToModel(data, assetStore, chainStore);
+  }, [data, assetStore, chainStore]);
 
   return {
     fusionTrades,

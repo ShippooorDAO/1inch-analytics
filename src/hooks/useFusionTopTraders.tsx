@@ -5,7 +5,8 @@ import { Filter } from '@/gql/graphql';
 import { ChainId } from '@/shared/Model/Chain';
 import { FusionTrader } from '@/shared/Model/FusionTrader';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
+
+import { useChainStore } from './useChainStore';
 
 const QUERY = gql`
   query getFusionTopTraders(
@@ -91,7 +92,7 @@ export function useFusionTopTraders({
   pageNumber,
   pageSize,
 }: UseFusionTopTradersProps) {
-  const { chainStore } = useOneInchAnalyticsAPIContext();
+  const chainStore = useChainStore();
   const { data, loading, error } = useQuery<
     FusionTopTradersResponse,
     FusionTopTradersQueryVariables

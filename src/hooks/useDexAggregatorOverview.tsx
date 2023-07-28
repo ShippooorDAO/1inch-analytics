@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
-import { useFeatureFlags } from '@/shared/FeatureFlags/FeatureFlagsContextProvider';
+import { useFeatureFlags } from '@/contexts/FeatureFlags/FeatureFlagsContextProvider';
 import { ChainId } from '@/shared/Model/Chain';
 import {
   DexAggregatorOverviewMetrics,
@@ -12,9 +12,9 @@ import {
 } from '@/shared/Model/DexAggregator';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { Timeseries } from '@/shared/Model/Timeseries';
-import { useOneInchAnalyticsAPIContext } from '@/shared/OneInchAnalyticsAPI/OneInchAnalyticsAPIProvider';
 
 import { createMockDexAggregatorOverviewResponse } from './mocks/DexAggregatorOverviewQueryResponse';
+import { useChainStore } from './useChainStore';
 
 const DEX_AGGREGATOR_OVERVIEW_QUERY = gql`
   fragment WalletsAndTransactionsFields on Wallet {
@@ -639,8 +639,7 @@ export function useDexAggregatorOverview({
 }: {
   chainIds?: string[];
 }): DexAggregatorOverview {
-  const { chainStore } = useOneInchAnalyticsAPIContext();
-
+  const chainStore = useChainStore();
   const featureFlags = useFeatureFlags();
 
   const { data, loading, variables } = useQuery<

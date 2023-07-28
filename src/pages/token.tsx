@@ -19,11 +19,11 @@ import { EtherscanButton } from '@/components/EtherscanButton';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { TrendLabelPercent } from '@/components/MetricsCard';
 import { PageTitle } from '@/components/PageTitle';
+import { StakingVersionToggleButtonGroup } from '@/components/StakingVersionToggleButtonGroup';
 import {
   StatsContainer,
   StatsContainerLayout,
 } from '@/components/StatsContainer';
-import { StakingVersionToggleButtonGroup } from '@/components/table/StakingVersionToggleButtonGroup';
 import {
   GetStakingWalletsQueryVariables,
   SortDirection,

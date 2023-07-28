@@ -6,7 +6,7 @@ import { AutoSkeleton } from '@/components/AutoSkeleton';
 import { TreasuryBalances } from '@/shared/Model/TreasuryBalances';
 import { format } from '@/shared/Utils/Format';
 
-import { SlimAssetTableCell } from './table/SlimAssetTableCell';
+import { SlimAssetTableCell } from './SlimAssetTableCell';
 
 interface TreasuryBalancesTableProps {
   data?: TreasuryBalances;
@@ -91,7 +91,7 @@ export function TreasuryBalancesTable({
             </div>
             <div
               css={(theme) => css`
-                width: 200px;
+                width: 300px;
                 ${theme.breakpoints.down('lg')} {
                   display: none;
                 }
@@ -105,7 +105,7 @@ export function TreasuryBalancesTable({
             </div>
             <div
               css={css`
-                width: 200px;
+                width: 140px;
               `}
             >
               <AutoSkeleton loading={loading}>
@@ -116,7 +116,7 @@ export function TreasuryBalancesTable({
             </div>
             <div
               css={css`
-                width: 120px;
+                width: 60px;
                 position: relative;
                 display: flex;
                 flex-flow: row;

@@ -9,7 +9,7 @@ import { LoadingWrapper } from '@/components/SkeletonWrapper';
 import {
   createGradient,
   useHighchartsContext,
-} from '@/shared/Highcharts/HighchartsContextProvider';
+} from '@/contexts/Highcharts/HighchartsContextProvider';
 import { Timeseries, TimeWindow } from '@/shared/Model/Timeseries';
 
 import { TimeseriesMultiSelect } from './TimeseriesMultiSelect';

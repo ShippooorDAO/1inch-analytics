@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import { Asset } from '@/shared/Model/Asset';
 import { Chain, ChainId } from '@/shared/Model/Chain';
 
-import { RoundedImageIcon } from '../icons/RoundedImageIcon';
+import { RoundedImageIcon } from './icons/RoundedImageIcon';
 
 interface SlimTokenTableCellProps {
   symbol: string;
