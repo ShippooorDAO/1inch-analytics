@@ -208,6 +208,9 @@ export function StatsContainer({
       <div
         css={css`
           width: 100%;
+          display: flex;
+          flex-flow: column;
+          gap: 16px;
         `}
       >
         {rows.map(({ leftContainerNode, rightContainerNode }, i) => (

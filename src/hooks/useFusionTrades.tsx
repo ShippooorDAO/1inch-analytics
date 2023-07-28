@@ -2,9 +2,11 @@ import { gql, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
 import {
+  Filter,
   GetFusionTradesQuery,
   GetFusionTradesQueryVariables,
   InputMaybe,
+  Operator,
   SortDirection,
 } from '@/gql/graphql';
 import { FusionTrade } from '@/shared/Model/FusionTrade';
@@ -101,6 +103,38 @@ function convertResponseToModel(
   );
 }
 
+function buildQueryFilter({
+  startDate,
+  endDate,
+}: {
+  startDate?: Date;
+  endDate?: Date;
+}): Filter {
+  const filter: Filter = {};
+
+  if (startDate) {
+    filter.integerFilters = (filter.integerFilters ?? []).concat([
+      {
+        field: 'timestamp',
+        operator: Operator.GtEq,
+        value: Math.floor(startDate.getTime() / 1000),
+      },
+    ]);
+  }
+
+  if (endDate) {
+    filter.integerFilters = (filter.integerFilters ?? []).concat([
+      {
+        field: 'timestamp',
+        operator: Operator.SmEq,
+        value: Math.floor(endDate.getTime() / 1000),
+      },
+    ]);
+  }
+
+  return filter;
+}
+
 export interface UseFusionTradesProps {
   sortBy?: 'timestamp' | 'sourceUsdAmount' | 'destinationUsdAmount';
   sortDirection?: InputMaybe<SortDirection> | undefined;
@@ -108,6 +142,8 @@ export interface UseFusionTradesProps {
   pageNumber?: number;
   assetIds?: string[];
   chainIds?: string[];
+  startDate?: Date;
+  endDate?: Date;
 }
 export function useFusionTrades({
   sortBy,
@@ -116,6 +152,8 @@ export function useFusionTrades({
   pageNumber,
   assetIds,
   chainIds,
+  startDate,
+  endDate,
 }: UseFusionTradesProps) {
   const assetStore = useAssetStore();
   const chainStore = useChainStore();
@@ -129,6 +167,7 @@ export function useFusionTrades({
       sortBy,
       sortDirection,
       pageSize,
+      filter: buildQueryFilter({ startDate, endDate }),
       pageNumber,
     },
   });

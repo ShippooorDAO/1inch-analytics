@@ -99,9 +99,10 @@ function useDonutOptions({
         borderColor: theme.palette.text.secondary,
         borderWidth: 1,
         innerSize: '60%',
+        size: '75%',
         showInLegend: true,
         dataLabels: {
-          crop: false,
+          crop: true,
           enabled: true,
           formatter() {
             return `${this.point.name}: ${innerLabelFormatter(this.y)}`;

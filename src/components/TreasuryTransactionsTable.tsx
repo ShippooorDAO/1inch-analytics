@@ -251,13 +251,16 @@ export function TreasuryTransactionsTable() {
 
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
   const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
-  const [sortBy, setSortBy] = useState<'timestamp' | 'amountUsd'>('timestamp');
-  const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(9);
   const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<
     TreasuryTransactionType[]
   >([]);
-  const [dateRange, setDateRange] = useState<{ start?: Date; end?: Date }>({});
+  const [selectedDateRange, setSelectedDateRange] = useState<{
+    start?: Date;
+    end?: Date;
+  }>({});
+  const [sortBy, setSortBy] = useState<'timestamp' | 'amountUsd'>('timestamp');
+  const [pageNumber, setPageNumber] = useState(0);
+  const [pageSize, setPageSize] = useState(9);
 
   const { transactions, mock, loading } = useTreasuryTransactions({
     transactionTypes: selectedTransactionTypes,
@@ -266,8 +269,8 @@ export function TreasuryTransactionsTable() {
     sortBy,
     chainIds: selectedChains.map((c) => c.id),
     assetIds: selectedAssets.map((asset) => asset.id),
-    startDate: dateRange.start,
-    endDate: dateRange.end,
+    startDate: selectedDateRange.start,
+    endDate: selectedDateRange.end,
   });
 
   const rows = !loading && transactions ? transactions : mock;
@@ -364,7 +367,10 @@ export function TreasuryTransactionsTable() {
         >
           <Typography variant="h3">Transactions</Typography>
           <AutoSkeleton>
-            <DateRangePicker value={dateRange} onChange={setDateRange} />
+            <DateRangePicker
+              value={selectedDateRange}
+              onChange={setSelectedDateRange}
+            />
           </AutoSkeleton>
           <AutoSkeleton loading={!assetOptions}>
             <AssetMultiSelect

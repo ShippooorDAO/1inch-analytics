@@ -25,6 +25,7 @@ import { HistogramChart } from '@/components/chart/HistogramChart';
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
 import { MultiTabSection } from '@/components/container/SectionContainer';
 import { StatsContainer } from '@/components/container/StatsContainer';
+import { DateRangePicker } from '@/components/DateRangePicker';
 import { EtherscanButton } from '@/components/EtherscanButton';
 import { AssetMultiSelect } from '@/components/filters/AssetMultiSelect';
 import { AddressIcon } from '@/components/icons/AddressIcon';
@@ -814,11 +815,16 @@ function FusionTradersTable() {
 function FusionTradesTable() {
   const assetStore = useAssetStore();
   const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
+  const [selectedDateRange, setSelectedDateRange] = useState<{
+    start?: Date;
+    end?: Date;
+  }>({});
   const [sortBy, setSortBy] = useState<'timestamp' | 'destinationUsdAmount'>(
     'destinationUsdAmount'
   );
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(7);
+  const [pageSize, setPageSize] = useState(9);
+
   const {
     fusionTrades,
     mock: mockFusionTrades,
@@ -828,6 +834,8 @@ function FusionTradesTable() {
     pageNumber: 1,
     sortBy,
     assetIds: selectedAssets.map((asset) => asset.id),
+    startDate: selectedDateRange.start,
+    endDate: selectedDateRange.end,
   });
   const rows = !loading && fusionTrades ? fusionTrades : mockFusionTrades;
 
@@ -910,26 +918,34 @@ function FusionTradesTable() {
           `}
         >
           <Typography variant="h4">Top Fusion Trades</Typography>
-          <AutoSkeleton loading={!assetOptions}>
-            <AssetMultiSelect
-              placeholder="Filter by assets"
-              assets={assetOptions ?? []}
-              values={selectedAssets}
-              onChange={setSelectedAssets}
-            />
-          </AutoSkeleton>
           <div
             css={css`
               display: flex;
               flex-flow: row;
-              justify-content: space-between;
+              align-items: center;
+              gap: 10px;
             `}
           >
+            <AutoSkeleton loading={!assetOptions}>
+              <DateRangePicker
+                value={selectedDateRange}
+                onChange={setSelectedDateRange}
+              />
+            </AutoSkeleton>
+            <AutoSkeleton loading={!assetOptions}>
+              <AssetMultiSelect
+                placeholder="Filter by assets"
+                assets={assetOptions ?? []}
+                values={selectedAssets}
+                onChange={setSelectedAssets}
+              />
+            </AutoSkeleton>
             <Button
               onClick={handleSortMenuClick}
               endIcon={<Sort />}
               css={(theme) =>
                 css`
+                  width: 100%;
                   color: ${theme.palette.text.secondary};
                 `
               }
@@ -985,7 +1001,6 @@ function FusionTradesTable() {
             css={(theme) => css`
               display: flex;
               flex-flow: row;
-              height: 86px;
               gap: 10px;
               align-items: center;
               justify-content: space-between;

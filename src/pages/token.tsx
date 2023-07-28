@@ -62,7 +62,7 @@ function useTokenPageData() {
     sortBy: 'stakingBalance',
     sortDirection: SortDirection.Desc,
     pageNumber: 1,
-    pageSize: 5,
+    pageSize: 8,
     version: 'ALL',
   };
 
@@ -219,6 +219,7 @@ interface StakingWalletsTableProps {
     totalEntries?: number | null;
     totalPages?: number | null;
   };
+  marketCap?: number;
   refetchStakingWallets: (params: GetStakingWalletsQueryVariables) => void;
 }
 
@@ -227,6 +228,7 @@ function StakingWalletsTable({
   stakingWallets,
   refetchStakingWallets,
   pagination,
+  marketCap,
 }: StakingWalletsTableProps) {
   const rows = stakingWallets ?? undefined;
 
@@ -237,7 +239,7 @@ function StakingWalletsTable({
     StakingVersion.All
   );
   const [pageNumber, setPageNumber] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(8);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const sortMenuOpen = Boolean(anchorEl);
   const handleSortMenuClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -367,12 +369,11 @@ function StakingWalletsTable({
             css={(theme) => css`
               display: flex;
               flex-flow: row;
-              height: 86px;
               gap: 10px;
               align-items: center;
               justify-content: space-between;
               padding: 10px 20px;
-              border-radius: 24px;
+              border-radius: 16px;
               background-color: ${lighten(
                 0.05,
                 theme.palette.background.paper
@@ -384,80 +385,67 @@ function StakingWalletsTable({
                 display: flex;
                 flex-flow: row;
                 gap: 10px;
+                flex-grow: 1;
               `}
             >
               <AddressIcon address={stakingWallet.address} />
-              <div>
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row;
-                    align-items: center;
-                    gap: 10px;
-                  `}
+              <div
+                css={css`
+                  display: flex;
+                  flex-flow: row;
+                  align-items: center;
+                  gap: 10px;
+                `}
+              >
+                <a
+                  href={`https://etherscan.io/address/${stakingWallet.address}`}
                 >
-                  <a
-                    href={`https://etherscan.io/address/${stakingWallet.address}`}
-                  >
-                    <Typography variant="body2">
-                      {getAddressShorthand(stakingWallet.address)}
-                    </Typography>
-                  </a>
-                  <EtherscanButton
-                    size="small"
-                    address={stakingWallet.address}
-                  />
-                  <AddressCopyButton
-                    size="small"
-                    address={stakingWallet.address}
-                  />
-                </div>
-                <Typography variant="body1" color="textSecondary">
-                  {getAddressShorthand(stakingWallet.address)}
-                </Typography>
+                  <Typography variant="body2">
+                    {getAddressShorthand(stakingWallet.address)}
+                  </Typography>
+                </a>
+                <EtherscanButton size="small" address={stakingWallet.address} />
+                <AddressCopyButton
+                  size="small"
+                  address={stakingWallet.address}
+                />
               </div>
+            </div>
+
+            <div
+              css={css`
+                text-align: right;
+              `}
+            >
+              <Typography variant="body2">
+                {format(stakingWallet.stakingBalance, {
+                  abbreviate: true,
+                  symbol: stakingWallet.version,
+                })}
+              </Typography>
             </div>
             <div
               css={css`
-                display: flex;
-                flex-flow: column;
-                justify-content: space-between;
-                gap: 5px;
-                align-items: flex-end;
+                width: 200px;
+                text-align: right;
               `}
             >
-              <div
-                css={css`
-                  display: flex;
-                  flex-flow: row;
-                  flex-grow: 1;
-                  justify-content: flex-end;
-                  align-items: flex-end;
-                `}
-              >
-                <Typography variant="body2">
-                  {format(stakingWallet.stakingBalance, {
-                    abbreviate: true,
-                    symbol: stakingWallet.version,
-                  })}
-                </Typography>
-              </div>
-              <div
-                css={css`
-                  display: flex;
-                  flex-flow: row;
-                  flex-grow: 1;
-                  justify-content: flex-end;
-                  align-items: flex-end;
-                `}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  {format(tokenPrice * stakingWallet.stakingBalance, {
-                    abbreviate: true,
-                    symbol: 'USD',
-                  })}
-                </Typography>
-              </div>
+              <Typography variant="body2">
+                {format(tokenPrice * stakingWallet.stakingBalance, {
+                  abbreviate: true,
+                  symbol: 'USD',
+                })}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">
+                {format(
+                  (stakingWallet.stakingBalance * tokenPrice) /
+                    (marketCap ?? 1),
+                  {
+                    symbol: '%',
+                  }
+                )}{' '}
+                of market cap
+              </Typography>
             </div>
           </div>
         ))}
@@ -681,6 +669,10 @@ export default function TokenPage() {
                     }
                   ),
                 },
+                {
+                  title: 'Total supply',
+                  value: format(1500000000, { abbreviate: true }),
+                },
               ]}
               containers={[
                 {
@@ -703,57 +695,6 @@ export default function TokenPage() {
                     />
                   ),
                 },
-              ]}
-            />
-          </div>
-          <div
-            css={(theme) => css`
-              width: 100%;
-              background-color: ${theme.palette.background.paper};
-              border-radius: 24px;
-            `}
-          >
-            <StakingWalletsTable
-              tokenPrice={marketData?.currentMarketData?.usd ?? 0}
-              stakingWallets={stakingWallets}
-              pagination={pagination}
-              refetchStakingWallets={refetchStakingWallets}
-            />
-          </div>
-          <div
-            css={css`
-              width: 100%;
-            `}
-          >
-            <StatsContainer
-              title={
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row;
-                    gap: 5px;
-                    flex: 1 0 auto;
-                  `}
-                >
-                  <img
-                    height="24px"
-                    width="24px"
-                    src="/pools.svg"
-                    alt="general info"
-                  />
-                  <Typography variant="h3">
-                    Token general information
-                  </Typography>
-                </div>
-              }
-              layout={StatsContainerLayout.ONE_HALF_ONE_HALF}
-              headerMetrics={[
-                {
-                  title: 'Total supply',
-                  value: format(1500000000, { abbreviate: true }),
-                },
-              ]}
-              containers={[
                 {
                   title: 'Token unlock schedule',
                   content: (
@@ -784,6 +725,25 @@ export default function TokenPage() {
                   ),
                 },
               ]}
+            />
+          </div>
+
+          <div
+            css={(theme) => css`
+              width: 100%;
+              max-width: 768px;
+              margin-left: auto;
+              margin-right: auto;
+              background-color: ${theme.palette.background.paper};
+              border-radius: 24px;
+            `}
+          >
+            <StakingWalletsTable
+              tokenPrice={marketData?.currentMarketData?.usd ?? 0}
+              stakingWallets={stakingWallets}
+              pagination={pagination}
+              marketCap={marketData?.currentMarketData?.usdMarketCap}
+              refetchStakingWallets={refetchStakingWallets}
             />
           </div>
         </div>
