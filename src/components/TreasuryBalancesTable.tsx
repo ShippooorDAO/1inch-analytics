@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { Typography } from '@mui/material';
 import { lighten, rgba } from 'polished';
 
-import { AutoSkeleton } from '@/components/AutoSkeleton';
+import { AutoSkeleton } from '@/components/loading/AutoSkeleton';
 import { TreasuryBalances } from '@/shared/Model/TreasuryBalances';
 import { format } from '@/shared/Utils/Format';
 

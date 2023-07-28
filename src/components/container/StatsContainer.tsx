@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { chunk } from 'lodash';
 import { rgba } from 'polished';
 
-import { SlimMetricsCard, SlimMetricsCardProps } from './MetricsCard';
+import { SlimMetricsCard, SlimMetricsCardProps } from '../MetricsCard';
 
 export enum StatsContainerLayout {
   SINGLE,

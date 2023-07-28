@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash';
 import { useMemo } from 'react';
 
 import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggleButtonGroup';
-import { LoadingWrapper } from '@/components/SkeletonWrapper';
+import { LoadingWrapper } from '@/components/loading/SkeletonWrapper';
 import {
   createGradient,
   useHighchartsContext,

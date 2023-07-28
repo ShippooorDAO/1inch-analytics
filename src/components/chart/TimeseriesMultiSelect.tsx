@@ -9,7 +9,7 @@ import {
   SelectWithSearchProps,
 } from '../filters/SelectWithSearch';
 import { RoundedImageIcon } from '../icons/RoundedImageIcon';
-import { SelectOptionLabel } from '../SelectOptionLabel';
+import { SelectOptionLabel } from '../filters/SelectOptionLabel';
 
 export interface TimeseriesMultiSelectProps
   extends Omit<

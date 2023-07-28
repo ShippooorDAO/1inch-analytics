@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 
 import { Asset } from '@/shared/Model/Asset';
 
-import { AssetOptionLabel } from '../AssetOptionLabel';
+import { AssetOptionLabel } from './AssetOptionLabel';
 import { SelectWithSearch, SelectWithSearchProps } from './SelectWithSearch';
 
 export interface AssetMultiSelectProps

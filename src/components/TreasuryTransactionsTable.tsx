@@ -22,7 +22,7 @@ import { useEffect, useMemo, useState } from 'react';
 import TimeAgo from 'react-timeago';
 
 import { AddressCopyButton } from '@/components/AddressCopyButton';
-import { AutoSkeleton } from '@/components/AutoSkeleton';
+import { AutoSkeleton } from '@/components/loading/AutoSkeleton';
 import { AssetMultiSelect } from '@/components/filters/AssetMultiSelect';
 import { AddressIcon } from '@/components/icons/AddressIcon';
 import { AssetIcon } from '@/components/icons/AssetIcon';

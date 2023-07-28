@@ -6,7 +6,7 @@ import { Line, LineChart, Tooltip } from 'recharts';
 
 import { TimedGasPrice } from '@/contexts/UniswapV3Subgraph/UniswapV3SubgraphProvider';
 
-import { AutoSkeleton } from './AutoSkeleton';
+import { AutoSkeleton } from '../loading/AutoSkeleton';
 
 export interface GasPriceChartProps {
   data?: TimedGasPrice[];

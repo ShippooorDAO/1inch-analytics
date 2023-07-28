@@ -3,7 +3,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { rgba } from 'polished';
 
-import { LoadingWrapper } from '@/components/SkeletonWrapper';
+import { LoadingWrapper } from '@/components/loading/SkeletonWrapper';
 import { createTooltipFormatter } from '@/contexts/Highcharts/HighchartsContextProvider';
 import { format } from '@/shared/Utils/Format';
 

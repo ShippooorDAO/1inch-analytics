@@ -6,7 +6,7 @@ import React from 'react';
 
 import { formatDelta } from '@/shared/Utils/Format';
 
-import { AutoSkeleton } from './AutoSkeleton';
+import { AutoSkeleton } from './loading/AutoSkeleton';
 
 export interface SlimMetricsCardProps {
   loading?: boolean;

@@ -22,7 +22,7 @@ import { TimeWindowToggleButtonGroup } from '@/components/chart/TimeWindowToggle
 import {
   StatsContainer,
   StatsContainerLayout,
-} from '@/components/StatsContainer';
+} from '@/components/container/StatsContainer';
 import { scopeTimeseriesToTimeWindow } from '@/shared/Utils/Chart';
 import { ChainMultiSelect } from '@/components/filters/ChainMultiSelect';
 import { PageTitle } from '@/components/PageTitle';

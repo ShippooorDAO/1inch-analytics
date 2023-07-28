@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 
 import { Asset } from '@/shared/Model/Asset';
 
-import { AssetIcon } from './icons/AssetIcon';
+import { AssetIcon } from '../icons/AssetIcon';
 
 interface AssetOptionLabelProps {
   asset: Asset;

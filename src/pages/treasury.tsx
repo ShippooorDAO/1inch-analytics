@@ -9,7 +9,7 @@ import { PageTitle } from '@/components/PageTitle';
 import {
   StatsContainer,
   StatsContainerLayout,
-} from '@/components/StatsContainer';
+} from '@/components/container/StatsContainer';
 import { TreasuryBalancesTable } from '@/components/TreasuryBalancesTable';
 import { TreasuryCashflowBreakdownTable } from '@/components/TreasuryCashflowBreakdownTable';
 import { TreasuryTransactionsTable } from '@/components/TreasuryTransactionsTable';

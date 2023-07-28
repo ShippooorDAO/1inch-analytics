@@ -32,9 +32,6 @@ export function useChartOptions() {
     labels: {
       // @ts-ignore
       ...optionsWithOppositeYAxis.yAxis!.labels,
-      formatter() {
-        return format(this.value, { symbol: 'USD', abbreviate: true });
-      },
       y: 0,
       x: -10,
     },

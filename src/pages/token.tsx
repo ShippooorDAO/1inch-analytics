@@ -23,7 +23,7 @@ import { StakingVersionToggleButtonGroup } from '@/components/StakingVersionTogg
 import {
   StatsContainer,
   StatsContainerLayout,
-} from '@/components/StatsContainer';
+} from '@/components/container/StatsContainer';
 import {
   GetStakingWalletsQueryVariables,
   SortDirection,
@@ -43,6 +43,19 @@ import {
   TimeWindow,
 } from '@/shared/Model/Timeseries';
 import { format, getAddressShorthand } from '@/shared/Utils/Format';
+
+function getStakingWalletVersionLabel(version: StakingWalletVersion) {
+  switch (version) {
+    case StakingWalletVersion.One:
+      return 'Staking 1INCH v1';
+    case StakingWalletVersion.Two:
+      return 'Staking 1INCH v2';
+    case StakingWalletVersion.All:
+      return 'All';
+    default:
+      return 'Unknown';
+  }
+}
 
 function useTokenPageData() {
   const initialStakingWalletsParams = {
@@ -256,7 +269,7 @@ function StakingWalletsTable({
   ).map((key) => {
     return {
       value: StakingWalletVersion[key],
-      label: key,
+      label: getStakingWalletVersionLabel(StakingWalletVersion[key]),
     };
   });
 

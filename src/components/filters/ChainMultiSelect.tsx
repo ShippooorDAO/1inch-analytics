@@ -4,7 +4,7 @@ import { Asset } from '@/shared/Model/Asset';
 import { Chain } from '@/shared/Model/Chain';
 
 import { RoundedImageIcon } from '../icons/RoundedImageIcon';
-import { SelectOptionLabel } from '../SelectOptionLabel';
+import { SelectOptionLabel } from './SelectOptionLabel';
 import { SelectWithSearch, SelectWithSearchProps } from './SelectWithSearch';
 
 export interface ChainMultiSelectProps

@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import { TreasuryCashflowBreakdown } from '@/shared/Model/TreasuryCashflowBreakdown';
 import { format } from '@/shared/Utils/Format';
 
-import { AutoSkeleton } from './AutoSkeleton';
+import { AutoSkeleton } from './loading/AutoSkeleton';
 
 const INDENT_SIZE = 24;
 
