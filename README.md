@@ -50,3 +50,10 @@ To automatically fix lint errors, run this command:
 ```shell
 yarn fix
 ```
+
+## Feature Flags
+Feature flags are useful to control the set of features that is shown to the user. To enable all of them, use the append `e=1` to url query params (i.e `https://info.1inch.io/?e=1`)
+
+To disable them, use the menu on the bottom-right of the screen and click "Reset to Prod-like". This will revert to default settings as defined in `.env*` file.
+
+
