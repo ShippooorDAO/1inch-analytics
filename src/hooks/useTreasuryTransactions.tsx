@@ -6,24 +6,27 @@ import {
   GetTreasuryTransactionsQuery,
   GetTreasuryTransactionsQueryVariables,
   InputMaybe,
+  Operator,
   SortDirection,
 } from '@/gql/graphql';
-import {
-  AGGREGATION_ROUTER_ADDRESSES,
-  GOV_LEFTOVER_EXCHANGER_ADDRESS,
-  GOV_STAKING_ADDRESS,
-  NULL_ADDRESS,
-  TREASURY_ADDRESS,
-} from '@/shared/Constants';
 import { AssetService } from '@/shared/Currency/AssetService';
+import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import {
   TreasuryTransaction,
-  TreasuryTransactionSubType,
   TreasuryTransactionType,
 } from '@/shared/Model/TreasuryTransaction';
 
 import { mockTreasuryTransactionsResponse } from './mocks/TreasuryTransactions';
 import { useAssetService } from './useAssetService';
+import { useChainStore } from './useChainStore';
+
+const SPREAD_SURPLUS_LABEL = '1inch: Spread Surplus';
+const STAKING_FEES_LABEL = '1inch: Staking v2 fees';
+const SPENDING_LABEL = '1inch: Spending';
+const GRANT_LABEL = '1inch: Grant';
+const COLD_WALLET_LABEL = '1inch: Cold wallet';
+const AAVE_LABEL = 'Aave: USDC V3';
+const ONE_INCH_TREASURY_LABEL = '1inch: Treasury';
 
 const QUERY = gql`
   query getTreasuryTransactions(
@@ -33,6 +36,7 @@ const QUERY = gql`
     $sortBy: String
     $sortDirection: SortDirection
     $assetIds: [String]
+    $chainIds: [String]
     $fromLabels: [String]
     $toLabels: [String]
   ) {
@@ -43,6 +47,7 @@ const QUERY = gql`
       sortBy: $sortBy
       sortDirection: $sortDirection
       assetIds: $assetIds
+      chainIds: $chainIds
       fromLabels: $fromLabels
       toLabels: $toLabels
     ) {
@@ -54,6 +59,9 @@ const QUERY = gql`
         amount
         amountUsd
         asset {
+          id
+        }
+        chain {
           id
         }
         from
@@ -69,72 +77,51 @@ const QUERY = gql`
 `;
 
 function getTransactionType({
-  from,
-  to,
+  fromLabel,
+  toLabel,
 }: {
-  from?: string | null;
-  to?: string | null;
+  fromLabel?: string | null;
+  toLabel?: string | null;
 }) {
-  if (from === TREASURY_ADDRESS && to === NULL_ADDRESS) {
-    return TreasuryTransactionType.BURN;
+  if (fromLabel === SPREAD_SURPLUS_LABEL) {
+    return TreasuryTransactionType.SPREAD_SURPLUS;
   }
 
-  if (to === TREASURY_ADDRESS && from === NULL_ADDRESS) {
-    return TreasuryTransactionType.MINT;
+  if (fromLabel === STAKING_FEES_LABEL) {
+    return TreasuryTransactionType.STAKING_FEES;
   }
 
-  if (to === TREASURY_ADDRESS) {
-    return TreasuryTransactionType.DEPOSIT;
+  if (toLabel === SPENDING_LABEL) {
+    return TreasuryTransactionType.SPENDING;
   }
 
-  if (from === TREASURY_ADDRESS) {
+  if (toLabel === GRANT_LABEL) {
+    return TreasuryTransactionType.GRANT_PAYMENT;
+  }
+
+  if (toLabel === COLD_WALLET_LABEL) {
+    return TreasuryTransactionType.COLD_WALLET;
+  }
+
+  if (toLabel === AAVE_LABEL) {
+    return TreasuryTransactionType.AAVE;
+  }
+
+  if (fromLabel === ONE_INCH_TREASURY_LABEL) {
     return TreasuryTransactionType.WITHDRAW;
   }
 
-  return TreasuryTransactionType.UNKNOWN;
-}
-
-function getTransactionSubType({
-  type,
-  from,
-  to,
-}: {
-  type: TreasuryTransactionType;
-  from?: string | null;
-  to?: string | null;
-}): TreasuryTransactionSubType {
-  if (
-    type === TreasuryTransactionType.DEPOSIT &&
-    from === GOV_STAKING_ADDRESS
-  ) {
-    return TreasuryTransactionSubType.STAKING_REVENUE;
+  if (toLabel === ONE_INCH_TREASURY_LABEL) {
+    return TreasuryTransactionType.DEPOSIT;
   }
 
-  if (type === TreasuryTransactionType.WITHDRAW) {
-    return TreasuryTransactionSubType.GRANT_PAYMENT;
-  }
-
-  if (
-    type === TreasuryTransactionType.DEPOSIT &&
-    from === GOV_LEFTOVER_EXCHANGER_ADDRESS
-  ) {
-    return TreasuryTransactionSubType.OTHER;
-  }
-
-  if (
-    type === TreasuryTransactionType.DEPOSIT &&
-    from &&
-    AGGREGATION_ROUTER_ADDRESSES.includes(from)
-  ) {
-    return TreasuryTransactionSubType.AGGREGATION_ROUTER_REVENUE;
-  }
-
-  return TreasuryTransactionSubType.OTHER;
+  return TreasuryTransactionType.OTHER;
 }
 
 function convertResponseToModel(
   response: GetTreasuryTransactionsQuery,
-  assetService: AssetService
+  assetService: AssetService,
+  chainStore: ChainStore
 ): TreasuryTransaction[] {
   return (
     response.treasuryTransactions?.treasuryTransactions
@@ -148,16 +135,11 @@ function convertResponseToModel(
           !!t.to &&
           !!t.id &&
           !!t.timestamp &&
-          !!t.transactionHash
+          !!t.transactionHash &&
+          !!t.chain?.id
       )
       .map((t) => t!)
       .map((tx) => ({
-        type: getTransactionType(tx),
-        subType: getTransactionSubType({
-          type: getTransactionType(tx),
-          from: tx.from,
-          to: tx.to,
-        }),
         amount: assetService.createAssetAmount(tx.amount!, tx.asset!.id!)!,
         amountUsd: assetService.createUsdAmount(tx.amountUsd!)!,
         asset: assetService.store.getById(tx.asset!.id!)!,
@@ -166,8 +148,13 @@ function convertResponseToModel(
         id: tx.id!,
         timestamp: tx.timestamp!,
         to: tx.to!,
+        chain: chainStore.getById(tx.chain!.id!)!,
         toLabel: tx.toLabel,
         transactionHash: tx.transactionHash!,
+        type: getTransactionType({
+          fromLabel: tx.fromLabel,
+          toLabel: tx.toLabel,
+        }),
       })) ??
     [] ??
     []
@@ -185,20 +172,21 @@ interface UseTreasuryTransactionsProps {
   toLabels?: string[];
   from?: string;
   to?: string;
-  includeSpreadSurplus?: boolean;
-  includeStakingFees?: boolean;
-  includeSpending?: boolean;
-  includeGrantPayments?: boolean;
-  includeColdWalletTransfers?: boolean;
-  includeAave?: boolean;
+  transactionTypes?: TreasuryTransactionType[];
+  startDate?: Date;
+  endDate?: Date;
 }
 
 function buildQueryFilter({
   from,
   to,
+  startDate,
+  endDate,
 }: {
   from?: string;
   to?: string;
+  startDate?: Date;
+  endDate?: Date;
 }): Filter {
   const filter: Filter = {};
 
@@ -214,49 +202,65 @@ function buildQueryFilter({
     ]);
   }
 
+  if (startDate) {
+    filter.integerFilters = (filter.integerFilters ?? []).concat([
+      {
+        field: 'timestamp',
+        operator: Operator.GtEq,
+        value: Math.floor(startDate.getTime() / 1000),
+      },
+    ]);
+  }
+
+  if (endDate) {
+    filter.integerFilters = (filter.integerFilters ?? []).concat([
+      {
+        field: 'timestamp',
+        operator: Operator.SmEq,
+        value: Math.floor(endDate.getTime() / 1000),
+      },
+    ]);
+  }
+
   return filter;
 }
 
-function getTransactionTypeQueryFilter({
-  includeSpreadSurplus,
-  includeStakingFees,
-  includeGrantPayments,
-  includeSpending,
-  includeColdWalletTransfers,
-  includeAave,
-}: {
-  includeSpreadSurplus?: boolean;
-  includeStakingFees?: boolean;
-  includeSpending?: boolean;
-  includeGrantPayments?: boolean;
-  includeColdWalletTransfers?: boolean;
-  includeAave?: boolean;
-}): { fromLabels: string[]; toLabels: string[] } {
+function getTransactionTypeQueryFilter(
+  transactionTypes?: TreasuryTransactionType[]
+): { fromLabels: string[]; toLabels: string[] } {
   const fromLabels: string[] = [];
   const toLabels: string[] = [];
 
-  if (includeSpreadSurplus) {
-    fromLabels.push('1inch: Spread Surplus');
+  if (transactionTypes?.includes(TreasuryTransactionType.SPREAD_SURPLUS)) {
+    fromLabels.push(SPREAD_SURPLUS_LABEL);
   }
 
-  if (includeStakingFees) {
-    fromLabels.push('1inch: Staking v2 fees');
+  if (transactionTypes?.includes(TreasuryTransactionType.STAKING_FEES)) {
+    fromLabels.push(STAKING_FEES_LABEL);
   }
 
-  if (includeSpending) {
-    toLabels.push('1inch: Spending');
+  if (transactionTypes?.includes(TreasuryTransactionType.SPENDING)) {
+    toLabels.push(SPENDING_LABEL);
   }
 
-  if (includeGrantPayments) {
-    toLabels.push('1inch: Grant');
+  if (transactionTypes?.includes(TreasuryTransactionType.GRANT_PAYMENT)) {
+    toLabels.push(GRANT_LABEL);
   }
 
-  if (includeColdWalletTransfers) {
-    toLabels.push('1inch: Cold wallet');
+  if (transactionTypes?.includes(TreasuryTransactionType.COLD_WALLET)) {
+    toLabels.push(COLD_WALLET_LABEL);
   }
 
-  if (includeAave) {
-    toLabels.push('Aave: USDC V3');
+  if (transactionTypes?.includes(TreasuryTransactionType.AAVE)) {
+    toLabels.push(AAVE_LABEL);
+  }
+
+  if (transactionTypes?.includes(TreasuryTransactionType.DEPOSIT)) {
+    toLabels.push(ONE_INCH_TREASURY_LABEL);
+  }
+
+  if (transactionTypes?.includes(TreasuryTransactionType.WITHDRAW)) {
+    fromLabels.push(ONE_INCH_TREASURY_LABEL);
   }
 
   return { fromLabels, toLabels };
@@ -268,33 +272,28 @@ export function useTreasuryTransactions({
   pageSize,
   pageNumber,
   assetIds,
-  includeSpreadSurplus,
-  includeStakingFees,
-  includeGrantPayments,
-  includeSpending,
-  includeColdWalletTransfers,
-  includeAave,
+  chainIds,
+  transactionTypes,
   from,
   to,
+  startDate,
+  endDate,
 }: UseTreasuryTransactionsProps) {
   const assetService = useAssetService();
-  const transactionTypeQueryFilter = getTransactionTypeQueryFilter({
-    includeSpreadSurplus,
-    includeStakingFees,
-    includeGrantPayments,
-    includeSpending,
-    includeColdWalletTransfers,
-    includeAave,
-  });
+  const chainStore = useChainStore();
+
+  const transactionTypeQueryFilter =
+    getTransactionTypeQueryFilter(transactionTypes);
   const { data, error, loading } = useQuery<
     GetTreasuryTransactionsQuery,
     GetTreasuryTransactionsQueryVariables
   >(QUERY, {
     variables: {
       assetIds,
+      chainIds,
       fromLabels: transactionTypeQueryFilter.fromLabels,
       toLabels: transactionTypeQueryFilter.toLabels,
-      filter: buildQueryFilter({ from, to }),
+      filter: buildQueryFilter({ from, to, startDate, endDate }),
       sortBy,
       sortDirection,
       pageSize,
@@ -303,21 +302,22 @@ export function useTreasuryTransactions({
   });
 
   const mock = useMemo(() => {
-    if (!assetService) {
+    if (!assetService || !chainStore) {
       return null;
     }
     return convertResponseToModel(
       mockTreasuryTransactionsResponse,
-      assetService
+      assetService,
+      chainStore
     );
-  }, [assetService]);
+  }, [assetService, chainStore]);
 
   const transactions = useMemo(() => {
-    if (!assetService || !data) {
+    if (!assetService || !chainStore || !data) {
       return null;
     }
-    return convertResponseToModel(data, assetService);
-  }, [assetService, data]);
+    return convertResponseToModel(data, assetService, chainStore);
+  }, [assetService, chainStore, data]);
 
   return {
     error,

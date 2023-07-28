@@ -37,7 +37,6 @@ export function TreasuryBalancesTable({
           flex-flow: column;
           gap: 10px;
           white-space: nowrap;
-          //   padding: 10px;
           height: 100%;
         `}
       >
@@ -91,7 +90,6 @@ export function TreasuryBalancesTable({
             </div>
             <div
               css={(theme) => css`
-                width: 300px;
                 ${theme.breakpoints.down('lg')} {
                   display: none;
                 }

@@ -9,7 +9,7 @@ export interface Asset {
   displayName: string;
   decimals: number;
   precision: bigint;
-  imageUrl: string;
+  imageUrl?: string;
   chain: Chain;
   priceUsd: UsdAmount;
 }

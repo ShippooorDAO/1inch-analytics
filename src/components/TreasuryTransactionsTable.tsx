@@ -1,10 +1,14 @@
 import { css } from '@emotion/react';
 import {
+  AcUnit,
   ArrowBack,
   ArrowForward,
   AttachMoney,
+  Group,
   NorthEast,
+  ReceiptLong,
   Sort,
+  SouthEast,
 } from '@mui/icons-material';
 import {
   Button,
@@ -12,11 +16,10 @@ import {
   Menu,
   MenuItem,
   NoSsr,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from '@mui/material';
 import moment from 'moment';
+import Image from 'next/image';
 import { lighten } from 'polished';
 import { useEffect, useMemo, useState } from 'react';
 import TimeAgo from 'react-timeago';
@@ -27,125 +30,199 @@ import { AddressIcon } from '@/components/icons/AddressIcon';
 import { AssetIcon } from '@/components/icons/AssetIcon';
 import { AutoSkeleton } from '@/components/loading/AutoSkeleton';
 import { useAssetService } from '@/hooks/useAssetService';
+import { useChainStore } from '@/hooks/useChainStore';
 import { useTreasuryTransactions } from '@/hooks/useTreasuryTransactions';
 import { Asset } from '@/shared/Model/Asset';
-import { ChainId } from '@/shared/Model/Chain';
-import {
-  TreasuryTransactionSubType,
-  TreasuryTransactionType,
-} from '@/shared/Model/TreasuryTransaction';
+import { Chain, ChainId } from '@/shared/Model/Chain';
+import { TreasuryTransactionType } from '@/shared/Model/TreasuryTransaction';
 import {
   getEtherscanAddressLink,
   getEtherscanTransactionLink,
 } from '@/shared/Utils/Etherscan';
 import { getWalletDisplayName } from '@/shared/Utils/Format';
 
-function TransactionTypeCell({
-  type,
-  subType,
-  fromLabel,
-  toLabel,
-}: {
-  type: TreasuryTransactionType;
-  subType: TreasuryTransactionSubType;
-  fromLabel?: string | null;
-  toLabel?: string | null;
-}) {
-  const logo = (() => {
-    if (fromLabel === '1inch: Spread Surplus') {
+import { DateRangePicker } from './DateRangePicker';
+import { ChainMultiSelect } from './filters/ChainMultiSelect';
+import { SelectOptionLabel } from './filters/SelectOptionLabel';
+import {
+  SelectWithSearch,
+  SelectWithSearchProps,
+} from './filters/SelectWithSearch';
+
+function TransactionTypeIcon({ type }: { type: TreasuryTransactionType }) {
+  switch (type) {
+    case TreasuryTransactionType.SPREAD_SURPLUS:
       return <AttachMoney />;
-    }
-
-    if (fromLabel === '1inch: Staking v2 fees') {
+    case TreasuryTransactionType.STAKING_FEES:
       return <AttachMoney />;
-    }
-
-    if (toLabel === '1inch: Spending') {
-      return <NorthEast />; // TODO
-    }
-
-    if (toLabel === '1inch: Grant') {
-      return <NorthEast />; // TODO
-    }
-
-    if (toLabel === '1inch: Cold wallet') {
-      return <NorthEast />; // TODO
-    }
-
-    if (toLabel === 'Aave: USDC V3') {
-      return <NorthEast />; // TODO
-    }
-
-    if (fromLabel === '1inch: Treasury') {
+    case TreasuryTransactionType.SPENDING:
+      return <ReceiptLong />;
+    case TreasuryTransactionType.GRANT_PAYMENT:
+      return <Group />;
+    case TreasuryTransactionType.COLD_WALLET:
+      return <AcUnit />;
+    case TreasuryTransactionType.AAVE:
+      return (
+        <div
+          css={css`
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            align-items: center;
+            width: 27px;
+            height: 27px;
+          `}
+        >
+          <Image src="/aave-icon.png" height="24px" width="18px" alt="aave" />
+        </div>
+      );
+    case TreasuryTransactionType.DEPOSIT:
+      return <SouthEast />;
+    case TreasuryTransactionType.WITHDRAW:
+      return <NorthEast />;
+    case TreasuryTransactionType.OTHER:
       return <AttachMoney />;
-    }
+    default:
+      return null;
+  }
+}
 
-    if (toLabel === '1inch: Treasury') {
-      return <NorthEast />; // TODO
-    }
-  })();
-
-  const mainLabel = (() => {
-    if (fromLabel === '1inch: Spread Surplus') {
+function getSecondaryTransactionLabel(
+  transactionType: TreasuryTransactionType
+) {
+  switch (transactionType) {
+    case TreasuryTransactionType.SPREAD_SURPLUS:
       return 'Deposit';
-    }
-
-    if (fromLabel === '1inch: Staking v2 fees') {
+    case TreasuryTransactionType.STAKING_FEES:
       return 'Deposit';
-    }
-
-    if (toLabel === '1inch: Spending') {
+    case TreasuryTransactionType.SPENDING:
       return 'Withdraw';
-    }
-
-    if (toLabel === '1inch: Grant') {
+    case TreasuryTransactionType.GRANT_PAYMENT:
       return 'Withdraw';
-    }
-
-    if (toLabel === '1inch: Cold wallet') {
-      return 'Transfer';
-    }
-
-    if (toLabel === 'Aave: USDC V3') {
+    case TreasuryTransactionType.COLD_WALLET:
+      return 'Withdraw';
+    case TreasuryTransactionType.AAVE:
       return 'Lend';
-    }
-
-    if (fromLabel === '1inch: Treasury') {
+    case TreasuryTransactionType.DEPOSIT:
       return 'Deposit';
-    }
-
-    if (toLabel === '1inch: Treasury') {
+    case TreasuryTransactionType.WITHDRAW:
       return 'Withdraw';
-    }
-  })();
-
-  const secondaryLabel = (() => {
-    if (fromLabel === '1inch: Spread Surplus') {
+    case TreasuryTransactionType.OTHER:
+    default:
+      return 'Other';
+  }
+}
+function getPrimaryTransactionLabel(transactionType: TreasuryTransactionType) {
+  switch (transactionType) {
+    case TreasuryTransactionType.SPREAD_SURPLUS:
       return 'Spread surplus';
-    }
-
-    if (fromLabel === '1inch: Staking v2 fees') {
+    case TreasuryTransactionType.STAKING_FEES:
       return 'Staking v2 fees';
-    }
-
-    if (toLabel === '1inch: Spending') {
+    case TreasuryTransactionType.SPENDING:
       return 'Spending';
-    }
-
-    if (toLabel === '1inch: Grant') {
+    case TreasuryTransactionType.GRANT_PAYMENT:
       return 'Grant payment';
-    }
-
-    if (toLabel === '1inch: Cold wallet') {
+    case TreasuryTransactionType.COLD_WALLET:
       return 'Transfer to cold wallet';
+    case TreasuryTransactionType.AAVE:
+      return 'Lend on AAVE';
+    case TreasuryTransactionType.DEPOSIT:
+      return 'Other transfer in';
+    case TreasuryTransactionType.WITHDRAW:
+      return 'Other transfer out';
+    case TreasuryTransactionType.OTHER:
+    default:
+      return 'Unknown type';
+  }
+}
+
+interface TransactionTypeMultiSelectProps
+  extends Omit<
+    SelectWithSearchProps<Asset>,
+    'onChange' | 'options' | 'searchPredicate' | 'value'
+  > {
+  options: TreasuryTransactionType[];
+  value: TreasuryTransactionType[];
+  onChange: (transactionTypes: TreasuryTransactionType[]) => void;
+  placeholder?: string;
+}
+
+function TransactionTypeMultiSelect({
+  options,
+  value,
+  onChange,
+  placeholder,
+  ...props
+}: TransactionTypeMultiSelectProps) {
+  const optionsInternal = options.map((txType) => {
+    return {
+      key: TreasuryTransactionType[txType],
+      value: txType,
+      label: (
+        <SelectOptionLabel
+          name={getPrimaryTransactionLabel(txType)}
+          description={getSecondaryTransactionLabel(txType)}
+          icon={<TransactionTypeIcon type={txType} />}
+        />
+      ),
+    };
+  });
+
+  const onChangeInternal = (
+    values: TreasuryTransactionType[] | TreasuryTransactionType | null
+  ) => {
+    if (!values) {
+      onChange([]);
+      return;
     }
 
-    if (toLabel === 'Aave: USDC V3') {
-      return 'Lend on AAVE v3';
+    if (!Array.isArray(values)) {
+      values = [values];
     }
 
-    return 'Other';
+    onChange(values);
+  };
+
+  const label = (() => {
+    if (value.length === 0) {
+      return placeholder ?? 'Filter by transaction type';
+    }
+    if (value.length === 1) {
+      return (
+        optionsInternal.find((o) => o.value === value[0])?.label ??
+        placeholder ??
+        'Filter by transaction type'
+      );
+    }
+
+    if (value.length > 1) {
+      return `Filtered by ${value.length} transaction types`;
+    }
+    if (value.length === optionsInternal.length) {
+      return 'All transaction types selected';
+    }
   })();
+
+  return (
+    <SelectWithSearch
+      {...props}
+      label={label}
+      value={value}
+      getKey={(option) => TreasuryTransactionType[option]}
+      multiple={true}
+      options={optionsInternal ?? []}
+      disableSearch={true}
+      onChange={onChangeInternal}
+      css={css`
+        width: 400px;
+      `}
+    />
+  );
+}
+
+function TransactionTypeCell({ type }: { type: TreasuryTransactionType }) {
+  const primaryLabel = getPrimaryTransactionLabel(type);
+  const secondaryLabel = getSecondaryTransactionLabel(type);
 
   return (
     <div
@@ -157,9 +234,9 @@ function TransactionTypeCell({
         gap: 5px;
       `}
     >
-      {logo}
+      <TransactionTypeIcon type={type} />
       <div>
-        <Typography variant="body2">{mainLabel}</Typography>
+        <Typography variant="body2">{primaryLabel}</Typography>
         <Typography variant="body1" color="textSecondary">
           {secondaryLabel}
         </Typography>
@@ -170,34 +247,41 @@ function TransactionTypeCell({
 
 export function TreasuryTransactionsTable() {
   const assetService = useAssetService();
-  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
-  const [sortBy, setSortBy] = useState<'timestamp' | 'amountUsd'>('timestamp');
+  const chainStore = useChainStore();
 
+  const [selectedAssets, setSelectedAssets] = useState<Asset[]>([]);
+  const [selectedChains, setSelectedChains] = useState<Chain[]>([]);
+  const [sortBy, setSortBy] = useState<'timestamp' | 'amountUsd'>('timestamp');
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(7);
+  const [pageSize, setPageSize] = useState(9);
   const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<
-    string[]
+    TreasuryTransactionType[]
   >([]);
+  const [dateRange, setDateRange] = useState<{ start?: Date; end?: Date }>({});
+
   const { transactions, mock, loading } = useTreasuryTransactions({
-    includeSpreadSurplus: selectedTransactionTypes.includes(
-      'includeSpreadSurplus'
-    ),
-    includeStakingFees: selectedTransactionTypes.includes('includeStakingFees'),
-    includeSpending: selectedTransactionTypes.includes('includeSpending'),
-    includeGrantPayments: selectedTransactionTypes.includes(
-      'includeGrantPayments'
-    ),
-    includeColdWalletTransfers: selectedTransactionTypes.includes(
-      'includeColdWalletTransfers'
-    ),
-    includeAave: selectedTransactionTypes.includes('includeAave'),
+    transactionTypes: selectedTransactionTypes,
     pageSize: pageSize * 100,
     pageNumber: 1,
     sortBy,
+    chainIds: selectedChains.map((c) => c.id),
     assetIds: selectedAssets.map((asset) => asset.id),
+    startDate: dateRange.start,
+    endDate: dateRange.end,
   });
 
   const rows = !loading && transactions ? transactions : mock;
+
+  const chainOptions = useMemo(() => {
+    if (!chainStore) {
+      return;
+    }
+
+    return [
+      chainStore.getByChainId(ChainId.ETHEREUM)!,
+      chainStore.getByChainId(ChainId.ARBITRUM)!,
+    ];
+  }, [chainStore]);
 
   const assetOptions = useMemo(() => {
     if (!assetService) {
@@ -246,13 +330,6 @@ export function TreasuryTransactionsTable() {
     setSortBy('timestamp');
   };
 
-  const handleTransactionTypeFilterChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newTransactionTypes: string[] | null
-  ) => {
-    setSelectedTransactionTypes(newTransactionTypes ?? []);
-  };
-
   return (
     <div
       css={css`
@@ -279,12 +356,16 @@ export function TreasuryTransactionsTable() {
             flex-flow: row;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             white-space: nowrap;
             padding: 10px 10px 0 10px;
             width: 100%;
           `}
         >
           <Typography variant="h3">Transactions</Typography>
+          <AutoSkeleton>
+            <DateRangePicker value={dateRange} onChange={setDateRange} />
+          </AutoSkeleton>
           <AutoSkeleton loading={!assetOptions}>
             <AssetMultiSelect
               placeholder="Filter by assets"
@@ -293,47 +374,30 @@ export function TreasuryTransactionsTable() {
               onChange={setSelectedAssets}
             />
           </AutoSkeleton>
-          <ToggleButtonGroup
-            size="small"
-            value={selectedTransactionTypes}
-            color="primary"
-            onChange={handleTransactionTypeFilterChange}
-            aria-label="text formatting"
-            exclusive
-          >
-            <ToggleButton
-              value="includeStakingFees"
-              aria-label="staking fees"
-              size="small"
-            >
-              Staking fees
-            </ToggleButton>
-            <ToggleButton
-              value="includeSpreadSurplus"
-              aria-label="spread surplus"
-            >
-              Spread surplus
-            </ToggleButton>
-            <ToggleButton value="includeGrantPayments" aria-label="grants">
-              Grants
-            </ToggleButton>
-            <ToggleButton
-              value="includeSpending"
-              aria-label="spending"
-              size="small"
-            >
-              Spending
-            </ToggleButton>
-            <ToggleButton
-              value="includeColdWalletTransfers"
-              aria-label="cold wallet"
-            >
-              Cold wallet
-            </ToggleButton>
-            <ToggleButton value="includeAave" aria-label="aave">
-              AAVE
-            </ToggleButton>
-          </ToggleButtonGroup>
+          <AutoSkeleton loading={!assetOptions}>
+            <TransactionTypeMultiSelect
+              onChange={setSelectedTransactionTypes}
+              value={selectedTransactionTypes}
+              options={[
+                TreasuryTransactionType.SPREAD_SURPLUS,
+                TreasuryTransactionType.STAKING_FEES,
+                TreasuryTransactionType.COLD_WALLET,
+                TreasuryTransactionType.AAVE,
+                TreasuryTransactionType.GRANT_PAYMENT,
+                TreasuryTransactionType.SPENDING,
+                TreasuryTransactionType.DEPOSIT,
+                TreasuryTransactionType.WITHDRAW,
+              ]}
+            />
+          </AutoSkeleton>
+
+          <AutoSkeleton>
+            <ChainMultiSelect
+              options={chainOptions ?? []}
+              value={selectedChains}
+              onChange={setSelectedChains}
+            />
+          </AutoSkeleton>
           <div
             css={css`
               display: flex;
@@ -401,12 +465,11 @@ export function TreasuryTransactionsTable() {
             css={(theme) => css`
               display: flex;
               flex-flow: row;
-              height: 86px;
               gap: 10px;
               align-items: center;
               justify-content: space-between;
               padding: 10px 20px;
-              border-radius: 24px;
+              border-radius: 16px;
               background-color: ${lighten(
                 0.05,
                 theme.palette.background.paper
@@ -458,12 +521,7 @@ export function TreasuryTransactionsTable() {
                 width: 160px;
               `}
             >
-              <TransactionTypeCell
-                type={row.type}
-                subType={row.subType}
-                fromLabel={row.fromLabel}
-                toLabel={row.toLabel}
-              />
+              <TransactionTypeCell type={row.type} />
             </div>
             <div
               css={(theme) => css`

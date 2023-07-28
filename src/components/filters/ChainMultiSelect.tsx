@@ -12,18 +12,18 @@ export interface ChainMultiSelectProps
     SelectWithSearchProps<Asset>,
     'onChange' | 'options' | 'searchPredicate' | 'value'
   > {
-  chains: Chain[];
-  values: Chain[];
+  options: Chain[];
+  value: Chain[];
   onChange: (asset: Chain[]) => void;
 }
 
 export function ChainMultiSelect({
-  chains,
-  values,
+  options,
+  value,
   onChange,
   ...props
 }: ChainMultiSelectProps) {
-  const options = chains.map((chain) => {
+  const optionsInternal = options.map((chain) => {
     return {
       key: chain.id,
       value: chain,
@@ -52,35 +52,36 @@ export function ChainMultiSelect({
       );
     });
   };
-  const onChangeInternal = (values: Chain[] | Chain | null) => {
-    if (!values) {
+  const onChangeInternal = (newValue: Chain[] | Chain | null) => {
+    if (!newValue) {
       onChange([]);
       return;
     }
 
-    if (!Array.isArray(values)) {
-      values = [values];
+    if (!Array.isArray(newValue)) {
+      newValue = [newValue];
     }
 
-    onChange(values);
+    onChange(newValue);
   };
 
   const label =
     props.label ??
     (() => {
-      if (values.length === 0) {
+      if (value.length === 0) {
         return 'Select chains';
       }
-      if (values.length === 1) {
+      if (value.length === 1) {
         return (
-          options.find((o) => o.value === values[0])?.label ?? 'Select chains'
+          optionsInternal.find((o) => o.value === value[0])?.label ??
+          'Select chains'
         );
       }
-      if (values.length === chains.length) {
+      if (value.length === optionsInternal.length) {
         return 'All chains';
       }
-      if (values.length > 1) {
-        return `${values.length} chains`;
+      if (value.length > 1) {
+        return `${value.length} chains`;
       }
     })();
 
@@ -88,10 +89,10 @@ export function ChainMultiSelect({
     <SelectWithSearch
       {...props}
       label={label}
-      value={values}
+      value={value}
       getKey={(asset) => asset.id}
       multiple={true}
-      options={options ?? []}
+      options={optionsInternal ?? []}
       searchPlaceholder="Search by chain name or id"
       onChange={onChangeInternal}
       searchPredicate={searchPredicate}

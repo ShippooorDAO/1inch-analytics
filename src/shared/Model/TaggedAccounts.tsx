@@ -1,18 +1,30 @@
+import {
+  AGGREGATION_ROUTER_V4_ADDRESS,
+  GOV_LEFTOVER_EXCHANGER_ADDRESS,
+  GOV_STAKING_ADDRESS,
+  TREASURY_ADDRESS_ARBITRUM,
+  TREASURY_ADDRESS_ETHEREUM,
+} from '../Constants';
+
 const taggedAccounts: Readonly<Array<TaggedAccount>> = [
   {
-    address: '0x7951c7ef839e26f63da87a42c9a87986507f1c07',
+    address: TREASURY_ADDRESS_ETHEREUM,
     tag: '1inch Treasury',
   },
   {
-    address: '0x9a0c8ff858d273f57072d714bca7411d717501d7',
+    address: TREASURY_ADDRESS_ARBITRUM,
+    tag: '1inch Treasury',
+  },
+  {
+    address: GOV_STAKING_ADDRESS,
     tag: '1inch Governance Staking',
   },
   {
-    address: '0x1111111254fb6c44bac0bed2854e76f90643097d',
+    address: AGGREGATION_ROUTER_V4_ADDRESS,
     tag: '1inch v4 Aggregation Router',
   },
   {
-    address: '0xdd9f24efc84d93deef3c8745c837ab63e80abd27',
+    address: GOV_LEFTOVER_EXCHANGER_ADDRESS,
     tag: '1inch Gov Leftover Exchanger',
   },
   {

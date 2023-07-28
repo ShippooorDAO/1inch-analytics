@@ -229,9 +229,9 @@ export default function Home() {
             Filter by chain:
           </Typography>
           <ChainMultiSelect
-            values={selectedChains}
+            value={selectedChains}
             onChange={setSelectedChains}
-            chains={chainOptions ?? []}
+            options={chainOptions ?? []}
           />
         </div>
       </div>

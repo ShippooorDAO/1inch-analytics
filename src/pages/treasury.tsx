@@ -17,13 +17,18 @@ import { useTreasuryBalances } from '@/hooks/useTreasuryBalances';
 import { useTreasuryCashflowBreakdown } from '@/hooks/useTreasuryCashflowBreakdown';
 import { TreasuryFlows, useTreasuryFlows } from '@/hooks/useTreasuryFlows';
 import Dashboard from '@/layouts/DashboardLayout';
-import { TREASURY_ADDRESS } from '@/shared/Constants';
+import {
+  TREASURY_ADDRESS_ARBITRUM,
+  TREASURY_ADDRESS_ETHEREUM,
+} from '@/shared/Constants';
+import { ChainId } from '@/shared/Model/Chain';
 import {
   getTimeIntervalLabel,
   TimeInterval,
   Timeseries,
   TimeWindow,
 } from '@/shared/Model/Timeseries';
+import { getBlockExplorerName } from '@/shared/Utils/Etherscan';
 import { format } from '@/shared/Utils/Format';
 
 function ControlledTreasuryFlowsChart({
@@ -199,6 +204,7 @@ export default function TreasuryPage() {
                 treasuryCashFlowBreakdown?.data?.revenues ?? 12345,
                 {
                   abbreviate: true,
+                  symbol: 'USD',
                 }
               ),
             },
@@ -208,6 +214,7 @@ export default function TreasuryPage() {
                 treasuryCashFlowBreakdown?.data?.expenses ?? 12345,
                 {
                   abbreviate: true,
+                  symbol: 'USD',
                 }
               ),
             },
@@ -256,11 +263,36 @@ export default function TreasuryPage() {
                   css={css`
                     display: flex;
                     flex-flow: row;
+                    justify-content: space-between;
+                    align-items: center;
                     gap: 10px;
                   `}
                 >
                   <Typography variant="h3">Portfolio</Typography>
-                  <EtherscanButton size="medium" address={TREASURY_ADDRESS} />
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-flow: row;
+                      align-items: center;
+                      gap: 10px;
+                    `}
+                  >
+                    <EtherscanButton
+                      size="small"
+                      tooltip={`View 1inch Treasury on ${getBlockExplorerName(
+                        ChainId.ETHEREUM
+                      )}`}
+                      address={TREASURY_ADDRESS_ETHEREUM}
+                    />
+                    <EtherscanButton
+                      size="small"
+                      tooltip={`View 1inch Treasury on ${getBlockExplorerName(
+                        ChainId.ARBITRUM
+                      )}`}
+                      address={TREASURY_ADDRESS_ARBITRUM}
+                      chainId={ChainId.ARBITRUM}
+                    />
+                  </div>
                 </div>
               ),
               content: (

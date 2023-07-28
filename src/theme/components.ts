@@ -32,6 +32,7 @@ const components = {
     styleOverrides: {
       root: {
         borderRadius: '10px',
+        borderColor: 'white',
       },
     },
   },

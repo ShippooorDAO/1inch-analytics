@@ -1,27 +1,24 @@
 import { AssetAmount } from '../Currency/AssetAmount';
 import { UsdAmount } from '../Currency/UsdAmount';
 import { Asset } from './Asset';
+import { Chain } from './Chain';
 
 export enum TreasuryTransactionType {
-  UNKNOWN,
+  SPREAD_SURPLUS,
+  STAKING_FEES,
+  SPENDING,
+  GRANT_PAYMENT,
+  COLD_WALLET,
+  AAVE,
   DEPOSIT,
   WITHDRAW,
-  TRANSFER,
-  MINT,
-  BURN,
-}
-
-export enum TreasuryTransactionSubType {
-  UNKNOWN,
-  STAKING_REVENUE,
-  AGGREGATION_ROUTER_REVENUE,
-  GRANT_PAYMENT,
   OTHER,
 }
 
 export interface TreasuryTransaction {
   amount: AssetAmount;
   amountUsd: UsdAmount;
+  chain: Chain;
   asset: Asset;
   from: string;
   fromLabel?: string | null;
@@ -31,5 +28,4 @@ export interface TreasuryTransaction {
   toLabel?: string | null;
   transactionHash: string;
   type: TreasuryTransactionType;
-  subType: TreasuryTransactionSubType;
 }

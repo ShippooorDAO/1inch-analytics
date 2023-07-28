@@ -25,6 +25,9 @@ const QUERY = gql`
         asset {
           id
         }
+        chain {
+          id
+        }
       }
     }
   }

@@ -215,6 +215,7 @@ const darkVariant = merge(defaultVariant, {
   },
   palette: {
     mode: 'dark',
+    divider: borders.borderMain,
     primary: {
       main: primary[600],
       contrastText: '#FFF',

@@ -1,5 +1,3 @@
-import { css } from '@emotion/react';
-
 import { Asset } from '@/shared/Model/Asset';
 
 import { AssetOptionLabel } from './AssetOptionLabel';
@@ -89,9 +87,6 @@ export function AssetMultiSelect({
       searchPlaceholder="Search by symbol, address or protocol"
       onChange={onChangeInternal}
       searchPredicate={searchPredicate}
-      css={css`
-        width: 400px;
-      `}
     />
   );
 }

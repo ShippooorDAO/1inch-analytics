@@ -55,7 +55,7 @@ export interface GlobalSystemQueryResponse {
     };
     name: string;
     decimals: number;
-    logoUrl: string;
+    logoUrl?: string | null;
     priceUsd: number | null;
     price: number | null;
   }[];
@@ -71,6 +71,18 @@ function getAssetDisplayName(symbol: string, chain: Chain): string {
   }
 
   return `${symbol} (${chain.displayName})`;
+}
+
+function getTokenImage(asset: Asset, assets: Asset[]): string | undefined {
+  if (asset.address === '0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c') {
+    return '/aave-usdc.webp';
+  }
+
+  if (asset.address === '0xc36442b4a4522e871399cd717abdd847ab11fe88') {
+    return assets.find((asset) => asset.symbol === 'UNI')!.imageUrl!;
+  }
+
+  return asset.imageUrl;
 }
 
 export function processGlobalSystemResponse(
@@ -104,12 +116,16 @@ export function processGlobalSystemResponse(
       return {
         ...entry,
         chain,
-        imageUrl: entry.logoUrl,
+        imageUrl: entry.logoUrl ?? undefined,
         displayName: getAssetDisplayName(entry.name, chain),
         precision: BigInt(10 ** entry.decimals),
         priceUsd: new UsdAmount(entry.priceUsd ?? 0),
       };
     });
+
+  for (const asset of assets) {
+    asset.imageUrl = getTokenImage(asset, assets);
+  }
 
   for (const chain of chains) {
     const nativeToken = assets.find(

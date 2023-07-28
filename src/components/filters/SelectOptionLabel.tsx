@@ -3,10 +3,15 @@ import { Typography } from '@mui/material';
 
 interface SelectOptionLabelProps {
   name: string;
+  description?: string;
   icon?: React.ReactNode;
 }
 
-export function SelectOptionLabel({ name, icon }: SelectOptionLabelProps) {
+export function SelectOptionLabel({
+  name,
+  icon,
+  description,
+}: SelectOptionLabelProps) {
   return (
     <div
       css={css`
@@ -18,6 +23,11 @@ export function SelectOptionLabel({ name, icon }: SelectOptionLabelProps) {
     >
       {icon}
       <Typography variant="body2">{name}</Typography>
+      {description && (
+        <Typography variant="body2" color="textSecondary">
+          {description}
+        </Typography>
+      )}
     </div>
   );
 }

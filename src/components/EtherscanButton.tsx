@@ -13,6 +13,7 @@ export interface EtherscanButtonProps {
   address: string;
   chainId?: ChainId;
   linkType?: EtherscanLinkType;
+  tooltip?: string;
   size?: 'small' | 'medium' | 'large';
 }
 
@@ -20,6 +21,7 @@ export function EtherscanButton({
   address,
   linkType,
   chainId,
+  tooltip,
   size,
 }: EtherscanButtonProps) {
   const imageHeight = size === 'small' ? '20px' : '24px';
@@ -28,7 +30,10 @@ export function EtherscanButton({
   const blockExplorerName = getBlockExplorerName(chainId);
 
   return (
-    <Tooltip title={`View on ${blockExplorerName}`} placement="bottom">
+    <Tooltip
+      title={tooltip ?? `View on ${blockExplorerName}`}
+      placement="bottom"
+    >
       <a href={link} target="_blank" rel="noreferrer">
         <IconButton
           size={size}
