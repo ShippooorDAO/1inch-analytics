@@ -52,7 +52,7 @@ function convertTreasuryFlowsToTimeseries(
     }));
 
   const inboundVolumeUsdTimeseries: Timeseries = {
-    name: 'Inbound Volume (USD)',
+    name: 'Inflow (USD)',
     data:
       nonNullTreasuryFlows?.map((flow) => ({
         x: flow.timestamp,
@@ -60,7 +60,7 @@ function convertTreasuryFlowsToTimeseries(
       })) ?? [],
   };
   const outboundVolumeUsdTimeseries: Timeseries = {
-    name: 'Outbound Volume (USD)',
+    name: 'Outflow (USD)',
     data:
       nonNullTreasuryFlows?.map((flow) => ({
         x: flow.timestamp,
@@ -90,7 +90,7 @@ function convertTreasuryFlowsToTimeseries(
   };
 
   const cumulativeRevenueUsdTimeseries: Timeseries = {
-    name: 'Cumulative Inbound Volume (USD)',
+    name: 'Cumulative Inflow (USD)',
     data:
       nonNullTreasuryFlows?.reduce((acc, flow) => {
         const latestValue = acc[acc.length - 1]?.y ?? 0;
@@ -103,7 +103,7 @@ function convertTreasuryFlowsToTimeseries(
   };
 
   const cumulativeExpenseUsdTimeseries: Timeseries = {
-    name: 'Cumulative Outbound Volume (USD)',
+    name: 'Cumulative Outflow (USD)',
     data:
       nonNullTreasuryFlows?.reduce((acc, flow) => {
         const latestValue = acc[acc.length - 1]?.y ?? 0;
