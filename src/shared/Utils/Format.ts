@@ -1,4 +1,3 @@
-// @ts-ignore
 import { BigNumber, utils } from 'ethers';
 import numberAbbreviate from 'number-abbreviate';
 
@@ -10,32 +9,19 @@ export function getAddressShorthand(account: string) {
   return `${account.substring(0, 6)}...${account.substring(38, 42)}`;
 }
 
-function toExactString(n: BigNumber | bigint) {
-  return utils.formatUnits(n, bigNumberDecimalPlaces);
-}
-
-function toUsdString(n: BigNumber | bigint) {
-  return utils.formatUnits(n, 18);
+function toNumber(n: BigNumber | bigint | string | number) {
+  if (typeof n === 'number') {
+    return n;
+  }
+  if (typeof n === 'string') {
+    return Number(n);
+  }
+  return Number(utils.formatUnits(n, bigNumberDecimalPlaces));
 }
 
 export function getWalletDisplayName(address: string) {
   const taggedAccount = getTaggedAccount(address);
   return taggedAccount?.tag ?? getAddressShorthand(address);
-}
-
-function toDisplayString(n: BigNumber | bigint) {
-  const exactString = toExactString(n);
-  const displayString = parseFloat(exactString).toLocaleString('en-US', {
-    minimumFractionDigits: bigNumberDecimalPlaces,
-    maximumFractionDigits: bigNumberDecimalPlaces,
-  });
-
-  // If the return string is -0.00 or some variant, strip the negative
-  if (displayString.match(/-0\.?[0]*/)) {
-    return displayString.replace('-', '');
-  }
-
-  return displayString;
 }
 
 export function getTransactionUniqueIdentifier(id: string) {
@@ -51,39 +37,31 @@ type Options = {
   delta?: boolean;
 };
 
+function isWithinAbbreviationRange(value: number) {
+  return value >= 1000 || value <= -1000;
+}
+
 export function format(
   value?: number | string | BigNumber | bigint | null,
-  { symbol, decimals, abbreviate, delta }: Options = { decimals: 2 }
+  { symbol, decimals, abbreviate: abbreviateParam, delta }: Options = {
+    decimals: 2,
+  }
 ): string {
   let formatDecimals = decimals;
-  let formatValue = value;
   formatDecimals = formatDecimals ?? 2;
 
-  if (formatValue === undefined || formatValue === null) {
+  if (value === undefined || value === null) {
     return '-';
   }
-  if ((formatValue < 1000 || formatValue < -1000) && abbreviate) {
-    formatDecimals = 0;
-  }
-  if (typeof formatValue === 'string') {
-    formatValue = Number(formatValue);
-  }
 
-  if (
-    (abbreviate && formatValue instanceof BigNumber) ||
-    typeof formatValue === 'bigint'
-  ) {
-    formatValue = Number(toExactString(formatValue));
-  }
+  let formatValue = toNumber(value);
+  const abbreviate = abbreviateParam && isWithinAbbreviationRange(formatValue);
 
   const prefix = delta ? (formatValue > 0 ? '+' : '') : '';
 
   if (symbol === 'USD') {
-    if (abbreviate && (formatValue >= 1000 || formatValue <= -1000)) {
+    if (abbreviate) {
       return `${prefix}$${numberAbbreviate(formatValue, formatDecimals)}`;
-    }
-    if (formatValue instanceof BigNumber || typeof formatValue === 'bigint') {
-      return `${prefix}$${toDisplayString(formatValue)}`;
     }
     return `${prefix}${formatValue.toLocaleString('en-US', {
       style: 'currency',
@@ -99,23 +77,15 @@ export function format(
     if (formatValue === Number.NEGATIVE_INFINITY) {
       return `${prefix}-∞%`;
     }
-    if (abbreviate && (formatValue >= 1000 || formatValue <= -1000)) {
+    if (abbreviate) {
       return `${prefix}${numberAbbreviate(formatValue, formatDecimals)}%`;
-    }
-    if (formatValue instanceof BigNumber || typeof formatValue === 'bigint') {
-      formatValue = Number(toExactString(formatValue));
     }
     return `${prefix}${(formatValue * 100).toFixed(formatDecimals)}%`;
   }
 
   let roundedLocalizedValue;
-  if (abbreviate && formatValue >= 1000) {
+  if (abbreviate) {
     roundedLocalizedValue = numberAbbreviate(value, formatDecimals);
-  } else if (
-    formatValue instanceof BigNumber ||
-    typeof formatValue === 'bigint'
-  ) {
-    roundedLocalizedValue = toDisplayString(formatValue);
   } else {
     roundedLocalizedValue = formatValue.toLocaleString(undefined, {
       minimumFractionDigits: formatDecimals,
