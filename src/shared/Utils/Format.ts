@@ -3,20 +3,8 @@ import numberAbbreviate from 'number-abbreviate';
 
 import { getTaggedAccount } from '../Model/TaggedAccounts';
 
-const bigNumberDecimalPlaces = 18;
-
 export function getAddressShorthand(account: string) {
   return `${account.substring(0, 6)}...${account.substring(38, 42)}`;
-}
-
-function toNumber(n: BigNumber | bigint | string | number) {
-  if (typeof n === 'number') {
-    return n;
-  }
-  if (typeof n === 'string') {
-    return Number(n);
-  }
-  return Number(utils.formatUnits(n, bigNumberDecimalPlaces));
 }
 
 export function getWalletDisplayName(address: string) {
@@ -28,6 +16,18 @@ export function getTransactionUniqueIdentifier(id: string) {
   const index = id.lastIndexOf('-');
 
   return id.substring(index + 1);
+}
+
+const bigNumberDecimalPlaces = 18;
+
+function toNumber(n: BigNumber | bigint | string | number) {
+  if (typeof n === 'number') {
+    return n;
+  }
+  if (typeof n === 'string') {
+    return Number(n);
+  }
+  return Number(utils.formatUnits(n, bigNumberDecimalPlaces));
 }
 
 type Options = {
