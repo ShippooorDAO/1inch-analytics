@@ -72,7 +72,6 @@ export function StatsContainer({
           <div
             css={css`
               width: 100%;
-              height: 100%;
             `}
           >
             {leftContainer.content}
@@ -91,7 +90,6 @@ export function StatsContainer({
               gap: 20px;
               background-color: ${rgba(theme.palette.background.paper, 1)};
               border-radius: 24px;
-              justify-content: space-between;
               padding: 16px;
               ${theme.breakpoints.down('md')} {
                 width: 100%;
@@ -220,6 +218,7 @@ export function StatsContainer({
               display: flex;
               flex-flow: row;
               justify-content: flex-start;
+              align-items: flex-start;
               gap: 16px;
               flex-wrap: wrap;
             `}

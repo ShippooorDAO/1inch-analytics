@@ -92,20 +92,18 @@ function getSecondaryTransactionLabel(
 ) {
   switch (transactionType) {
     case TreasuryTransactionType.SPREAD_SURPLUS:
-      return 'Deposit';
     case TreasuryTransactionType.STAKING_FEES:
-      return 'Deposit';
-    case TreasuryTransactionType.SPENDING:
-      return 'Withdraw';
-    case TreasuryTransactionType.GRANT_PAYMENT:
-      return 'Withdraw';
-    case TreasuryTransactionType.COLD_WALLET:
-      return 'Withdraw';
-    case TreasuryTransactionType.AAVE:
-      return 'Lend';
     case TreasuryTransactionType.DEPOSIT:
       return 'Deposit';
+    case TreasuryTransactionType.AAVE:
+      return 'Lend';
+    case TreasuryTransactionType.GRANT_PAYMENT:
+    case TreasuryTransactionType.COLD_WALLET:
+    case TreasuryTransactionType.SPENDING:
     case TreasuryTransactionType.WITHDRAW:
+    case TreasuryTransactionType.OPERATIONS_FUND:
+    case TreasuryTransactionType.OPERATIONS:
+    case TreasuryTransactionType.OTHER_EXPENSE:
       return 'Withdraw';
     case TreasuryTransactionType.OTHER:
     default:
@@ -124,6 +122,12 @@ function getPrimaryTransactionLabel(transactionType: TreasuryTransactionType) {
       return 'Grant payment';
     case TreasuryTransactionType.COLD_WALLET:
       return 'Transfer to cold wallet';
+    case TreasuryTransactionType.OPERATIONS:
+      return 'Operations';
+    case TreasuryTransactionType.OPERATIONS_FUND:
+      return 'Operations Fund';
+    case TreasuryTransactionType.OTHER_EXPENSE:
+      return 'Other Expense';
     case TreasuryTransactionType.AAVE:
       return 'Lend on AAVE';
     case TreasuryTransactionType.DEPOSIT:
@@ -387,12 +391,9 @@ export function TreasuryTransactionsTable() {
               options={[
                 TreasuryTransactionType.SPREAD_SURPLUS,
                 TreasuryTransactionType.STAKING_FEES,
-                TreasuryTransactionType.COLD_WALLET,
                 TreasuryTransactionType.AAVE,
-                TreasuryTransactionType.GRANT_PAYMENT,
-                TreasuryTransactionType.SPENDING,
-                TreasuryTransactionType.DEPOSIT,
-                TreasuryTransactionType.WITHDRAW,
+                TreasuryTransactionType.OPERATIONS,
+                TreasuryTransactionType.OPERATIONS_FUND,
               ]}
             />
           </AutoSkeleton>

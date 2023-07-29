@@ -9,6 +9,18 @@ import {
   Operator,
   SortDirection,
 } from '@/gql/graphql';
+import {
+  AAVE_LABEL,
+  COLD_WALLET_LABEL,
+  GRANT_LABEL,
+  ONE_INCH_TREASURY_LABEL,
+  OPERATIONS_FUND_LABEL,
+  OPERATIONS_LABEL,
+  SPENDING_LABEL,
+  SPREAD_SURPLUS_LABEL,
+  STAKING_FEES_LABEL,
+  TRANSFER_OUT_LABEL,
+} from '@/shared/Constants';
 import { AssetService } from '@/shared/Currency/AssetService';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import {
@@ -19,14 +31,6 @@ import {
 import { mockTreasuryTransactionsResponse } from './mocks/TreasuryTransactions';
 import { useAssetService } from './useAssetService';
 import { useChainStore } from './useChainStore';
-
-const SPREAD_SURPLUS_LABEL = '1inch: Spread Surplus';
-const STAKING_FEES_LABEL = '1inch: Staking v2 fees';
-const SPENDING_LABEL = '1inch: Spending';
-const GRANT_LABEL = '1inch: Grant';
-const COLD_WALLET_LABEL = '1inch: Cold wallet';
-const AAVE_LABEL = 'Aave: USDC V3';
-const ONE_INCH_TREASURY_LABEL = '1inch: Treasury';
 
 const QUERY = gql`
   query getTreasuryTransactions(
@@ -103,8 +107,16 @@ function getTransactionType({
     return TreasuryTransactionType.COLD_WALLET;
   }
 
-  if (toLabel === AAVE_LABEL) {
-    return TreasuryTransactionType.AAVE;
+  if (toLabel === OPERATIONS_LABEL) {
+    return TreasuryTransactionType.OPERATIONS;
+  }
+
+  if (toLabel === OPERATIONS_FUND_LABEL) {
+    return TreasuryTransactionType.OPERATIONS_FUND;
+  }
+
+  if (toLabel === TRANSFER_OUT_LABEL) {
+    return TreasuryTransactionType.OTHER_EXPENSE;
   }
 
   if (fromLabel === ONE_INCH_TREASURY_LABEL) {
@@ -239,16 +251,28 @@ function getTransactionTypeQueryFilter(
     fromLabels.push(STAKING_FEES_LABEL);
   }
 
-  if (transactionTypes?.includes(TreasuryTransactionType.SPENDING)) {
-    toLabels.push(SPENDING_LABEL);
+  // if (transactionTypes?.includes(TreasuryTransactionType.SPENDING)) {
+  //   toLabels.push(SPENDING_LABEL);
+  // }
+
+  // if (transactionTypes?.includes(TreasuryTransactionType.GRANT_PAYMENT)) {
+  //   toLabels.push(GRANT_LABEL);
+  // }
+
+  // if (transactionTypes?.includes(TreasuryTransactionType.COLD_WALLET)) {
+  //   toLabels.push(COLD_WALLET_LABEL);
+  // }
+
+  if (transactionTypes?.includes(TreasuryTransactionType.OPERATIONS)) {
+    toLabels.push(OPERATIONS_LABEL);
   }
 
-  if (transactionTypes?.includes(TreasuryTransactionType.GRANT_PAYMENT)) {
-    toLabels.push(GRANT_LABEL);
+  if (transactionTypes?.includes(TreasuryTransactionType.OPERATIONS_FUND)) {
+    toLabels.push(OPERATIONS_FUND_LABEL);
   }
 
-  if (transactionTypes?.includes(TreasuryTransactionType.COLD_WALLET)) {
-    toLabels.push(COLD_WALLET_LABEL);
+  if (transactionTypes?.includes(TreasuryTransactionType.OTHER_EXPENSE)) {
+    toLabels.push(TRANSFER_OUT_LABEL);
   }
 
   if (transactionTypes?.includes(TreasuryTransactionType.AAVE)) {

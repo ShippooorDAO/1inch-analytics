@@ -4,7 +4,18 @@ import {
   GetTreasuryCashflowBreakdownQuery,
   GetTreasuryCashflowBreakdownQueryVariables,
 } from '@/gql/graphql';
-import { TreasuryCashflowBreakdown } from '@/shared/Model/TreasuryCashflowBreakdown';
+import {
+  AAVE_LABEL,
+  COLD_WALLET_LABEL,
+  GRANT_LABEL,
+  OPERATIONS_FUND_LABEL,
+  OPERATIONS_LABEL,
+  SPENDING_LABEL,
+  SPREAD_SURPLUS_LABEL,
+  STAKING_FEES_LABEL,
+  TRANSFER_OUT_LABEL,
+} from '@/shared/Constants';
+import { CashFlow } from '@/shared/Model/TreasuryCashflowBreakdown';
 
 import { mockTreasuryCashflowBreakdownResponse } from './mocks/TreasuryCashflowBreakdown';
 
@@ -23,27 +34,16 @@ const QUERY = gql`
   }
 `;
 
-const cashflowLabels = {
-  spreadSurplus: '1inch: Spread Surplus',
-  oneInchTreasury: '1inch: Treasury',
-  stakingFees: '1inch: Staking v2 fees',
-  aave: 'Aave: USDC V3',
-  coldWallet: '1inch: Cold wallet',
-  spending: '1inch: Spending',
-  grants: '1inch: Grant',
-};
-
 function getCashflowForLabel(
-  key: keyof typeof cashflowLabels,
+  label: string,
   response: GetTreasuryCashflowBreakdownQuery
-) {
-  const label = cashflowLabels[key];
+): CashFlow {
   const inflow =
     response.treasuryTransactionSums?.from?.find((x) => x?.label === label)
       ?.sumUsd ?? 0;
   const outflow =
     response.treasuryTransactionSums?.to?.find((x) => x?.label === label)
-      ?.sumUsd ?? 0 * -1;
+      ?.sumUsd ?? 0;
   const net = inflow - outflow;
 
   return {
@@ -53,48 +53,41 @@ function getCashflowForLabel(
   };
 }
 
-function convertResponseToModel(
-  response: GetTreasuryCashflowBreakdownQuery
-): TreasuryCashflowBreakdown {
-  const stakingFees = getCashflowForLabel('stakingFees', response).inflow;
-  const depositOnAave = getCashflowForLabel('aave', response).net;
-  const spreadSurplus =
-    getCashflowForLabel('spreadSurplus', response).inflow - depositOnAave; // Temporary fix
-  const transfersIn = 0;
-  const otherTransfersIn = 0;
-  const grants = getCashflowForLabel('grants', response).net;
-  const otherSpending = getCashflowForLabel('spending', response).net;
+function convertResponseToModel(response: GetTreasuryCashflowBreakdownQuery) {
+  const stakingFees = getCashflowForLabel(STAKING_FEES_LABEL, response);
+  const spreadSurplus = getCashflowForLabel(SPREAD_SURPLUS_LABEL, response);
+
+  const aave = getCashflowForLabel(AAVE_LABEL, response);
+  const grants = getCashflowForLabel(GRANT_LABEL, response);
+  const otherSpending = getCashflowForLabel(SPENDING_LABEL, response);
   const transferOutToColdWallet = getCashflowForLabel(
-    'coldWallet',
+    COLD_WALLET_LABEL,
     response
-  ).net;
+  );
+  const otherTransfersOut = getCashflowForLabel(TRANSFER_OUT_LABEL, response);
+  const operations = getCashflowForLabel(OPERATIONS_LABEL, response);
+  const operationsFund = getCashflowForLabel(OPERATIONS_FUND_LABEL, response);
+  const transfersOut = getCashflowForLabel(TRANSFER_OUT_LABEL, response);
 
-  const revenues = stakingFees + spreadSurplus;
-  const deposits = revenues;
-  const otherDeposits = depositOnAave;
-
-  const expenses = grants + otherSpending;
-  const otherWithdrawals = transferOutToColdWallet + depositOnAave;
-  const withdrawals = expenses + otherWithdrawals;
-
-  const netCashflow = deposits - withdrawals;
+  const inflow = stakingFees.inflow + spreadSurplus.inflow;
+  const outflow =
+    operations.outflow + otherTransfersOut.outflow + operationsFund.outflow;
+  const net = inflow - outflow;
 
   return {
-    deposits,
-    otherDeposits,
-    revenues,
+    inflow,
+    outflow,
+    net,
     stakingFees,
     spreadSurplus,
-    transfersIn,
-    otherTransfersIn,
-    withdrawals,
-    expenses,
-    grants,
-    otherSpending,
-    otherWithdrawals,
+    operations,
+    operationsFund,
+    otherTransfersOut,
     transferOutToColdWallet,
-    depositOnAave,
-    netCashflow,
+    transfersOut,
+    otherSpending,
+    grants,
+    aave,
   };
 }
 

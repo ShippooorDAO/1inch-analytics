@@ -1,17 +1,16 @@
+export interface CashFlow {
+  outflow: number;
+  inflow: number;
+  net: number;
+}
+
 export interface TreasuryCashflowBreakdown {
-  deposits: number;
-  revenues: number;
-  otherDeposits: number;
-  stakingFees: number;
-  spreadSurplus: number;
-  otherTransfersIn: number;
-  withdrawals: number;
-  expenses: number;
-  grants: number;
-  transfersIn: number;
-  otherSpending: number;
-  otherWithdrawals: number;
-  transferOutToColdWallet: number;
-  depositOnAave: number;
-  netCashflow: number;
+  inflow: number;
+  outflow: number;
+  net: number;
+  stakingFees: CashFlow;
+  spreadSurplus: CashFlow;
+  operations: CashFlow;
+  operationsFund: CashFlow;
+  otherTransfersOut: CashFlow;
 }

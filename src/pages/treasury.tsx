@@ -200,23 +200,17 @@ export default function TreasuryPage() {
           headerMetrics={[
             {
               title: 'Total Revenues',
-              value: format(
-                treasuryCashFlowBreakdown?.data?.revenues ?? 12345,
-                {
-                  abbreviate: true,
-                  symbol: 'USD',
-                }
-              ),
+              value: format(treasuryCashFlowBreakdown?.data?.inflow ?? 12345, {
+                abbreviate: true,
+                symbol: 'USD',
+              }),
             },
             {
               title: 'Total Expenses',
-              value: format(
-                treasuryCashFlowBreakdown?.data?.expenses ?? 12345,
-                {
-                  abbreviate: true,
-                  symbol: 'USD',
-                }
-              ),
+              value: format(treasuryCashFlowBreakdown?.data?.outflow ?? 12345, {
+                abbreviate: true,
+                symbol: 'USD',
+              }),
             },
             {
               title: 'Net Worth',

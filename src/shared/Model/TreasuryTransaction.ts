@@ -12,6 +12,9 @@ export enum TreasuryTransactionType {
   AAVE,
   DEPOSIT,
   WITHDRAW,
+  OPERATIONS_FUND,
+  OPERATIONS,
+  OTHER_EXPENSE,
   OTHER,
 }
 

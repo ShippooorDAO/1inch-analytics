@@ -25,7 +25,6 @@ export function TreasuryCashflowBreakdownTable({
         display: flex;
         flex-flow: column;
         gap: 10px;
-        height: 100%;
       `}
     >
       <div
@@ -37,12 +36,12 @@ export function TreasuryCashflowBreakdownTable({
       >
         <AutoSkeleton loading={loading}>
           <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            Deposits
+            Inflows
           </Typography>
         </AutoSkeleton>
         <AutoSkeleton loading={loading}>
           <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.deposits, { abbreviate: true, symbol: 'USD' })}
+            {format(data?.inflow, { abbreviate: true, symbol: 'USD' })}
           </Typography>
         </AutoSkeleton>
       </div>
@@ -56,76 +55,12 @@ export function TreasuryCashflowBreakdownTable({
       >
         <AutoSkeleton loading={loading}>
           <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
-            Revenues
+            Staking fees
           </Typography>
         </AutoSkeleton>
         <AutoSkeleton loading={loading}>
           <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.revenues, { abbreviate: true, symbol: 'USD' })}
-          </Typography>
-        </AutoSkeleton>
-      </div>
-      <div
-        css={css`
-          margin-left: ${INDENT_SIZE * 2}px;
-          display: flex;
-          flex-flow: column;
-          gap: 10px;
-        `}
-      >
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Staking fees
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.stakingFees, { abbreviate: true, symbol: 'USD' })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Spread surplus
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.spreadSurplus, { abbreviate: true, symbol: 'USD' })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
-      </div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: row;
-          justify-content: space-between;
-          margin-left: ${INDENT_SIZE}px;
-        `}
-      >
-        <AutoSkeleton loading={loading}>
-          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            Others
-          </Typography>
-        </AutoSkeleton>
-        <AutoSkeleton loading={loading}>
-          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.otherDeposits, {
+            {format(data?.stakingFees.inflow, {
               abbreviate: true,
               symbol: 'USD',
             })}
@@ -134,33 +69,25 @@ export function TreasuryCashflowBreakdownTable({
       </div>
       <div
         css={css`
-          margin-left: ${INDENT_SIZE * 2}px;
           display: flex;
-          flex-flow: column;
-          gap: 10px;
+          flex-flow: row;
+          justify-content: space-between;
+          margin-left: ${INDENT_SIZE}px;
         `}
       >
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Lending on AAVE
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.depositOnAave, {
-                abbreviate: true,
-                symbol: 'USD',
-              })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
+        <AutoSkeleton loading={loading}>
+          <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
+            Spread surplus
+          </Typography>
+        </AutoSkeleton>
+        <AutoSkeleton loading={loading}>
+          <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
+            {format(data?.spreadSurplus.inflow, {
+              abbreviate: true,
+              symbol: 'USD',
+            })}
+          </Typography>
+        </AutoSkeleton>
       </div>
       <div
         css={(theme) => css`
@@ -178,12 +105,12 @@ export function TreasuryCashflowBreakdownTable({
       >
         <AutoSkeleton loading={loading}>
           <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            Withdrawals
+            Outflows
           </Typography>
         </AutoSkeleton>
         <AutoSkeleton loading={loading}>
           <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.withdrawals, { abbreviate: true, symbol: 'USD' })}
+            {format(data?.outflow, { abbreviate: true, symbol: 'USD' })}
           </Typography>
         </AutoSkeleton>
       </div>
@@ -197,76 +124,12 @@ export function TreasuryCashflowBreakdownTable({
       >
         <AutoSkeleton loading={loading}>
           <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
-            Expenses
+            Operations
           </Typography>
         </AutoSkeleton>
         <AutoSkeleton loading={loading}>
           <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.expenses, { abbreviate: true, symbol: 'USD' })}
-          </Typography>
-        </AutoSkeleton>
-      </div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: column;
-          gap: 10px;
-          margin-left: ${INDENT_SIZE * 2}px;
-        `}
-      >
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Grants
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.grants, { abbreviate: true, symbol: 'USD' })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Other spending
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.otherSpending, { abbreviate: true, symbol: 'USD' })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
-      </div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: row;
-          justify-content: space-between;
-          margin-left: ${INDENT_SIZE}px;
-        `}
-      >
-        <AutoSkeleton loading={loading}>
-          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            Others
-          </Typography>
-        </AutoSkeleton>
-        <AutoSkeleton loading={loading}>
-          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.otherWithdrawals, {
+            {format(data?.operations.outflow, {
               abbreviate: true,
               symbol: 'USD',
             })}
@@ -275,77 +138,45 @@ export function TreasuryCashflowBreakdownTable({
       </div>
       <div
         css={css`
-          margin-left: ${INDENT_SIZE * 2}px;
           display: flex;
-          flex-flow: column;
-          gap: 10px;
+          flex-flow: row;
+          justify-content: space-between;
+          margin-left: ${INDENT_SIZE}px;
         `}
       >
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Transfer to cold wallet
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.transferOutToColdWallet, {
-                abbreviate: true,
-                symbol: 'USD',
-              })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
-        <div
-          css={css`
-            display: flex;
-            flex-flow: row;
-            justify-content: space-between;
-          `}
-        >
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              Lending on AAVE
-            </Typography>
-          </AutoSkeleton>
-          <AutoSkeleton loading={loading}>
-            <Typography variant="body2" color="textSecondary">
-              {format(data?.depositOnAave, {
-                abbreviate: true,
-                symbol: 'USD',
-              })}
-            </Typography>
-          </AutoSkeleton>
-        </div>
+        <AutoSkeleton loading={loading}>
+          <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
+            Operations Fund
+          </Typography>
+        </AutoSkeleton>
+        <AutoSkeleton loading={loading}>
+          <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
+            {format(data?.operationsFund.outflow, {
+              abbreviate: true,
+              symbol: 'USD',
+            })}
+          </Typography>
+        </AutoSkeleton>
       </div>
-      <div
-        css={(theme) => css`
-          border: 1px solid ${theme.palette.divider};
-          height: 1px;
-          margin: 5px 0;
-        `}
-      ></div>
       <div
         css={css`
           display: flex;
           flex-flow: row;
           justify-content: space-between;
+          margin-left: ${INDENT_SIZE}px;
         `}
       >
         <AutoSkeleton loading={loading}>
-          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            Net cash flow
+          <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
+            Other Expenses
           </Typography>
         </AutoSkeleton>
         <AutoSkeleton loading={loading}>
-          <Typography variant="h4" color="textPrimary" whiteSpace="nowrap">
-            {format(data?.netCashflow, { abbreviate: true, symbol: 'USD' })}
+          <Typography variant="h5" color="textPrimary" whiteSpace="nowrap">
+            {format(data?.otherTransfersOut.outflow, {
+              abbreviate: true,
+              symbol: 'USD',
+            })}
           </Typography>
         </AutoSkeleton>
       </div>

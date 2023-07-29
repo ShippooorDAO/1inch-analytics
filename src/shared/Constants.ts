@@ -11,3 +11,18 @@ export const AGGREGATION_ROUTER_V4_ADDRESS =
 export const GOV_STAKING_ADDRESS = '0x9a0c8ff858d273f57072d714bca7411d717501d7';
 export const GOV_LEFTOVER_EXCHANGER_ADDRESS =
   '0xdd9f24efc84d93deef3c8745c837ab63e80abd27';
+
+export const SPREAD_SURPLUS_LABEL = '1inch: Spread Surplus';
+export const STAKING_FEES_LABEL = '1inch: Staking v2 fees';
+export const AAVE_LABEL = 'Aave: USDC V3';
+export const ONE_INCH_TREASURY_LABEL = '1inch: Treasury';
+export const OPERATIONS_LABEL = '1inch: Operations';
+export const OPERATIONS_FUND_LABEL = '1inch: Operations fund';
+export const TRANSFER_OUT_LABEL = '1inch: Tx out';
+
+/**
+ * Deprecated labels.
+ */
+export const SPENDING_LABEL = '1inch: Spending';
+export const GRANT_LABEL = '1inch: Grant';
+export const COLD_WALLET_LABEL = '1inch: Cold wallet';
