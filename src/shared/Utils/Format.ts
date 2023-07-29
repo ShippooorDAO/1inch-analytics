@@ -2,6 +2,8 @@
 import { BigNumber, utils } from 'ethers';
 import numberAbbreviate from 'number-abbreviate';
 
+import { getTaggedAccount } from '../Model/TaggedAccounts';
+
 const bigNumberDecimalPlaces = 18;
 
 export function getAddressShorthand(account: string) {
@@ -14,6 +16,11 @@ function toExactString(n: BigNumber | bigint) {
 
 function toUsdString(n: BigNumber | bigint) {
   return utils.formatUnits(n, 18);
+}
+
+export function getWalletDisplayName(address: string) {
+  const taggedAccount = getTaggedAccount(address);
+  return taggedAccount?.tag ?? getAddressShorthand(address);
 }
 
 function toDisplayString(n: BigNumber | bigint) {
