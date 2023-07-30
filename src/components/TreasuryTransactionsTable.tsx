@@ -1,9 +1,11 @@
 import { css } from '@emotion/react';
 import {
+  AccountBalance,
   AcUnit,
   ArrowBack,
   ArrowForward,
   AttachMoney,
+  Engineering,
   Group,
   NorthEast,
   ReceiptLong,
@@ -54,7 +56,26 @@ function TransactionTypeIcon({ type }: { type: TreasuryTransactionType }) {
     case TreasuryTransactionType.SPREAD_SURPLUS:
       return <AttachMoney />;
     case TreasuryTransactionType.STAKING_FEES:
-      return <AttachMoney />;
+      return (
+        <div
+          css={(theme) => css`
+            display: flex;
+            flex-flow: row;
+            justify-content: center;
+            align-items: center;
+            width: 27px;
+            height: 27px;
+            color: ${theme.palette.primary.main};
+          `}
+        >
+          <Image
+            src="/1inch-staking.svg"
+            height="20px"
+            width="20px"
+            alt="aave"
+          />
+        </div>
+      );
     case TreasuryTransactionType.SPENDING:
       return <ReceiptLong />;
     case TreasuryTransactionType.GRANT_PAYMENT:
@@ -82,6 +103,10 @@ function TransactionTypeIcon({ type }: { type: TreasuryTransactionType }) {
       return <NorthEast />;
     case TreasuryTransactionType.OTHER:
       return <AttachMoney />;
+    case TreasuryTransactionType.OPERATIONS:
+      return <Engineering />;
+    case TreasuryTransactionType.OPERATIONS_FUND:
+      return <AccountBalance />;
     default:
       return null;
   }
