@@ -560,7 +560,7 @@ export function TreasuryTransactionsTable() {
                 display: flex;
                 flex-flow: row;
                 gap: 10px;
-                width: 360px;
+                width: 300px;
                 ${theme.breakpoints.down('md')} {
                   display: none;
                 }
