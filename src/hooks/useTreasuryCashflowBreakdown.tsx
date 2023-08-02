@@ -38,12 +38,14 @@ function getCashflowForLabel(
   label: string,
   response: GetTreasuryCashflowBreakdownQuery
 ): CashFlow {
-  const inflow =
+  const inflow = Math.abs(
     response.treasuryTransactionSums?.from?.find((x) => x?.label === label)
-      ?.sumUsd ?? 0;
-  const outflow =
+      ?.sumUsd ?? 0
+  );
+  const outflow = Math.abs(
     response.treasuryTransactionSums?.to?.find((x) => x?.label === label)
-      ?.sumUsd ?? 0;
+      ?.sumUsd ?? 0
+  );
   const net = inflow - outflow;
 
   return {
