@@ -100,6 +100,7 @@ function TransactionTypeIcon({ type }: { type: TreasuryTransactionType }) {
     case TreasuryTransactionType.DEPOSIT:
       return <SouthEast />;
     case TreasuryTransactionType.WITHDRAW:
+    case TreasuryTransactionType.OTHER_EXPENSE:
       return <NorthEast />;
     case TreasuryTransactionType.OTHER:
       return <AttachMoney />;
@@ -419,6 +420,7 @@ export function TreasuryTransactionsTable() {
                 TreasuryTransactionType.AAVE,
                 TreasuryTransactionType.OPERATIONS,
                 TreasuryTransactionType.OPERATIONS_FUND,
+                TreasuryTransactionType.OTHER_EXPENSE,
               ]}
             />
           </AutoSkeleton>
@@ -527,7 +529,12 @@ export function TreasuryTransactionsTable() {
                       gap: 10px;
                     `}
                   >
-                    <a href={getEtherscanTransactionLink(row.transactionHash)}>
+                    <a
+                      href={getEtherscanTransactionLink(
+                        row.transactionHash,
+                        row.chain.chainId
+                      )}
+                    >
                       <Typography variant="body2">
                         {moment.unix(row.timestamp).format('MMM D, YYYY')}
                       </Typography>
