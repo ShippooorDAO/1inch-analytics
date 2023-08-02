@@ -2,7 +2,6 @@ import { gql, useQuery } from '@apollo/client';
 import { useTheme } from '@mui/material';
 import { useMemo } from 'react';
 
-import { useFeatureFlags } from '@/contexts/FeatureFlags/FeatureFlagsContextProvider';
 import {
   getAllTimeShare,
   getAllTimeTotal,
@@ -17,7 +16,6 @@ import {
 } from '@/shared/Model/FusionResolver';
 import { Timeseries } from '@/shared/Model/Timeseries';
 
-import { createMockFusionResolversQueryResponse } from './mocks/FusionResolversQueryResponse';
 import { useChainStore } from './useChainStore';
 
 const FUSION_RESOLVERS_QUERY = gql`
@@ -328,41 +326,19 @@ function parseFusionResolversQueryResponse(
 export function useFusionResolversMetrics(fusionResolvers?: FusionResolver[]) {
   const muiTheme = useTheme();
   const chainStore = useChainStore();
-  const featureFlags = useFeatureFlags();
 
   const { data, loading } = useQuery<
     FusionResolversQueryResponse,
     FusionResolversQueryVariables
-  >(FUSION_RESOLVERS_QUERY, {
-    skip: featureFlags.enableMockData,
-  });
+  >(FUSION_RESOLVERS_QUERY);
 
   const parsedData = useMemo(() => {
-    if (
-      !chainStore ||
-      featureFlags.enableMockData === undefined ||
-      !fusionResolvers
-    ) {
-      return undefined;
-    }
-
-    if (featureFlags.enableMockData) {
-      const response = createMockFusionResolversQueryResponse();
-      return parseFusionResolversQueryResponse(response, fusionResolvers);
-    }
-
-    if (!data) {
+    if (!chainStore || !fusionResolvers || !data) {
       return undefined;
     }
 
     return parseFusionResolversQueryResponse(data, fusionResolvers);
-  }, [
-    data,
-    chainStore,
-    featureFlags.enableMockData,
-    fusionResolvers,
-    muiTheme,
-  ]);
+  }, [data, chainStore, fusionResolvers, muiTheme]);
 
   return {
     data: parsedData,

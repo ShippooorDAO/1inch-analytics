@@ -1,7 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 
-import { useFeatureFlags } from '@/contexts/FeatureFlags/FeatureFlagsContextProvider';
 import { ChainId } from '@/shared/Model/Chain';
 import {
   DexAggregatorOverviewMetrics,
@@ -13,7 +12,6 @@ import {
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { Timeseries } from '@/shared/Model/Timeseries';
 
-import { createMockDexAggregatorOverviewResponse } from './mocks/DexAggregatorOverviewQueryResponse';
 import { useChainStore } from './useChainStore';
 
 const DEX_AGGREGATOR_OVERVIEW_QUERY = gql`
@@ -640,7 +638,6 @@ export function useDexAggregatorOverview({
   chainIds?: string[];
 }): DexAggregatorOverview {
   const chainStore = useChainStore();
-  const featureFlags = useFeatureFlags();
 
   const { data, loading, variables } = useQuery<
     DexAggregatorOverviewQueryResponse,
@@ -649,24 +646,11 @@ export function useDexAggregatorOverview({
     variables: {
       chainIds: chainIds?.map((chainId) => chainId.toString()) ?? [],
     },
-    skip: !chainIds || featureFlags.enableMockData,
+    skip: !chainIds,
   });
 
   const parsedData = useMemo(() => {
-    if (!chainStore || featureFlags.enableMockData === undefined || !chainIds) {
-      return undefined;
-    }
-
-    if (featureFlags.enableMockData) {
-      const response = createMockDexAggregatorOverviewResponse();
-      return parseDexAggregatorOverviewQueryResponse(
-        response,
-        chainIds.map((id) => chainStore.getById(id)!.chainId),
-        chainStore
-      );
-    }
-
-    if (!data) {
+    if (!chainStore || !chainIds || !data) {
       return undefined;
     }
 
@@ -675,7 +659,7 @@ export function useDexAggregatorOverview({
       chainIds.map((id) => chainStore.getById(id)!.chainId),
       chainStore
     );
-  }, [data, chainStore, chainIds, featureFlags.enableMockData]);
+  }, [data, chainStore, chainIds]);
 
   return {
     data: parsedData,

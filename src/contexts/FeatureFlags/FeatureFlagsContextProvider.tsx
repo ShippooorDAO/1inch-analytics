@@ -35,9 +35,6 @@ const FeatureFlagsContext = createContext<FeatureFlagsContextState>({
   get runtimeFeatureFlagsLoaded(): never {
     throw new Error(missingProviderError);
   },
-  get enableMockData(): never {
-    throw new Error(missingProviderError);
-  },
   get enableTransactionsPage(): never {
     throw new Error(missingProviderError);
   },
@@ -48,12 +45,14 @@ interface FeatureFlagsProviderProps {
 }
 
 function featureFlagsAreEqual(a: FeatureFlags, b: FeatureFlags): boolean {
-  return (
-    a.enableAllExperimentalFeatures === b.enableAllExperimentalFeatures &&
-    a.sudo === b.sudo &&
-    a.enableMockData === b.enableMockData &&
-    a.enableTransactionsPage === b.enableTransactionsPage
-  );
+  const aDict = a as Record<string, boolean | undefined>;
+  const bDict = b as Record<string, boolean | undefined>;
+
+  return [
+    'enableAllExperimentalFeatures',
+    'enableTransactionsPage',
+    'sudo',
+  ].every((key) => !!aDict[key] === !!bDict[key]);
 }
 
 function removeUndefinedFeatureFlags(obj: FeatureFlags): FeatureFlags {
@@ -113,7 +112,7 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
 
     let allExperimentalFeaturesEnabledFlags = removeUndefinedFeatureFlags({
       enableAllExperimentalFeatures,
-      enableTransactionsPage: true,
+      enableTransactionsPage: enableAllExperimentalFeatures,
       sudo: enableAllExperimentalFeatures,
     });
 
@@ -122,7 +121,6 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
         getBooleanQueryParam(router.query.enableAllExperimentalFeatures) ??
         getBooleanQueryParam(router.query.e),
       sudo: getBooleanQueryParam(router.query.sudo),
-      enableMockData: getBooleanQueryParam(router.query.enableMockData),
       enableTransactionsPage: getBooleanQueryParam(
         router.query.enableTransactionsPage
       ),
@@ -135,7 +133,6 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
     } else {
       storedForcedFeatureFlags = removeUndefinedFeatureFlags(
         storeFeatureFlags({
-          enableMockData: false,
           ...storedForcedFeatureFlags,
           ...forcedFeatureFlagsFromQueryParams,
         })!
@@ -166,7 +163,6 @@ export const FeatureFlagsContextProvider: FC<FeatureFlagsProviderProps> = ({
     delete router.query.e;
     delete router.query.enableAllExperimentalFeatures;
     delete router.query.sudo;
-    delete router.query.enableMockData;
     delete router.query.enableTransactionsPage;
     router.push(router);
   };

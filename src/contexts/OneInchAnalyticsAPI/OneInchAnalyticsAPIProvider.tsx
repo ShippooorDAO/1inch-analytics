@@ -24,8 +24,6 @@ import { AssetStore } from '@/shared/Model/Stores/AssetStore';
 import { ChainStore } from '@/shared/Model/Stores/ChainStore';
 import { TreasuryTransactionLabelStore } from '@/shared/Model/Stores/TreasuryTransactionLabelStore';
 
-import { createMockGlobalSystemResponse } from './mocks/GlobalSystemQueryResponse';
-
 export interface OneInchAnalyticsAPIProviderState {
   systemStatus?: {
     id: string;
@@ -263,24 +261,8 @@ export const OneInchAnalyticsAPIProvider: FC<
     if (!featureFlagsContext.runtimeFeatureFlagsLoaded) {
       return;
     }
-
-    if (featureFlagsContext.enableMockData) {
-      const { assets, chains, treasuryTransactionsLabels } =
-        processGlobalSystemResponse(createMockGlobalSystemResponse());
-
-      const assetStore = new AssetStore(assets);
-      setAssetService(new AssetService(assetStore));
-      setChainStore(new ChainStore(chains));
-      setTreasuryTransactionLabelsStore(
-        new TreasuryTransactionLabelStore(treasuryTransactionsLabels)
-      );
-    } else {
-      queryGlobalSystem();
-    }
-  }, [
-    featureFlagsContext.runtimeFeatureFlagsLoaded,
-    featureFlagsContext.enableMockData,
-  ]);
+    queryGlobalSystem();
+  }, [featureFlagsContext.runtimeFeatureFlagsLoaded]);
 
   useEffect(() => {
     if (!featureFlagsContext.runtimeFeatureFlagsLoaded) {
@@ -301,7 +283,7 @@ export const OneInchAnalyticsAPIProvider: FC<
     setTreasuryTransactionLabelsStore(
       new TreasuryTransactionLabelStore(treasuryTransactionsLabels)
     );
-  }, [featureFlagsContext]);
+  }, [featureFlagsContext.runtimeFeatureFlagsLoaded]);
 
   useEffect(() => {
     const response = globalSystemResponse;
