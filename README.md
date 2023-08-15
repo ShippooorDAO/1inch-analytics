@@ -1,5 +1,5 @@
 # 1Inch Analytics Webapp
-An open source analytics webapp for 1INCH DEX aggregator protocol. https://info.1inch.io/
+An open source analytics webapp for 1INCH DEX aggregator protocol. https://analytics.1inch.community/
 
 The project uses the following frameworks:
 - NextJS
@@ -57,7 +57,7 @@ yarn fix
 Feature flags are useful to control the set of features that is shown to the user. To enable all of them, append `e=1` to url query params 
 
 ```
-https://info.1inch.io/?e=1
+https://analytics.1inch.community/?e=1
 ```
 
 To disable them, use the menu on the bottom-right of the screen and click "Reset to Prod-like". This will revert to default settings as defined in `.env` file.

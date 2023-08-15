@@ -80,9 +80,9 @@ function App({
                   <NextSeo
                     title="1inch Info | Analytics for 1inch DEX Aggregator"
                     description="1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1INCH fusion. Powered by Warden Finance."
-                    canonical="https://info.inch.io/"
+                    canonical="https://analytics.1inch.community/"
                     openGraph={{
-                      url: 'https://info.inch.io/',
+                      url: 'https://analytics.1inch.community/',
                       title: '1inch Info | Analytics for 1inch DEX Aggregator',
                       description:
                         '1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion. Powered by Warden Finance.',
