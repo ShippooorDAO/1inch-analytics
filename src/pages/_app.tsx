@@ -11,6 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { LocalizationProvider as MuiProLocalizationProvider } from '@mui/x-date-pickers-pro';
 import { LicenseInfo } from '@mui/x-license-pro';
 import Head from 'next/head';
+import Script from 'next/script';
 import { NextSeo } from 'next-seo';
 import type { ReactNode } from 'react';
 
@@ -63,20 +64,18 @@ function App({
             >
               <MuiThemeProvider theme={createTheme(theme)}>
                 <HighchartsContextProvider>
-                  {/* 
-                  TODO: Hook up Google Analytics
                   <Script
                     src="https://www.googletagmanager.com/gtag/js?id=G-N0J7NY0K8H"
                     strategy="afterInteractive"
                   />
-                      <Script id="google-analytics" strategy="afterInteractive">
-                        {`
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){window.dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', 'G-N0J7NY0K8H');
-                `}
-                  </Script> */}
+                  <Script id="google-analytics" strategy="afterInteractive">
+                    {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){window.dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-N0J7NY0K8H');
+            `}
+                  </Script>
                   <NextSeo
                     title="1inch Info | Analytics for 1inch DEX Aggregator"
                     description="1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1INCH fusion. Powered by Warden Finance."
