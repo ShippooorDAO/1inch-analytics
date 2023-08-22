@@ -23,20 +23,20 @@ function Page404() {
   return (
     <Wrapper>
       <NextSeo
-        title={`Page Not Found | 1inch Info - Analytics for 1inch DEX Aggregator`}
+        title={`Page Not Found | 1inch Analytics - Analytics for 1inch DEX Aggregator`}
         description={`The page you are looking for might have been removed.`}
         openGraph={{
           url: '1inch://analytics.1inch.community/',
-          title: '1inch Info',
+          title: '1inch Analytics',
           description: `The page you are looking for might have been removed.`,
-          siteName: '1inch Info',
+          siteName: '1inch Analytics',
           images: [
             // {
             //   url: 'https://i.imgur.com/ZaLvku1.png', // TODO: Change this.
             //   width: 1008,
             //   height: 560,
             //   type: 'image/jpeg',
-            //   alt: '1inch Info Banner',
+            //   alt: '1inch Analytics Banner',
             // },
           ],
           locale: 'en',

@@ -87,22 +87,23 @@ export default class MyDocument extends Document {
           {emotionStyleTags}
         </Head>
         <DefaultSeo
-          title="1inch Info | Analytics for 1inch DEX Aggregator"
-          description="1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion mode. Powered by Warden Finance."
+          title="1inch Analytics | Analytics dashboard for 1inch DEX Aggregator"
+          description="1inch Analytics is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion mode. Powered by Warden Finance."
           canonical="https://analytics.1inch.community/"
           openGraph={{
             url: 'https://analytics.1inch.community/',
-            title: '1inch Info | Analytics for 1inch DEX Aggregator',
+            title:
+              '1inch Analytics | Analytics dashboard for 1inch DEX Aggregator',
             description:
-              '1inch Info is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion mode. Powered by Warden Finance.',
-            siteName: '1inch Info',
+              '1inch Analytics is an analytics platform for 1inch DEX Aggregator. Explore protocol performance metrics, transactions and 1inch fusion mode. Powered by Warden Finance.',
+            siteName: '1inch Analytics',
             images: [
               {
                 url: 'https://i.imgur.com/ZaLvku1.png', // TODO: Change this
                 width: 1008,
                 height: 560,
                 type: 'image/jpeg',
-                alt: '1inch Info Banner',
+                alt: '1inch Analytics Banner',
               },
             ],
             locale: 'en',
