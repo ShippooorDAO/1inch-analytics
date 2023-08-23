@@ -89,9 +89,9 @@ function App({
                       siteName: '1inch Analytics',
                       images: [
                         {
-                          url: 'https://i.imgur.com/ZaLvku1.png',
-                          width: 1008,
-                          height: 560,
+                          url: 'https://i.imgur.com/T3qDl4j.png',
+                          width: 1200,
+                          height: 630,
                           type: 'image/jpeg',
                           alt: '1inch Analytics Banner',
                         },
