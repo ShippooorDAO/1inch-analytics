@@ -31,6 +31,8 @@ import {
 } from '@/gql/graphql';
 import { useCoingeckoMarketData } from '@/hooks/useCoingeckoMarketData';
 import { useStakingWallets } from '@/hooks/useStakingWallets';
+import { useTokenHoldings } from '@/hooks/useTokenHoldings';
+import { useTokenUnlocks } from '@/hooks/useTokenUnlocks';
 import Dashboard from '@/layouts/DashboardLayout';
 import {
   StakingWallet,
@@ -43,6 +45,7 @@ import {
   TimeWindow,
 } from '@/shared/Model/Timeseries';
 import { format, getAddressShorthand } from '@/shared/Utils/Format';
+import { chartColors } from '@/theme/variants';
 
 function getStakingWalletVersionLabel(version: StakingWalletVersion) {
   switch (version) {
@@ -66,143 +69,22 @@ function useTokenPageData() {
     version: 'ALL',
   };
 
-  const tokenDistribution = [
-    {
-      name: 'Backers 2',
-      y: 12.2,
-      color: 'rgb(103,188,169)',
-    },
-    {
-      name: 'Backers 1',
-      y: 18.5,
-      color: 'rgb(200,115,95)',
-    },
-    {
-      name: 'Small Backers',
-      y: 2.3,
-      color: 'rgb(217,202,128)',
-    },
-    {
-      name: 'Core contributors',
-      y: 22.5,
-      color: 'rgb(81,86,116)',
-    },
-    {
-      name: 'Network Growth Fund',
-      y: 14.5,
-      color: 'rgb(94,86,205)',
-    },
-    {
-      name: 'Community Incentives',
-      y: 30.0,
-      color: 'rgb(190,73,81)',
-    },
-  ];
-
-  const tokenUnlockSchedule: Timeseries[] = [
-    {
-      name: 'Backers 2',
-      data: [
-        { x: 1606780800, y: 0 },
-        { x: 1622505600, y: 0 },
-        { x: 1638316800, y: 500000000 * 0.023 },
-        { x: 1654041600, y: 708333333 * 0.023 },
-        { x: 1669852800, y: 940972222 * 0.023 },
-        { x: 1685577600, y: 1166666666 * 0.023 },
-        { x: 1701388800, y: 1277777777 * 0.023 },
-        { x: 1717200000, y: 1388888888 * 0.122 },
-        { x: 1733011200, y: 183000000 },
-      ],
-      color: 'rgb(103,188,169)',
-    },
-    {
-      name: 'Backers 1',
-      data: [
-        { x: 1606780800, y: 0 },
-        { x: 1622505600, y: 0 },
-        { x: 1638316800, y: 500000000 * 0.023 },
-        { x: 1654041600, y: 708333333 * 0.023 },
-        { x: 1669852800, y: 940972222 * 0.023 },
-        { x: 1685577600, y: 1166666666 * 0.023 },
-        { x: 1701388800, y: 1277777777 * 0.023 },
-        { x: 1717200000, y: 1388888888 * 0.185 },
-        { x: 1733011200, y: 277500000 },
-      ],
-      color: 'rgb(200,115,95)',
-    },
-    {
-      name: 'Small Backers',
-      data: [
-        { x: 1606780800, y: 0 },
-        { x: 1622505600, y: 0 },
-        { x: 1638316800, y: 500000000 * 0.023 },
-        { x: 1654041600, y: 708333333 * 0.023 },
-        { x: 1669852800, y: 940972222 * 0.023 },
-        { x: 1685577600, y: 1166666666 * 0.023 },
-        { x: 1701388800, y: 1277777777 * 0.023 },
-        { x: 1717200000, y: 1388888888 * 0.023 },
-        { x: 1733011200, y: 34500000 },
-      ],
-      color: 'rgb(217,202,128)',
-    },
-    {
-      name: 'Core contributors',
-      data: [
-        { x: 1606780800, y: 0 },
-        { x: 1622505600, y: 0 },
-        { x: 1638316800, y: 500000000 * 0.225 },
-        { x: 1654041600, y: 708333333 * 0.225 },
-        { x: 1669852800, y: 940972222 * 0.225 },
-        { x: 1685577600, y: 1166666666 * 0.225 },
-        { x: 1701388800, y: 1277777777 * 0.225 },
-        { x: 1717200000, y: 1388888888 * 0.225 },
-        { x: 1733011200, y: 337500000 },
-      ],
-      color: 'rgb(81,86,116)',
-    },
-    {
-      name: 'Network Growth Fund',
-      data: [
-        { x: 1606780800, y: 59027777 },
-        { x: 1622505600, y: 69444444 },
-        { x: 1638316800, y: 500000000 * 0.145 },
-        { x: 1654041600, y: 708333333 * 0.145 },
-        { x: 1669852800, y: 940972222 * 0.145 },
-        { x: 1685577600, y: 1166666666 * 0.145 },
-        { x: 1701388800, y: 1277777777 * 0.145 },
-        { x: 1717200000, y: 1388888888 * 0.145 },
-        { x: 1733011200, y: 217500000 },
-      ],
-      color: 'rgb(94,86,205)',
-    },
-    {
-      name: 'Community Incentives',
-      data: [
-        { x: 1606780800, y: 145833333 },
-        { x: 1622505600, y: 173611111 },
-        { x: 1638316800, y: 500000000 * 0.3 },
-        { x: 1654041600, y: 708333333 * 0.3 },
-        { x: 1669852800, y: 940972222 * 0.3 },
-        { x: 1685577600, y: 1166666666 * 0.3 },
-        { x: 1701388800, y: 1277777777 * 0.3 },
-        { x: 1717200000, y: 1388888888 * 0.3 },
-        { x: 1733011200, y: 450000000 },
-      ],
-      color: 'rgb(190,73,81)',
-    },
-  ];
-
   const marketDataContext = useCoingeckoMarketData(TimeWindow.MAX, '1inch');
   const stakingWalletsContext = useStakingWallets(initialStakingWalletsParams);
+  const tokenUnlocksContext = useTokenUnlocks();
+  const tokenHoldingsContext = useTokenHoldings();
 
   const loading =
-    !stakingWalletsContext.stakingWallets || !marketDataContext.data;
+    !stakingWalletsContext.stakingWallets ||
+    !marketDataContext.data ||
+    !tokenUnlocksContext.tokenUnlocks ||
+    !tokenHoldingsContext.tokenHoldings;
 
   return {
     marketData: marketDataContext.data,
     stakingWallets: stakingWalletsContext.stakingWallets,
-    tokenDistribution,
-    tokenUnlockSchedule,
+    tokenHoldings: tokenHoldingsContext.tokenHoldings,
+    tokenUnlocks: tokenUnlocksContext.tokenUnlocks,
     pagination: stakingWalletsContext.pagination,
     refetchStakingWallets: stakingWalletsContext.refetchStakingWallets,
     updateMarketDataTimeWindow: marketDataContext.updateTimeWindow,
@@ -552,8 +434,8 @@ export default function TokenPage() {
   const {
     marketData,
     stakingWallets,
-    tokenDistribution,
-    tokenUnlockSchedule,
+    tokenHoldings,
+    tokenUnlocks,
     pagination,
     updateMarketDataTimeWindow,
     refetchStakingWallets,
@@ -582,6 +464,35 @@ export default function TokenPage() {
     ],
     [marketData]
   );
+
+  const tokenUnlocksTimeseries: Timeseries[] = useMemo(() => {
+    if (!tokenUnlocks) return [];
+
+    return [
+      {
+        name: 'Token unlocks',
+        data: tokenUnlocks.map((tokenUnlock) => {
+          return {
+            x: tokenUnlock.timestamp!,
+            y: tokenUnlock.totalAmount!,
+          };
+        }),
+        color: theme.palette.chart[0],
+      },
+    ];
+  }, [tokenUnlocks]);
+
+  const tokenHoldingsData = useMemo(() => {
+    if (!tokenHoldings) return undefined;
+
+    return tokenHoldings.map((tokenHolding, i) => {
+      return {
+        name: tokenHolding.affiliation!,
+        y: tokenHolding.balance!,
+        color: chartColors[i],
+      };
+    });
+  }, [tokenHoldings]);
 
   const loadingStubValue = 1234;
   return (
@@ -699,7 +610,8 @@ export default function TokenPage() {
                   title: 'Token unlock schedule',
                   content: (
                     <HistogramChart
-                      timeseriesList={tokenUnlockSchedule}
+                      timeseriesList={tokenUnlocksTimeseries}
+                      loading={tokenUnlocksTimeseries.length === 0}
                       timeWindow={TimeWindow.MAX}
                       timeInterval={TimeInterval.MONTHLY}
                       onTimeWindowChange={() => {}}
@@ -717,10 +629,12 @@ export default function TokenPage() {
                   title: 'Token distribution',
                   content: (
                     <DonutChart
-                      data={tokenDistribution}
-                      seriesName="Token distribution (%)"
-                      labelFormatter={(y?: number | null) => `${y}%`}
-                      tooltipFormatter={(y?: number | null) => `${y}%`}
+                      data={tokenHoldingsData}
+                      seriesName="Token amount"
+                      labelFormatter={(y?: number | null) =>
+                        `${format(y, { abbreviate: true })}`
+                      }
+                      tooltipFormatter={(y?: number | null) => `${format(y)}`}
                     />
                   ),
                 },

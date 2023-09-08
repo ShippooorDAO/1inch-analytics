@@ -164,6 +164,12 @@ type RootQueryType {
   """Fetch system status"""
   systemStatus: SystemStatus
 
+  """Fetch token holdings"""
+  tokenHoldings: [TokenHolding]
+
+  """Fetch token unlocks"""
+  tokenUnlocks: [TokenUnlock]
+
   """Fetch treasury transactions"""
   treasuryBalances(filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "amountUsd", sortDirection: SortDirection = DESC): TreasuryBalances
 
@@ -222,6 +228,23 @@ type SystemStatus {
   """System status object"""
   id: ID
   message: String
+}
+
+type TokenHolding {
+  affiliation: String
+  balance: Float
+
+  """Token holding object"""
+  id: ID
+  walletCount: Int
+}
+
+type TokenUnlock {
+  """Token unlock object"""
+  id: ID
+  timestamp: Int
+  totalAmount: Float
+  unlockAmount: Float
 }
 
 type TransactionLabels {
