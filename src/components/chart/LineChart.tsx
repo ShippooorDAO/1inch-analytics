@@ -56,6 +56,7 @@ export function LineChart({
             : undefined,
         name: t.name,
         data: cloneDeep(t.data),
+        turboThreshold: 2000,
         yAxis: t.yAxis,
         states: {
           inactive: {
