@@ -46,6 +46,8 @@ export const pageSections: ReadonlyMap<PageSection, SidebarItemsType> = new Map(
           />
         ),
         title: 'Fusion Mode',
+        badge: 'Maintenance',
+        disabled: true,
       },
     ],
     [
