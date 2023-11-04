@@ -26,6 +26,13 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
     startOf3MonthsAgo.setUTCFullYear(startOf3MonthsAgo.getUTCFullYear() - 1);
   }
 
+  const startOf6MonthsAgo = new Date(startOfToday.getTime());
+  startOf6MonthsAgo.setUTCMonth(startOfMonth.getUTCMonth() - 6);
+
+  if (startOf6MonthsAgo.getUTCFullYear() >= startOfToday.getUTCFullYear()) {
+    startOf6MonthsAgo.setUTCFullYear(startOf6MonthsAgo.getUTCFullYear() - 1);
+  }
+
   const startOfYearAgo = new Date(startOfToday.getTime());
   startOfYearAgo.setUTCFullYear(startOfYearAgo.getUTCFullYear() - 1);
 
@@ -43,6 +50,8 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
       return startOfMonth;
     case TimeWindow.THREE_MONTHS:
       return startOf3MonthsAgo;
+    case TimeWindow.SIX_MONTHS:
+      return startOf6MonthsAgo;
     case TimeWindow.ONE_YEAR:
       return startOfYearAgo;
     case TimeWindow.YEAR_TO_DATE:

@@ -20,9 +20,10 @@ export enum TimeWindow {
   SEVEN_DAYS = 2,
   ONE_MONTH = 3,
   THREE_MONTHS = 4,
-  ONE_YEAR = 5,
-  YEAR_TO_DATE = 6,
-  MAX = 7,
+  SIX_MONTHS = 5,
+  ONE_YEAR = 6,
+  YEAR_TO_DATE = 7,
+  MAX = 8,
 }
 
 export function getTimeWindowLabel(timeWindow: TimeWindow) {
@@ -35,6 +36,8 @@ export function getTimeWindowLabel(timeWindow: TimeWindow) {
       return '1M';
     case TimeWindow.THREE_MONTHS:
       return '3M';
+    case TimeWindow.SIX_MONTHS:
+      return '6M';
     case TimeWindow.ONE_YEAR:
       return '1Y';
     case TimeWindow.YEAR_TO_DATE:

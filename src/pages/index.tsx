@@ -80,10 +80,12 @@ function ControlledHistogramChart({
       timeWindow={timeWindow}
       timeInterval={timeInterval}
       timeWindowOptions={[
-        TimeWindow.SEVEN_DAYS,
+        // TimeWindow.SEVEN_DAYS,
         TimeWindow.ONE_MONTH,
-        TimeWindow.ONE_YEAR,
+        TimeWindow.THREE_MONTHS,
+        TimeWindow.SIX_MONTHS,
         TimeWindow.YEAR_TO_DATE,
+        TimeWindow.ONE_YEAR,
         TimeWindow.MAX,
       ].map((timeWindow) => ({
         value: timeWindow,
