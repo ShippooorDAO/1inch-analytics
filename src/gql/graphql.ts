@@ -175,6 +175,10 @@ export type RootQueryType = {
   stakingWallets?: Maybe<StakingWallets>;
   /** Fetch system status */
   systemStatus?: Maybe<SystemStatus>;
+  /** Fetch token holdings */
+  tokenHoldings?: Maybe<Array<Maybe<TokenHolding>>>;
+  /** Fetch token unlocks */
+  tokenUnlocks?: Maybe<Array<Maybe<TokenUnlock>>>;
   /** Fetch treasury transactions */
   treasuryBalances?: Maybe<TreasuryBalances>;
   /** Fetch treasury flows */
@@ -315,6 +319,24 @@ export type SystemStatus = {
   /** System status object */
   id?: Maybe<Scalars['ID']['output']>;
   message?: Maybe<Scalars['String']['output']>;
+};
+
+export type TokenHolding = {
+  __typename?: 'TokenHolding';
+  affiliation?: Maybe<Scalars['String']['output']>;
+  balance?: Maybe<Scalars['Float']['output']>;
+  /** Token holding object */
+  id?: Maybe<Scalars['ID']['output']>;
+  walletCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type TokenUnlock = {
+  __typename?: 'TokenUnlock';
+  /** Token unlock object */
+  id?: Maybe<Scalars['ID']['output']>;
+  timestamp?: Maybe<Scalars['Int']['output']>;
+  totalAmount?: Maybe<Scalars['Float']['output']>;
+  unlockAmount?: Maybe<Scalars['Float']['output']>;
 };
 
 export type TransactionLabels = {

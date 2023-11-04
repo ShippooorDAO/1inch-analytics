@@ -100,7 +100,11 @@ function httpFetcher(url: string) {
   return fetch(url).then((res) => res.json());
 }
 
-export function useNativeTokenRates() {
+interface UseNativeTokenRatesProps {
+  chainId?: number;
+}
+
+export function useNativeTokenRates({ chainId }: UseNativeTokenRatesProps) {
   const [messageHistory, setMessageHistory] = useState<GasPriceChainMessage[]>(
     []
   );
@@ -111,8 +115,12 @@ export function useNativeTokenRates() {
   );
 
   const { sendMessage, lastMessage } = useWebSocket(
-    'wss://gas-price-api.1inch.io/ws'
+    chainId ? `wss://gas-price-api.1inch.io/ws/${chainId}` : null
   );
+
+  useEffect(() => {
+    setMessageHistory([]);
+  }, [chainId]);
 
   useEffect(() => {
     if (lastMessage?.data) {
@@ -151,7 +159,7 @@ export function useNativeTokenRates() {
 
       setMessageHistory(newMessages);
     }
-  }, [lastMessage, setMessageHistory]);
+  }, [lastMessage]);
 
   const gasCost = useMemo(() => {
     if (!nativeTokenRatesQueryContext.data || messageHistory.length === 0) {
@@ -162,7 +170,7 @@ export function useNativeTokenRates() {
       nativeTokenRatesQueryContext.data,
       messageHistory
     );
-  }, [nativeTokenRatesQueryContext.data, lastMessage]);
+  }, [nativeTokenRatesQueryContext.data, messageHistory]);
 
   return {
     data: gasCost,

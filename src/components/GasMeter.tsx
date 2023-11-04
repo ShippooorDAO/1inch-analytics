@@ -51,12 +51,15 @@ export function GasMeter() {
   const theme = useTheme();
   const chainStore = useChainStore();
   const { latestGasPrices } = useUniswapV3SubgraphContext();
-  const gasData = useNativeTokenRates();
 
   const [selectedChain, setSelectedChain] = useState<Chain | null>();
   const [chainGasData, setChainGasData] = useState<ChainGasPrice | undefined>();
   const [ethGasPrices, setEthGasPrices] = useState<TimedGasPrice[]>([]);
   const [displayGasTrend, setDisplayGasTrend] = useState<boolean>(false);
+
+  const gasData = useNativeTokenRates({
+    chainId: selectedChain?.chainId,
+  });
 
   const chainOptions = useMemo(() => {
     if (!chainStore) {
