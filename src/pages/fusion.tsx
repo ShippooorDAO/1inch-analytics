@@ -1422,6 +1422,7 @@ export default function FusionPage() {
                             onTimeseriesChange={setTransactionsTimeseriesList}
                             timeWindow={TimeWindow.MAX}
                             timeInterval={TimeInterval.WEEKLY}
+                            formatter={(y) => format(y, { decimals: 0 })}
                           />
                         ),
                     },
@@ -1450,9 +1451,9 @@ export default function FusionPage() {
                               color: m.transactionsCountWeeklyTimeseries.color,
                             };
                           })}
-                          tooltipFormatter={(y) => format(y)}
+                          tooltipFormatter={(y) => format(y, { decimals: 0 })}
                           labelFormatter={(y) =>
-                            format(y, { abbreviate: true })
+                            format(y, { abbreviate: true, decimals: 1 })
                           }
                         />
                       ),
@@ -1477,6 +1478,7 @@ export default function FusionPage() {
                             onTimeseriesChange={setUsersTimeseriesList}
                             timeWindow={TimeWindow.MAX}
                             timeInterval={TimeInterval.WEEKLY}
+                            formatter={(y) => format(y, { decimals: 0 })}
                           />
                         ),
                     },
@@ -1505,9 +1507,9 @@ export default function FusionPage() {
                               color: m.walletsCountWeeklyTimeseries.color,
                             };
                           })}
-                          tooltipFormatter={(y) => format(y)}
+                          tooltipFormatter={(y) => format(y, { decimals: 0 })}
                           labelFormatter={(y) =>
-                            format(y, { abbreviate: true })
+                            format(y, { abbreviate: true, decimals: 1 })
                           }
                         />
                       ),
