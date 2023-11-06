@@ -1596,7 +1596,6 @@ export default function FusionPage() {
               value={format(
                 fusionResolversMetrics?.allResolvers.transactionsCountLastWeek,
                 {
-                  symbol: 'USD',
                   abbreviate: true,
                 }
               )}
