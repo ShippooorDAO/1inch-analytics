@@ -19,17 +19,21 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
   const startOfMonth = new Date(startOfToday.getTime());
   startOfMonth.setUTCMonth(startOfMonth.getUTCMonth() - 1);
 
+  if (startOfMonth.getUTCFullYear() > startOfToday.getUTCFullYear()) {
+    startOfMonth.setUTCFullYear(startOfMonth.getUTCFullYear() - 1);
+  }
+
   const startOf3MonthsAgo = new Date(startOfToday.getTime());
   startOf3MonthsAgo.setUTCMonth(startOfMonth.getUTCMonth() - 3);
 
-  if (startOf3MonthsAgo.getUTCFullYear() >= startOfToday.getUTCFullYear()) {
+  if (startOf3MonthsAgo.getUTCFullYear() > startOfToday.getUTCFullYear()) {
     startOf3MonthsAgo.setUTCFullYear(startOf3MonthsAgo.getUTCFullYear() - 1);
   }
 
   const startOf6MonthsAgo = new Date(startOfToday.getTime());
   startOf6MonthsAgo.setUTCMonth(startOfMonth.getUTCMonth() - 6);
 
-  if (startOf6MonthsAgo.getUTCFullYear() >= startOfToday.getUTCFullYear()) {
+  if (startOf6MonthsAgo.getUTCFullYear() > startOfToday.getUTCFullYear()) {
     startOf6MonthsAgo.setUTCFullYear(startOf6MonthsAgo.getUTCFullYear() - 1);
   }
 

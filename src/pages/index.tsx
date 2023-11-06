@@ -393,6 +393,7 @@ export default function Home() {
                       name: chain.displayName,
                       y: volume,
                       color: chain.color,
+                      type: 'bar',
                     };
                   })}
                   tooltipFormatter={(y) => format(y, { symbol: 'USD' })}
