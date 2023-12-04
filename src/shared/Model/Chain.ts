@@ -1,4 +1,4 @@
-import { Asset } from "./Asset";
+import { Asset } from './Asset';
 
 export interface Chain {
   id: string;
@@ -28,86 +28,86 @@ export enum ChainId {
 export function getChainColor(chainId: number): string {
   switch (chainId) {
     case ChainId.ETHEREUM:
-      return "#647FE9";
+      return '#647FE9';
     case ChainId.OPTIMISM:
-      return "#FF0420";
+      return '#FF0420';
     case ChainId.AURORA:
-      return "#86D65B";
+      return '#86D65B';
     case ChainId.ARBITRUM:
-      return "#2D374B";
+      return '#2D374B';
     case ChainId.POLYGON:
-      return "#8446E7";
+      return '#8446E7';
     case ChainId.BSC:
-      return "#F5B50D";
+      return '#F5B50D';
     case ChainId.FANTOM:
-      return "#0813EF";
+      return '#0813EF';
     case ChainId.GNOSIS:
-      return "#037A5B";
+      return '#037A5B';
     case ChainId.KLAYTN:
-      return "#E06C01";
+      return '#E06C01';
     case ChainId.AVALANCHE:
-      return "#D64F4A";
+      return '#D64F4A';
     case ChainId.BASE:
-      return "#0052FF";
+      return '#0052FF';
     default:
-      return "";
+      return '';
   }
 }
 
 export function getChainImageUrl(chainId: number): string {
   switch (chainId) {
     case ChainId.ETHEREUM:
-      return "/vendors/chains/ethereum.svg";
+      return '/vendors/chains/ethereum.svg';
     case ChainId.OPTIMISM:
-      return "/vendors/chains/optimism.svg";
+      return '/vendors/chains/optimism.svg';
     case ChainId.AURORA:
-      return "/vendors/chains/aurora.svg";
+      return '/vendors/chains/aurora.svg';
     case ChainId.ARBITRUM:
-      return "/vendors/chains/arbitrum.svg";
+      return '/vendors/chains/arbitrum.svg';
     case ChainId.POLYGON:
-      return "/vendors/chains/polygon.svg";
+      return '/vendors/chains/polygon.svg';
     case ChainId.BSC:
-      return "/vendors/chains/binance.svg";
+      return '/vendors/chains/binance.svg';
     case ChainId.FANTOM:
-      return "/vendors/chains/fantom.svg";
+      return '/vendors/chains/fantom.svg';
     case ChainId.GNOSIS:
-      return "/vendors/chains/gnosis.svg";
+      return '/vendors/chains/gnosis.svg';
     case ChainId.KLAYTN:
-      return "/vendors/chains/klaytn.svg";
+      return '/vendors/chains/klaytn.svg';
     case ChainId.AVALANCHE:
-      return "/vendors/chains/avalanche.svg";
+      return '/vendors/chains/avalanche.svg';
     case ChainId.BASE:
-      return "/vendors/chains/base.svg";
+      return '/vendors/chains/base.svg';
     default:
-      return "";
+      return '';
   }
 }
 
 export function getChainName(chainId: number): string {
   switch (chainId) {
     case ChainId.ETHEREUM:
-      return "Ethereum";
+      return 'Ethereum';
     case ChainId.OPTIMISM:
-      return "Optimism";
+      return 'Optimism';
     case ChainId.AURORA:
-      return "Aurora";
+      return 'Aurora';
     case ChainId.ARBITRUM:
-      return "Arbitrum";
+      return 'Arbitrum';
     case ChainId.POLYGON:
-      return "Polygon";
+      return 'Polygon';
     case ChainId.BSC:
-      return "Binance Smart Chain";
+      return 'Binance Smart Chain';
     case ChainId.FANTOM:
-      return "Fantom";
+      return 'Fantom';
     case ChainId.GNOSIS:
-      return "Gnosis";
+      return 'Gnosis';
     case ChainId.KLAYTN:
-      return "Klaytn";
+      return 'Klaytn';
     case ChainId.AVALANCHE:
-      return "Avalanche";
+      return 'Avalanche';
     case ChainId.BASE:
-      return "Base";
+      return 'Base';
     default:
-      return "";
+      return '';
   }
 }
