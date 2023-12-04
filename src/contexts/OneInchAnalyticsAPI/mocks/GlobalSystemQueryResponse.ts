@@ -70,6 +70,12 @@ export function createMockGlobalSystemResponse(): GlobalSystemQueryResponse {
         chainIdentifier: ChainId.AURORA,
         nativeToken: 'AUR',
       },
+      {
+        id: 'base',
+        name: 'Base',
+        chainIdentifier: ChainId.BASE,
+        nativeToken: 'ETH',
+      }
     ],
     assets: [],
   };
