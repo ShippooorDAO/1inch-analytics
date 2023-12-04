@@ -216,7 +216,7 @@ export default function Home() {
           margin-bottom: 5px;
         `}
       >
-        <PageTitle>1inch Aggregation Protocol Overview</PageTitle>
+        <PageTitle>1inch Swap Overview</PageTitle>
 
         <div
           css={css`
