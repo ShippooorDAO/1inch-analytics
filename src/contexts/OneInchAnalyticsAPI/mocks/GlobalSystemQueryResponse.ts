@@ -75,7 +75,7 @@ export function createMockGlobalSystemResponse(): GlobalSystemQueryResponse {
         name: 'Base',
         chainIdentifier: ChainId.BASE,
         nativeToken: 'ETH',
-      }
+      },
     ],
     assets: [],
   };
