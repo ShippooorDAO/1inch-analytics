@@ -139,7 +139,6 @@ export type FusionVolume = {
 export enum FusionVolumeTimespan {
   All = 'ALL',
   Day = 'DAY',
-  Hour = 'HOUR',
   Week = 'WEEK'
 }
 
