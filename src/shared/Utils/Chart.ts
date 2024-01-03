@@ -1,4 +1,5 @@
 import { groupBy, sumBy } from 'lodash';
+import moment from 'moment';
 
 import {
   Timeseries,
@@ -11,59 +12,26 @@ import {
  * Get the exact date corresponding to a given TimeWindow enum value.
  */
 export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
-  const startOfToday = new Date();
-  startOfToday.setUTCHours(0, 0, 0, 0);
-
-  const startOfWeek = new Date(startOfToday.getTime() - 86400 * 6 * 1000);
-
-  const startOfMonth = new Date(startOfToday.getTime());
-  startOfMonth.setUTCMonth(startOfMonth.getUTCMonth() - 1);
-
-  if (startOfMonth.getUTCFullYear() > startOfToday.getUTCFullYear()) {
-    startOfMonth.setUTCFullYear(startOfMonth.getUTCFullYear() - 1);
-  }
-
-  const startOf3MonthsAgo = new Date(startOfToday.getTime());
-  startOf3MonthsAgo.setUTCMonth(startOfMonth.getUTCMonth() - 3);
-
-  if (startOf3MonthsAgo.getUTCFullYear() > startOfToday.getUTCFullYear()) {
-    startOf3MonthsAgo.setUTCFullYear(startOf3MonthsAgo.getUTCFullYear() - 1);
-  }
-
-  const startOf6MonthsAgo = new Date(startOfToday.getTime());
-  startOf6MonthsAgo.setUTCMonth(startOfMonth.getUTCMonth() - 6);
-
-  if (startOf6MonthsAgo.getUTCFullYear() > startOfToday.getUTCFullYear()) {
-    startOf6MonthsAgo.setUTCFullYear(startOf6MonthsAgo.getUTCFullYear() - 1);
-  }
-
-  const startOfYearAgo = new Date(startOfToday.getTime());
-  startOfYearAgo.setUTCFullYear(startOfYearAgo.getUTCFullYear() - 1);
-
-  const startOfYearToDate = new Date(startOfToday.getTime());
-  startOfYearToDate.setUTCFullYear(startOfYearToDate.getUTCFullYear(), 0, 1);
-
-  const startOfAllTime = new Date(1000);
+  const startOfToday = moment().startOf('day').toDate();
+  const startOfYear = moment(startOfToday).startOf('year').toDate();
 
   switch (timeWindow) {
     case TimeWindow.ONE_DAY:
       return startOfToday;
     case TimeWindow.SEVEN_DAYS:
-      return startOfWeek;
+      return moment().startOf('week').toDate();
     case TimeWindow.ONE_MONTH:
-      return startOfMonth;
+      return moment(startOfToday).subtract(1, 'months').toDate();
     case TimeWindow.THREE_MONTHS:
-      return startOf3MonthsAgo;
-    case TimeWindow.SIX_MONTHS:
-      return startOf6MonthsAgo;
+      return moment(startOfToday).subtract(3, 'months').toDate();
     case TimeWindow.ONE_YEAR:
-      return startOfYearAgo;
+      return moment(startOfToday).subtract(1, 'years').toDate();
     case TimeWindow.YEAR_TO_DATE:
-      return startOfYearToDate;
+      return startOfYear;
     case TimeWindow.MAX:
-      return startOfAllTime;
+      return new Date(0);
     default:
-      return startOfYearToDate;
+      return startOfYear;
   }
 }
 
