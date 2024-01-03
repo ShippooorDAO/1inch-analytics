@@ -121,7 +121,6 @@ type FusionVolume {
 enum FusionVolumeTimespan {
   ALL
   DAY
-  HOUR
   WEEK
 }
 
@@ -156,7 +155,7 @@ type RootQueryType {
   fusionTopTrades(assetIds: [String] = [], chainIds: [String] = [], filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "destinationUsdAmount", sortDirection: SortDirection = DESC): FusionTopTrades
 
   """Fetch fusion volumes"""
-  fusionVolumes(timespan: FusionVolumeTimespan = HOUR): [FusionVolume]
+  fusionVolumes(timespan: FusionVolumeTimespan = DAY): [FusionVolume]
 
   """Fetch staking wallets"""
   stakingWallets(filter: Filter, pageNumber: Int = 1, pageSize: Int = 20, sortBy: String = "stakingBalance", sortDirection: SortDirection = DESC, version: StakingVersion = ALL): StakingWallets

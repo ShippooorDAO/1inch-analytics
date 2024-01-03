@@ -22,30 +22,33 @@ export enum ChainId {
   GNOSIS = 100,
   KLAYTN = 8217,
   AVALANCHE = 43114,
+  BASE = 8453,
 }
 
 export function getChainColor(chainId: number): string {
   switch (chainId) {
     case ChainId.ETHEREUM:
-      return '#95a0d7';
+      return '#647FE9';
     case ChainId.OPTIMISM:
-      return '#ff0420';
+      return '#FF0420';
     case ChainId.AURORA:
-      return '#29e7e7';
+      return '#86D65B';
     case ChainId.ARBITRUM:
-      return 'rgb(73,147,234)';
+      return '#2D374B';
     case ChainId.POLYGON:
-      return 'rgb(114,56,214)';
+      return '#8446E7';
     case ChainId.BSC:
-      return '#F0B90B';
+      return '#F5B50D';
     case ChainId.FANTOM:
-      return '#005EFF';
+      return '#0813EF';
     case ChainId.GNOSIS:
-      return '#133629';
+      return '#037A5B';
     case ChainId.KLAYTN:
-      return '#FF2F00';
+      return '#E06C01';
     case ChainId.AVALANCHE:
-      return '#e84142';
+      return '#D64F4A';
+    case ChainId.BASE:
+      return '#0052FF';
     default:
       return '';
   }
@@ -73,6 +76,8 @@ export function getChainImageUrl(chainId: number): string {
       return '/vendors/chains/klaytn.svg';
     case ChainId.AVALANCHE:
       return '/vendors/chains/avalanche.svg';
+    case ChainId.BASE:
+      return '/vendors/chains/base.svg';
     default:
       return '';
   }
@@ -100,6 +105,8 @@ export function getChainName(chainId: number): string {
       return 'Klaytn';
     case ChainId.AVALANCHE:
       return 'Avalanche';
+    case ChainId.BASE:
+      return 'Base';
     default:
       return '';
   }
