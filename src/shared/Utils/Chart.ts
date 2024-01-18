@@ -24,6 +24,8 @@ export function getTimeWindowStartDate(timeWindow: TimeWindow): Date {
       return moment(startOfToday).subtract(1, 'month').toDate();
     case TimeWindow.THREE_MONTHS:
       return moment(startOfToday).subtract(3, 'months').toDate();
+    case TimeWindow.SIX_MONTHS:
+      return moment(startOfToday).subtract(6, 'months').toDate();
     case TimeWindow.ONE_YEAR:
       return moment(startOfToday).subtract(1, 'years').toDate();
     case TimeWindow.YEAR_TO_DATE:
