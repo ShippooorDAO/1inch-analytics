@@ -41,9 +41,7 @@ function ControlledHistogramChart({
   monthlyTimeseriesList,
   formatter,
 }: ControllerHistogramChartProps) {
-  const [timeWindow, setTimeWindow] = useState<TimeWindow>(
-    TimeWindow.YEAR_TO_DATE
-  );
+  const [timeWindow, setTimeWindow] = useState<TimeWindow>(TimeWindow.MAX);
   const [timeInterval, setTimeInterval] = useState<TimeInterval>(
     TimeInterval.WEEKLY
   );
